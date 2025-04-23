@@ -40,7 +40,7 @@ CREATE TABLE silver.customers_zymetric (
 	,"Gen_Bus_Posting_Group" text NULL
 	,"Payment_Terms_Code" text NULL
 	,"Payment_Method_Code" text NULL
-	load_ts timestamp NULL
+	,load_ts timestamp NULL
 );
 
 
@@ -123,7 +123,7 @@ BEGIN
   	,"County"
   	,"Post_Code"
   	,"EDN_Province_Code"
-  	,REPLACE("VAT_Registration_No", '-', '') AS "VAT_Registration_No"
+  	,REGEXP_REPLACE(VAT_Registration_No, '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
   	,"Gen_Bus_Posting_Group"
   	,"Payment_Terms_Code"
   	,"Payment_Method_Code"
@@ -203,6 +203,8 @@ END;
 $procedure$
 ;
 
+
+call silver.sp_load_customers_zymetric()
 
 -------------------------------------------------------------------------
 -- CREATING FUNCTION FOR EXECUTE LOADING PROCEDURE FROM BRONZE TO SILVER LAYER
