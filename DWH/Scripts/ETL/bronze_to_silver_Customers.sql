@@ -40,7 +40,7 @@ CREATE TABLE silver.customers_zymetric (
 	,"Gen_Bus_Posting_Group" text NULL
 	,"Payment_Terms_Code" text NULL
 	,"Payment_Method_Code" text NULL
-	,load_ts timestamp NULL
+	,"load_ts" timestamptz NULL
 );
 
 
@@ -204,7 +204,7 @@ $procedure$
 ;
 
 
-call silver.sp_load_customers_zymetric()
+--call silver.sp_load_customers_zymetric()
 
 -------------------------------------------------------------------------
 -- CREATING FUNCTION FOR EXECUTE LOADING PROCEDURE FROM BRONZE TO SILVER LAYER
