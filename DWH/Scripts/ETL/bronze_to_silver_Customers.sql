@@ -123,7 +123,7 @@ BEGIN
   	,"County"
   	,"Post_Code"
   	,"EDN_Province_Code"
-  	,REGEXP_REPLACE(VAT_Registration_No, '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
+  	,REGEXP_REPLACE("VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
   	,"Gen_Bus_Posting_Group"
   	,"Payment_Terms_Code"
   	,"Payment_Method_Code"
