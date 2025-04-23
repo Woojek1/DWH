@@ -51,7 +51,7 @@ CREATE TABLE silver.customers_zymetric (
 
 -- DROP PROCEDURE silver.sp_load_customers_zymetric(int4);
 
-CREATE OR REPLACE PROCEDURE silver.sp_load_customers_zymetric(IN p_limit integer DEFAULT NULL::integer)
+CREATE OR REPLACE PROCEDURE silver.sp_load_customers_zymetric()
  LANGUAGE plpgsql
 AS $procedure$
 BEGIN
@@ -206,9 +206,9 @@ $procedure$
 
 --call silver.sp_load_customers_zymetric()
 
--------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CREATING FUNCTION FOR EXECUTE LOADING PROCEDURE FROM BRONZE TO SILVER LAYER
--------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 
 -- DROP FUNCTION bronze.fn_trigger_sync_customers();
@@ -235,4 +235,5 @@ CREATE TRIGGER trg_after_insert_or_update_customers
 AFTER INSERT OR UPDATE
 ON bronze.customers_zymetric 
 FOR EACH STATEMENT EXECUTE FUNCTION bronze.fn_trigger_sync_customers()
+;
 
