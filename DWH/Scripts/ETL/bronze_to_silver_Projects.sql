@@ -5,7 +5,7 @@
 
 -- DROP TABLE silver.projects_zymetric;
 
-CREATE TABLE silver.projects_zymetric (
+CREATE TABLE IF NOT EXISTS silver.projects_zymetric (
 	"No" text PRIMARY KEY
 	,"Description" text NULL
 	,"Description_2" text NULL
@@ -20,7 +20,7 @@ CREATE TABLE silver.projects_zymetric (
 	,"Planned_Delivery_Date" date NULL
 	,"Project_Account_Manager" text NULL
 	,"Salesperson_Code" text NULL
-	,"load_ts" timestamp NULL
+	,"load_ts" timestamptz NULL
 );
 
 
