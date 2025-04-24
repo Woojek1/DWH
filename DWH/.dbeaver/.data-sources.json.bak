@@ -16,7 +16,7 @@
 				"type": "dev",
 				"closeIdleConnection": true,
 				"provider-properties": {
-					"@dbeaver-show-non-default-db@": "false",
+					"@dbeaver-show-non-default-db@": "true",
 					"@dbeaver-chosen-role@": ""
 				},
 				"auth-model": "native"

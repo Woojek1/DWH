@@ -20,6 +20,9 @@
 					"@dbeaver-chosen-role@": ""
 				},
 				"auth-model": "native"
+			},
+			"custom-properties": {
+				"resultset.maxrows": "10000"
 			}
 		}
 	},
