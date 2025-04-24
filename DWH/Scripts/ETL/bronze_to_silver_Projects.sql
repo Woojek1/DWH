@@ -91,7 +91,6 @@ BEGIN
 		,"Project_Account_Manager"
 		,"Salesperson_Code"
 	  	,CURRENT_TIMESTAMP AS "load_ts"
-	  	
 	  FROM bronze.projects_zymetric
 	  ON CONFLICT ("No") DO UPDATE
 	  SET
@@ -109,7 +108,7 @@ BEGIN
 		,"Project_Account_Manager" = EXCLUDED."Project_Account_Manager"
 		,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
 		,"load_ts" = CURRENT_TIMESTAMP
-	  WHERE 
+	  WHERE
 		silver.projects_zymetric."Description" IS DISTINCT FROM EXCLUDED."Description"
 	 OR silver.projects_zymetric."Description_2" IS DISTINCT FROM EXCLUDED."Description_2"
 	 OR silver.projects_zymetric."Status" IS DISTINCT FROM EXCLUDED."Status"
@@ -139,13 +138,13 @@ BEGIN
 -- DROP FUNCTION bronze.fn_trigger_sync_projects();
 
 CREATE OR REPLACE FUNCTION bronze.fn_trigger_sync_projects()
- RETURNS trigger
- LANGUAGE plpgsql
+	RETURNS trigger
+	LANGUAGE plpgsql
 AS $function$
 BEGIN
-  -- Wywołanie procedury ładowania danych
-  EXECUTE 'CALL silver.sp_load_projects_zymetric()';
-  RETURN NULL; -- nie modyfikujemy danych
+-- Wywołanie procedury ładowania danych
+	EXECUTE 'CALL silver.sp_load_projects_zymetric()';
+	RETURN NULL; -- nie modyfikujemy danych
 END;
 $function$
 ;
