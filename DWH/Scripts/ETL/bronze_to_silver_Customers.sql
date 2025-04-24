@@ -5,7 +5,7 @@
 
 -- DROP TABLE silver.customers_zymetric;
 
-CREATE TABLE silver.customers_zymetric (
+CREATE TABLE IF NOT EXISTS silver.customers_zymetric (
 	"No"	text    PRIMARY KEY
 	,"Contact_Type"	text NULL
 	,"Name" text NULL
