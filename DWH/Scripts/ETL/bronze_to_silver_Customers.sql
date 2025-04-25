@@ -55,79 +55,121 @@ CREATE OR REPLACE PROCEDURE silver.sp_load_customers_zymetric()
  LANGUAGE plpgsql
 AS $procedure$
 BEGIN
-  INSERT INTO silver.customers_zymetric (
-	"No"
-	,"Contact_Type"
-	,"Name"
-	,"Name_2"
-	,"Search_Name"
-	,"IC_Partner_Code"
-	,"Balance_LCY"
-	,"Balance_Due_LCY"
-	,"Credit_Limit_LCY"
-	,"EDN_Black_List"
-	,"Salesperson_Code"
-	,"TotalSales2"
-	,"CustSalesLCY_CustProfit_AdjmtCostLCY"
-	,"AdjCustProfit"
-	,"EDN_NAV_Key"
-	,"VIP"
-	,"Company_Profile"
-	,"Company_SegmentA"
-	,"MagentoID"
-	,"EDN_Reckoning_Limit__x005B_LCY_x005D_"
-	,"EDN_Used_Limit__x005B_LCY_x005D_"
-	,"EDN_Factoring_Reckoning"
-	,"EDN_Insurance_Customer"
-	,"EDN_Limit_Amount_Insur__x005B_LCY_x005D_"
-	,"Address"
-	,"Country_Region_Code"
-	,"City"
-	,"County"
-	,"Post_Code"
-	,"EDN_Province_Code"
-	,"VAT_Registration_No"
-	,"Gen_Bus_Posting_Group"
-	,"Payment_Terms_Code"
-	,"Payment_Method_Code"
-	,"load_ts"
-  )
-  SELECT
-    "No"
-  	,"Contact_Type"
-  	,"Name"
-  	,"Name_2"
-  	,"Search_Name"
-  	,"IC_Partner_Code"
-  	,"Balance_LCY"
-  	,"Balance_Due_LCY"
-  	,"Credit_Limit_LCY"
-  	,"EDN_Black_List"
-  	,"Salesperson_Code"
-  	,"TotalSales2"
-  	,"CustSalesLCY_CustProfit_AdjmtCostLCY"
-  	,"AdjCustProfit"
-  	,"EDN_NAV_Key"
-  	,"VIP"
-  	,"Company_Profile"
-  	,"Company_SegmentA"
-  	,"MagentoID"
-  	,"EDN_Reckoning_Limit__x005B_LCY_x005D_"
-  	,"EDN_Used_Limit__x005B_LCY_x005D_"
-  	,"EDN_Factoring_Reckoning"
-  	,"EDN_Insurance_Customer"
-  	,"EDN_Limit_Amount_Insur__x005B_LCY_x005D_"
-  	,"Address"
-  	,"Country_Region_Code"
-  	,"City"
-  	,"County"
-  	,"Post_Code"
-  	,"EDN_Province_Code"
-  	,REGEXP_REPLACE("VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
-  	,"Gen_Bus_Posting_Group"
-  	,"Payment_Terms_Code"
-  	,"Payment_Method_Code"
-  	,CURRENT_TIMESTAMP AS "load_ts"
+
+--Creating Customers table in Silver Layer
+
+	CREATE TABLE IF NOT EXISTS silver.customers_zymetric (
+		"No"	text    PRIMARY KEY
+		,"Contact_Type"	text NULL
+		,"Name" text NULL
+		,"Name_2" text NULL
+		,"Search_Name" text NULL
+		,"IC_Partner_Code" text NULL
+		,"Balance_LCY" numeric(14, 2) NULL
+		,"Balance_Due_LCY" numeric(14, 2) NULL
+		,"Credit_Limit_LCY" numeric(14, 2) NULL
+		,"EDN_Black_List" bool NULL
+		,"Salesperson_Code" text NULL
+		,"TotalSales2" numeric(14, 2) NULL
+		,"CustSalesLCY_CustProfit_AdjmtCostLCY" numeric(14, 2) NULL
+		,"AdjCustProfit" numeric(14, 2) NULL
+		,"EDN_NAV_Key" text NULL
+		,"VIP" bool NULL
+		,"Company_Profile" text NULL
+		,"Company_SegmentA" text NULL
+		,"MagentoID" int4 NULL
+		,"EDN_Reckoning_Limit__x005B_LCY_x005D_" numeric(14, 2) NULL
+		,"EDN_Used_Limit__x005B_LCY_x005D_" numeric(14, 2) NULL
+		,"EDN_Factoring_Reckoning" bool NULL
+		,"EDN_Insurance_Customer" bool NULL
+		,"EDN_Limit_Amount_Insur__x005B_LCY_x005D_" numeric(14, 2) NULL
+		,"Address" text NULL
+		,"Country_Region_Code" text NULL
+		,"City" text NULL
+		,"County" text NULL
+		,"Post_Code" text NULL
+		,"EDN_Province_Code" text NULL
+		,"VAT_Registration_No" text NULL
+		,"Gen_Bus_Posting_Group" text NULL
+		,"Payment_Terms_Code" text NULL
+		,"Payment_Method_Code" text NULL
+		,"load_ts" timestamptz NULL
+	);
+
+
+	  INSERT INTO silver.customers_zymetric (
+		"No"
+		,"Contact_Type"
+		,"Name"
+		,"Name_2"
+		,"Search_Name"
+		,"IC_Partner_Code"
+		,"Balance_LCY"
+		,"Balance_Due_LCY"
+		,"Credit_Limit_LCY"
+		,"EDN_Black_List"
+		,"Salesperson_Code"
+		,"TotalSales2"
+		,"CustSalesLCY_CustProfit_AdjmtCostLCY"
+		,"AdjCustProfit"
+		,"EDN_NAV_Key"
+		,"VIP"
+		,"Company_Profile"
+		,"Company_SegmentA"
+		,"MagentoID"
+		,"EDN_Reckoning_Limit__x005B_LCY_x005D_"
+		,"EDN_Used_Limit__x005B_LCY_x005D_"
+		,"EDN_Factoring_Reckoning"
+		,"EDN_Insurance_Customer"
+		,"EDN_Limit_Amount_Insur__x005B_LCY_x005D_"
+		,"Address"
+		,"Country_Region_Code"
+		,"City"
+		,"County"
+		,"Post_Code"
+		,"EDN_Province_Code"
+		,"VAT_Registration_No"
+		,"Gen_Bus_Posting_Group"
+		,"Payment_Terms_Code"
+		,"Payment_Method_Code"
+		,"load_ts"
+	  )
+	 SELECT
+	    "No"
+	  	,"Contact_Type"
+	  	,"Name"
+	  	,"Name_2"
+	  	,"Search_Name"
+	  	,"IC_Partner_Code"
+	  	,"Balance_LCY"
+	  	,"Balance_Due_LCY"
+	  	,"Credit_Limit_LCY"
+	  	,"EDN_Black_List"
+	  	,"Salesperson_Code"
+	  	,"TotalSales2"
+	  	,"CustSalesLCY_CustProfit_AdjmtCostLCY"
+	  	,"AdjCustProfit"
+	  	,"EDN_NAV_Key"
+	  	,"VIP"
+	  	,"Company_Profile"
+	  	,"Company_SegmentA"
+	  	,"MagentoID"
+	  	,"EDN_Reckoning_Limit__x005B_LCY_x005D_"
+	  	,"EDN_Used_Limit__x005B_LCY_x005D_"
+	  	,"EDN_Factoring_Reckoning"
+	  	,"EDN_Insurance_Customer"
+	  	,"EDN_Limit_Amount_Insur__x005B_LCY_x005D_"
+	  	,"Address"
+	  	,"Country_Region_Code"
+	  	,"City"
+	  	,"County"
+	  	,"Post_Code"
+	  	,"EDN_Province_Code"
+	  	,REGEXP_REPLACE("VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
+	  	,"Gen_Bus_Posting_Group"
+	  	,"Payment_Terms_Code"
+	  	,"Payment_Method_Code"
+	  	,CURRENT_TIMESTAMP AS "load_ts"
   FROM bronze.customers_zymetric
   ON CONFLICT ("No") DO UPDATE
   SET
