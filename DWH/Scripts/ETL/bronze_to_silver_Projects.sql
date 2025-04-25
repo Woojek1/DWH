@@ -3,23 +3,26 @@
 -------------------------------------------
 
 
+-- DROP TABLE silver.bc_projects_zymetric;
+
+
 CREATE TABLE silver.bc_projects_zymetric (
-	"No" text PRIMARY KEY,
-	"Description" text NULL,
-	"Description_2" text NULL,
-	"Status" text NULL,
-	"Creation_Date" date NULL,
-	"Manufacturer_Code" text NULL,
-	"City" text NULL,
-	"County" text NULL,
-	"Object_Type" text NULL,
-	"Project_Source" text NULL,
-	"Manufacturer" text NULL,
-	"Planned_Delivery_Date" date NULL,
-	"Project_Account_Manager" text NULL,
-	"Salesperson_Code" text NULL,
-	"Firma" CHAR(1) NOT NULL DEFAULT 'Z',
-	"load_ts" timestamptz NULL
+	"No" text PRIMARY KEY
+	,"Description" text NULL
+	,"Description_2" text NULL
+	,"Status" text NULL
+	,"Creation_Date" date NULL
+	,"Manufacturer_Code" text NULL
+	,"City" text NULL
+	,"County" text NULL
+	,"Object_Type" text NULL
+	,"Project_Source" text NULL
+	,"Manufacturer" text NULL
+	,"Planned_Delivery_Date" date NULL
+	,"Project_Account_Manager" text NULL
+	,"Salesperson_Code" text NULL
+	,"Firma" CHAR(1) NOT NULL DEFAULT 'Z'
+	,"load_ts" timestamptz NULL
 );
 
 
@@ -29,58 +32,58 @@ CREATE TABLE silver.bc_projects_zymetric (
 
 
 INSERT INTO silver.bc_projects_zymetric (
-	"No",
-	"Description",
-	"Description_2",
-	"Status",
-	"Creation_Date",
-	"Manufacturer_Code",
-	"City",
-	"County",
-	"Object_Type",
-	"Project_Source",
-	"Manufacturer",
-	"Planned_Delivery_Date",
-	"Project_Account_Manager",
-	"Salesperson_Code",
-	"Firma",
-	"load_ts"
+	"No"
+	,"Description"
+	,"Description_2"
+	,"Status"
+	,"Creation_Date"
+	,"Manufacturer_Code"
+	,"City"
+	,"County"
+	,"Object_Type"
+	,"Project_Source"
+	,"Manufacturer"
+	,"Planned_Delivery_Date"
+	,"Project_Account_Manager"
+	,"Salesperson_Code"
+	,"Firma"
+	,"load_ts"
 )
 SELECT
-	p."No",
-	TRIM(p."Description"),
-	TRIM(p."Description_2"),
-	p."Status",
-	NULLIF(p."Creation_Date", DATE '0001-01-01'),
-	p."Manufacturer_Code",
-	INITCAP(TRIM(p."City")),
-	p."County",
-	p."Object_Type",
-	p."Project_Source",
-	p."Manufacturer",
-	NULLIF(p."Planned_Delivery_Date", DATE '0001-01-01'),
-	p."Project_Account_Manager",
-	p."Salesperson_Code",
-	'Z',
-	CURRENT_TIMESTAMP
-FROM bronze.projects_zymetric P
-ON CONFLICT ("No") DO UPDATE
+	p."No"
+	,TRIM(p."Description")
+	,TRIM(p."Description_2")
+	,p."Status"
+	,NULLIF(p."Creation_Date",DATE '0001-01-01')
+	,p."Manufacturer_Code"
+	,INITCAP(TRIM(p."City"))
+	,p."County"
+	,p."Object_Type"
+	,p."Project_Source"
+	,p."Manufacturer"
+	,NULLIF(p."Planned_Delivery_Date",DATE '0001-01-01')
+	,p."Project_Account_Manager"
+	,p."Salesperson_Code"
+	,'Z'
+	,CURRENT_TIMESTAMP
+FROM bronze.bc_projects_zymetric p
+ON CONFLICT("No") DO UPDATE
 SET
-	"Description" = EXCLUDED."Description",
-	"Description_2" = EXCLUDED."Description_2",
-	"Status" = EXCLUDED."Status",
-	"Creation_Date" = EXCLUDED."Creation_Date",
-	"Manufacturer_Code" = EXCLUDED."Manufacturer_Code",
-	"City" = EXCLUDED."City",
-	"County" = EXCLUDED."County",
-	"Object_Type" = EXCLUDED."Object_Type",
-	"Project_Source" = EXCLUDED."Project_Source",
-	"Manufacturer" = EXCLUDED."Manufacturer",
-	"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date",
-	"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
-	"Salesperson_Code" = EXCLUDED."Salesperson_Code",
-	"Firma" = EXCLUDED."Firma",
-	"load_ts" = CURRENT_TIMESTAMP;
+	"Description"=EXCLUDED."Description"
+	,"Description_2"=EXCLUDED."Description_2"
+	,"Status"=EXCLUDED."Status"
+	,"Creation_Date"=EXCLUDED."Creation_Date"
+	,"Manufacturer_Code"=EXCLUDED."Manufacturer_Code"
+	,"City"=EXCLUDED."City"
+	,"County"=EXCLUDED."County"
+	,"Object_Type"=EXCLUDED."Object_Type"
+	,"Project_Source"=EXCLUDED."Project_Source"
+	,"Manufacturer"=EXCLUDED."Manufacturer"
+	,"Planned_Delivery_Date"=EXCLUDED."Planned_Delivery_Date"
+	,"Project_Account_Manager"=EXCLUDED."Project_Account_Manager"
+	,"Salesperson_Code"=EXCLUDED."Salesperson_Code"
+	,"Firma"=EXCLUDED."Firma"
+	,"load_ts"=CURRENT_TIMESTAMP;
 
 
 --------------------------------------------------------------
@@ -89,67 +92,68 @@ SET
 
 
 CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_projects_zymetric()
-  RETURNS trigger
-  LANGUAGE plpgsql
+RETURNS trigger
+LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO silver.bc_projects_zymetric (
-	    "No",
-	    "Description",
-	    "Description_2",
-	    "Status",
-	    "Creation_Date",
-	    "Manufacturer_Code",
-	    "City",
-	    "County",
-	    "Object_Type",
-	    "Project_Source",
-	    "Manufacturer",
-	    "Planned_Delivery_Date",
-	    "Project_Account_Manager",
-	    "Salesperson_Code",
-	    "Firma",
-	    "load_ts"
-	) 
-	VALUES (
-		NEW."No",
-		TRIM(NEW."Description"),
-		TRIM(NEW."Description_2"),
-		NEW."Status",
-		NULLIF(NEW."Creation_Date", DATE '0001-01-01'),
-		NEW."Manufacturer_Code",
-		INITCAP(TRIM(NEW."City")),
-		NEW."County",
-		NEW."Object_Type",
-		NEW."Project_Source",
-		NEW."Manufacturer",
-		NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01'),
-		NEW."Project_Account_Manager",
-		NEW."Salesperson_Code",
-		'Z',
-		CURRENT_TIMESTAMP
-	)
-	ON CONFLICT ("No") DO UPDATE
-	SET
-		"Description" = EXCLUDED."Description",
-		"Description_2" = EXCLUDED."Description_2",
-		"Status" = EXCLUDED."Status",
-		"Creation_Date" = EXCLUDED."Creation_Date",
-		"Manufacturer_Code" = EXCLUDED."Manufacturer_Code",
-		"City" = EXCLUDED."City",
-		"County" = EXCLUDED."County",
-		"Object_Type" = EXCLUDED."Object_Type",
-		"Project_Source" = EXCLUDED."Project_Source",
-		"Manufacturer" = EXCLUDED."Manufacturer",
-		"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date",
-		"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
-		"Salesperson_Code" = EXCLUDED."Salesperson_Code",
-		"Firma" = EXCLUDED."Firma",
-		"load_ts" = CURRENT_TIMESTAMP;
+    INSERT INTO silver.bc_projects_zymetric (
+		"No"
+		,"Description"
+		,"Description_2"
+		,"Status"
+		,"Creation_Date"
+		,"Manufacturer_Code"
+		,"City"
+		,"County"
+		,"Object_Type"
+		,"Project_Source"
+		,"Manufacturer"
+		,"Planned_Delivery_Date"
+		,"Project_Account_Manager"
+		,"Salesperson_Code"
+		,"Firma"
+		,"load_ts"
+    )
+    VALUES (
+		NEW."No"
+		,TRIM(NEW."Description")
+		,TRIM(NEW."Description_2")
+		,NEW."Status"
+		,NULLIF(NEW."Creation_Date",DATE '0001-01-01')
+		,NEW."Manufacturer_Code"
+		,INITCAP(TRIM(NEW."City"))
+		,NEW."County"
+		,NEW."Object_Type"
+		,NEW."Project_Source"
+		,NEW."Manufacturer"
+		,NULLIF(NEW."Planned_Delivery_Date",DATE '0001-01-01')
+		,NEW."Project_Account_Manager"
+		,NEW."Salesperson_Code"
+		,'Z'
+		,CURRENT_TIMESTAMP
+    )
+    ON CONFLICT("No") DO UPDATE
+    SET
+		"Description"=EXCLUDED."Description"
+		,"Description_2"=EXCLUDED."Description_2"
+		,"Status"=EXCLUDED."Status"
+		,"Creation_Date"=EXCLUDED."Creation_Date"
+		,"Manufacturer_Code"=EXCLUDED."Manufacturer_Code"
+		,"City"=EXCLUDED."City"
+		,"County"=EXCLUDED."County"
+		,"Object_Type"=EXCLUDED."Object_Type"
+		,"Project_Source"=EXCLUDED."Project_Source"
+		,"Manufacturer"=EXCLUDED."Manufacturer"
+		,"Planned_Delivery_Date"=EXCLUDED."Planned_Delivery_Date"
+		,"Project_Account_Manager"=EXCLUDED."Project_Account_Manager"
+		,"Salesperson_Code"=EXCLUDED."Salesperson_Code"
+		,"Firma"=EXCLUDED."Firma"
+		,"load_ts"=CURRENT_TIMESTAMP;
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$;
+
 
 
 -----------------------------------------------------
@@ -159,7 +163,7 @@ $$;
 
 CREATE TRIGGER trg_after_upsert_bc_projects_zymetric
 	AFTER INSERT OR UPDATE
-	ON bronze.projects_zymetric
+	ON bronze.bc_projects_zymetric
 	FOR EACH ROW
 	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_zymetric();
 
