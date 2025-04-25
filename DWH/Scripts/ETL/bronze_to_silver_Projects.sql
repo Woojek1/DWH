@@ -83,3 +83,4 @@ CREATE TRIGGER trg_after_upsert_project
   ON bronze.projects_zymetric
   FOR EACH ROW
   EXECUTE FUNCTION bronze.fn_upsert_project();
+
