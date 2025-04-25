@@ -1,86 +1,165 @@
--- 1) USUWAMY stary trigger i funkcję
-DROP TRIGGER IF EXISTS trg_after_insert_or_update_projects
-  ON bronze.projects_zymetric;
-DROP FUNCTION IF EXISTS bronze.fn_trigger_sync_projects();
+-------------------------------------------
+-- CREATING PROJECTS TABLE IN SILVER LAYER
+-------------------------------------------
 
--- 2) TWORZYMY funkcję, która dla każdego wiersza robi UPSERT do silver.projects_zymetric
-CREATE OR REPLACE FUNCTION bronze.fn_upsert_project()
+
+CREATE TABLE silver.bc_projects_zymetric (
+	"No" text PRIMARY KEY,
+	"Description" text NULL,
+	"Description_2" text NULL,
+	"Status" text NULL,
+	"Creation_Date" date NULL,
+	"Manufacturer_Code" text NULL,
+	"City" text NULL,
+	"County" text NULL,
+	"Object_Type" text NULL,
+	"Project_Source" text NULL,
+	"Manufacturer" text NULL,
+	"Planned_Delivery_Date" date NULL,
+	"Project_Account_Manager" text NULL,
+	"Salesperson_Code" text NULL,
+	"Firma" CHAR(1) NOT NULL DEFAULT 'Z',
+	"load_ts" timestamptz NULL
+);
+
+
+-------------------------------------
+-- FIRST LOAD DATA TO SILVER PROJECTS
+-------------------------------------
+
+
+INSERT INTO silver.bc_projects_zymetric (
+	"No",
+	"Description",
+	"Description_2",
+	"Status",
+	"Creation_Date",
+	"Manufacturer_Code",
+	"City",
+	"County",
+	"Object_Type",
+	"Project_Source",
+	"Manufacturer",
+	"Planned_Delivery_Date",
+	"Project_Account_Manager",
+	"Salesperson_Code",
+	"Firma",
+	"load_ts"
+)
+SELECT
+	p."No",
+	TRIM(p."Description"),
+	TRIM(p."Description_2"),
+	p."Status",
+	NULLIF(p."Creation_Date", DATE '0001-01-01'),
+	p."Manufacturer_Code",
+	INITCAP(TRIM(p."City")),
+	p."County",
+	p."Object_Type",
+	p."Project_Source",
+	p."Manufacturer",
+	NULLIF(p."Planned_Delivery_Date", DATE '0001-01-01'),
+	p."Project_Account_Manager",
+	p."Salesperson_Code",
+	'Z',
+	CURRENT_TIMESTAMP
+FROM bronze.projects_zymetric P
+ON CONFLICT ("No") DO UPDATE
+SET
+	"Description" = EXCLUDED."Description",
+	"Description_2" = EXCLUDED."Description_2",
+	"Status" = EXCLUDED."Status",
+	"Creation_Date" = EXCLUDED."Creation_Date",
+	"Manufacturer_Code" = EXCLUDED."Manufacturer_Code",
+	"City" = EXCLUDED."City",
+	"County" = EXCLUDED."County",
+	"Object_Type" = EXCLUDED."Object_Type",
+	"Project_Source" = EXCLUDED."Project_Source",
+	"Manufacturer" = EXCLUDED."Manufacturer",
+	"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date",
+	"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
+	"Salesperson_Code" = EXCLUDED."Salesperson_Code",
+	"Firma" = EXCLUDED."Firma",
+	"load_ts" = CURRENT_TIMESTAMP;
+
+
+--------------------------------------------------------------
+-- CREATING DATA LOADING PROCEDURE FROM BRONZE TO SILVER LAYER
+--------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_projects_zymetric()
   RETURNS trigger
   LANGUAGE plpgsql
 AS $$
 BEGIN
-  INSERT INTO silver.projects_zymetric (
-    "No",
-    "Description",
-    "Description_2",
-    "Status",
-    "Creation_Date",
-    "Manufacturer_Code",
-    "City",
-    "County",
-    "Object_Type",
-    "Project_Source",
-    "Manufacturer",
-    "Planned_Delivery_Date",
-    "Project_Account_Manager",
-    "Salesperson_Code",
-    "load_ts"
-  ) VALUES (
-    NEW."No",
-    TRIM(NEW."Description"),
-    TRIM(NEW."Description_2"),
-    NEW."Status",
-    NULLIF(NEW."Creation_Date", DATE '0001-01-01'),
-    NEW."Manufacturer_Code",
-    NEW."City",
-    NEW."County",
-    NEW."Object_Type",
-    NEW."Project_Source",
-    NEW."Manufacturer",
-    NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01'),
-    NEW."Project_Account_Manager",
-    NEW."Salesperson_Code",
-    CURRENT_TIMESTAMP
-  )
-  ON CONFLICT ("No") DO UPDATE
-    SET
-      "Description"            = EXCLUDED."Description",
-      "Description_2"          = EXCLUDED."Description_2",
-      "Status"                 = EXCLUDED."Status",
-      "Creation_Date"          = EXCLUDED."Creation_Date",
-      "Manufacturer_Code"      = EXCLUDED."Manufacturer_Code",
-      "City"                   = EXCLUDED."City",
-      "County"                 = EXCLUDED."County",
-      "Object_Type"            = EXCLUDED."Object_Type",
-      "Project_Source"         = EXCLUDED."Project_Source",
-      "Manufacturer"           = EXCLUDED."Manufacturer",
-      "Planned_Delivery_Date"  = EXCLUDED."Planned_Delivery_Date",
-      "Project_Account_Manager"= EXCLUDED."Project_Account_Manager",
-      "Salesperson_Code"       = EXCLUDED."Salesperson_Code",
-      "load_ts"                = CURRENT_TIMESTAMP
-    WHERE
-      silver.projects_zymetric."Description"             IS DISTINCT FROM EXCLUDED."Description"
-   OR silver.projects_zymetric."Description_2"           IS DISTINCT FROM EXCLUDED."Description_2"
-   OR silver.projects_zymetric."Status"                  IS DISTINCT FROM EXCLUDED."Status"
-   OR silver.projects_zymetric."Creation_Date"           IS DISTINCT FROM EXCLUDED."Creation_Date"
-   OR silver.projects_zymetric."Manufacturer_Code"       IS DISTINCT FROM EXCLUDED."Manufacturer_Code"
-   OR silver.projects_zymetric."City"                    IS DISTINCT FROM EXCLUDED."City"
-   OR silver.projects_zymetric."County"                  IS DISTINCT FROM EXCLUDED."County"
-   OR silver.projects_zymetric."Object_Type"             IS DISTINCT FROM EXCLUDED."Object_Type"
-   OR silver.projects_zymetric."Project_Source"          IS DISTINCT FROM EXCLUDED."Project_Source"
-   OR silver.projects_zymetric."Manufacturer"            IS DISTINCT FROM EXCLUDED."Manufacturer"
-   OR silver.projects_zymetric."Planned_Delivery_Date"   IS DISTINCT FROM EXCLUDED."Planned_Delivery_Date"
-   OR silver.projects_zymetric."Project_Account_Manager" IS DISTINCT FROM EXCLUDED."Project_Account_Manager"
-   OR silver.projects_zymetric."Salesperson_Code"        IS DISTINCT FROM EXCLUDED."Salesperson_Code";
-  
+	INSERT INTO silver.bc_projects_zymetric (
+	    "No",
+	    "Description",
+	    "Description_2",
+	    "Status",
+	    "Creation_Date",
+	    "Manufacturer_Code",
+	    "City",
+	    "County",
+	    "Object_Type",
+	    "Project_Source",
+	    "Manufacturer",
+	    "Planned_Delivery_Date",
+	    "Project_Account_Manager",
+	    "Salesperson_Code",
+	    "Firma",
+	    "load_ts"
+	) 
+	VALUES (
+		NEW."No",
+		TRIM(NEW."Description"),
+		TRIM(NEW."Description_2"),
+		NEW."Status",
+		NULLIF(NEW."Creation_Date", DATE '0001-01-01'),
+		NEW."Manufacturer_Code",
+		INITCAP(TRIM(NEW."City")),
+		NEW."County",
+		NEW."Object_Type",
+		NEW."Project_Source",
+		NEW."Manufacturer",
+		NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01'),
+		NEW."Project_Account_Manager",
+		NEW."Salesperson_Code",
+		'Z',
+		CURRENT_TIMESTAMP
+	)
+	ON CONFLICT ("No") DO UPDATE
+	SET
+		"Description" = EXCLUDED."Description",
+		"Description_2" = EXCLUDED."Description_2",
+		"Status" = EXCLUDED."Status",
+		"Creation_Date" = EXCLUDED."Creation_Date",
+		"Manufacturer_Code" = EXCLUDED."Manufacturer_Code",
+		"City" = EXCLUDED."City",
+		"County" = EXCLUDED."County",
+		"Object_Type" = EXCLUDED."Object_Type",
+		"Project_Source" = EXCLUDED."Project_Source",
+		"Manufacturer" = EXCLUDED."Manufacturer",
+		"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date",
+		"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
+		"Salesperson_Code" = EXCLUDED."Salesperson_Code",
+		"Firma" = EXCLUDED."Firma",
+		"load_ts" = CURRENT_TIMESTAMP;
+
   RETURN NEW;
 END;
 $$;
 
--- 3) I tworzymy nowy trigger per‐row, który wywoła tę funkcję
-CREATE TRIGGER trg_after_upsert_project
-  AFTER INSERT OR UPDATE
-  ON bronze.projects_zymetric
-  FOR EACH ROW
-  EXECUTE FUNCTION bronze.fn_upsert_project();
+
+-----------------------------------------------------
+-- CREATING TRIGGER IN BRONZE LAYER ON PROJECTS TABLE
+-----------------------------------------------------
+
+
+CREATE TRIGGER trg_after_upsert_bc_projects_zymetric
+	AFTER INSERT OR UPDATE
+	ON bronze.projects_zymetric
+	FOR EACH ROW
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_zymetric();
 
