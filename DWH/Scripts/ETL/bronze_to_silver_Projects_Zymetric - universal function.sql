@@ -10,16 +10,19 @@ DECLARE
 _firmy text[] := ARRAY['zymetric', 'aircon','technab'];
 -- zmienne
 _firma text;
-_litera char(1);
+_tabela text;
+_litera_firmy char(1);
 
 BEGIN
 	FOREACH _firma IN ARRAY _firmy LOOP
 	-- jedna duża litera do kolumny Firma
-	_litera := UPPER(SUBSTR(_firma,1,1));
+	_litera_firmy := UPPER(SUBSTR(_firma,1,1));
+	_tabela := format('bc_projects_%s', _firma);  -- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ
 
-	-- 1) Tworzenie tabeli, jeśli nie istnieje
+
+-- 1) Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
-		CREATE TABLE IF NOT EXISTS silver.bc_projects_%I_test (
+		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text PRIMARY KEY
 			,"Description" text NULL
 			,"Description_2" text NULL
@@ -37,11 +40,11 @@ BEGIN
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
-	$ddl$, _firma, _litera);
+	$ddl$, _tabela, _litera_firmy);
 
 	-- 2) Insert z bronze → silver z ON CONFLICT DO UPDATE
 	EXECUTE format($insert$
-		INSERT INTO silver.bc_projects_%I_test (
+		INSERT INTO silver.%I (
 			"No"
 			,"Description"
 			,"Description_2"
@@ -76,24 +79,24 @@ BEGIN
 			,p."Salesperson_Code"
 			,%L
         	,CURRENT_TIMESTAMP
-		FROM bronze.bc_projects_%I p
-		ON CONFLICT ("No") DO UPDATE
-		SET
-			"Description" = EXCLUDED."Description"
-			,"Description_2" = EXCLUDED."Description_2"
-			,"Status" = EXCLUDED."Status"
-			,"Creation_Date" = EXCLUDED."Creation_Date"
-			,"Manufacturer_Code" = EXCLUDED."Manufacturer_Code"
-			,"City" = EXCLUDED."City"
-			,"County" = EXCLUDED."County"
-			,"Object_Type" = EXCLUDED."Object_Type"
-			,"Project_Source" = EXCLUDED."Project_Source"
-			,"Manufacturer" = EXCLUDED."Manufacturer"
-			,"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date"
-			,"Project_Account_Manager" = EXCLUDED."Project_Account_Manager"
-			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
-			,"load_ts" = EXCLUDED."load_ts"
-    $insert$, _firma, _litera, _firma);
+		FROM bronze.%I p
+--		ON CONFLICT ("No") DO UPDATE
+--		SET
+--			"Description" = EXCLUDED."Description"
+--			,"Description_2" = EXCLUDED."Description_2"
+--			,"Status" = EXCLUDED."Status"
+--			,"Creation_Date" = EXCLUDED."Creation_Date"
+--			,"Manufacturer_Code" = EXCLUDED."Manufacturer_Code"
+--			,"City" = EXCLUDED."City"
+--			,"County" = EXCLUDED."County"
+--			,"Object_Type" = EXCLUDED."Object_Type"
+--			,"Project_Source" = EXCLUDED."Project_Source"
+--			,"Manufacturer" = EXCLUDED."Manufacturer"
+--			,"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date"
+--			,"Project_Account_Manager" = EXCLUDED."Project_Account_Manager"
+--			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
+--			,"load_ts" = EXCLUDED."load_ts"
+    $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -114,17 +117,19 @@ LANGUAGE plpgsql
 AS $function$
 DECLARE
 	firma TEXT;
-	litera CHAR(1);
+	litera_firmy CHAR(1);
 --	tgt_schema TEXT := 'silver';
 	tgt_table TEXT;
 
 BEGIN
-	-- pobieramy argumenty przekazane w CREATE TRIGGER … EXECUTE FUNCTION …(…)
+-- pobieramy argumenty przekazane w CREATE TRIGGER … EXECUTE FUNCTION …(…)
 	firma := TG_ARGV[0];
-	litera := TG_ARGV[1];
-	tgt_table := format('bc_projects_%s_test', firma);
+	litera_firmy := UPPER(SUBSTR(firma, 1, 1));
+-- litera := TG_ARGV[1];
+-- nazwa tabeli docelowej do uzupełnienia --
+	target_table := format('bc_projects_%s_test', firma);
 
-EXECUTE format($q$
+EXECUTE format($etl$
 INSERT INTO silver.%I (
 	"No"
 	,"Description"
@@ -143,27 +148,27 @@ INSERT INTO silver.%I (
 	,"Firma"
 	,"load_ts"
 )
-VALUES (
+SELECT (
 	$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
 )
 ON CONFLICT("No") DO UPDATE
-	SET
-		"Description"             = EXCLUDED."Description",
-		"Description_2"           = EXCLUDED."Description_2",
-		"Status"                  = EXCLUDED."Status",
-		"Creation_Date"           = EXCLUDED."Creation_Date",
-		"Manufacturer_Code"       = EXCLUDED."Manufacturer_Code",
-		"City"                    = EXCLUDED."City",
-		"County"                  = EXCLUDED."County",
-		"Object_Type"             = EXCLUDED."Object_Type",
-		"Project_Source"          = EXCLUDED."Project_Source",
-		"Manufacturer"            = EXCLUDED."Manufacturer",
-		"Planned_Delivery_Date"   = EXCLUDED."Planned_Delivery_Date",
-		"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
-		"Salesperson_Code"        = EXCLUDED."Salesperson_Code",
-		"Firma"                   = EXCLUDED."Firma",
-		"load_ts"                 = EXCLUDED."load_ts";
-$q$, tgt_table)
+SET
+	"Description" = EXCLUDED."Description",
+	"Description_2" = EXCLUDED."Description_2",
+	"Status" = EXCLUDED."Status",
+	"Creation_Date" = EXCLUDED."Creation_Date",
+	"Manufacturer_Code" = EXCLUDED."Manufacturer_Code",
+	"City" = EXCLUDED."City",
+	"County" = EXCLUDED."County",
+	"Object_Type" = EXCLUDED."Object_Type",
+	"Project_Source" = EXCLUDED."Project_Source",
+	"Manufacturer" = EXCLUDED."Manufacturer",
+	"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date",
+	"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
+	"Salesperson_Code" = EXCLUDED."Salesperson_Code",
+	"Firma" = EXCLUDED."Firma",
+	"load_ts" = EXCLUDED."load_ts";
+$etl$, target_table)
 USING
 	NEW."No",
 	TRIM(NEW."Description"),
@@ -197,19 +202,19 @@ $function$;
 --    który wywoła powyższą funkcję z odpowiednimi argumentami
 DO $$
 BEGIN
-	CREATE TRIGGER trg_upsert_projects_aircon_test
+	CREATE TRIGGER trg_upsert_bc_projects_aircon_test
 	AFTER INSERT OR UPDATE ON bronze.bc_projects_aircon
 	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('aircon','A');
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('aircon');
 
-	CREATE TRIGGER trg_upsert_projects_zymetric_test
+CREATE TRIGGER trg_upsert_bc_projects_zymetric_test
 	AFTER INSERT OR UPDATE ON bronze.bc_projects_zymetric
 	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('zymetric','Z');
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('zymetric');
 
-	CREATE TRIGGER trg_upsert_projects_technab_test
+CREATE TRIGGER trg_upsert_bc_projects_technab_test
 	AFTER INSERT OR UPDATE ON bronze.bc_projects_technab
 	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('technab','T');
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('technab');
 END;
 $$;
