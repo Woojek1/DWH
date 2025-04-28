@@ -5,47 +5,44 @@
 
 DO $$
 DECLARE
-  -- zmień tu suffix na 'zymetric' / 'aircon' / 'technab'
-  _suffix      text := 'zymetric';
-
-  -- jedna litera do kolumny Firma
-  _firma       char(1) := upper(substr(_suffix,1,1));
-
-  -- źródło: schema=iście 'bronze', tabela='bc_projects_<suffix>'
+  -- lista suffixów, które chcesz przetworzyć
+  _suffixes    text[] := ARRAY['zymetric','aircon','technab'];
+  -- tymczasowe zmienne
+  _suffix      text;
+  _firma       char(1);
   src_schema   text := 'bronze';
-  src_table    text := format('bc_projects_%s', _suffix);
-
-  -- cel: schema 'silver', tabela='bc_projects_<suffix>_test'
   tgt_schema   text := 'silver';
-  tgt_table    text := format('bc_projects_%s_test', _suffix);
 BEGIN
-  -- 1) Stwórz tabelę docelową, jeśli nie istnieje
-	EXECUTE format($ddl$
-  	CREATE TABLE IF NOT EXISTS %I.%I (
-		"No"                      text    PRIMARY KEY,
-		"Description"             text    NULL,
-		"Description_2"           text    NULL,
-		"Status"                  text    NULL,
-		"Creation_Date"           date    NULL,
-		"Manufacturer_Code"       text    NULL,
-		"City"                    text    NULL,
-		"County"                  text    NULL,
-		"Object_Type"             text    NULL,
-		"Project_Source"          text    NULL,
-		"Manufacturer"            text    NULL,
-		"Planned_Delivery_Date"   date    NULL,
-		"Project_Account_Manager" text    NULL,
-		"Salesperson_Code"        text    NULL,
-		"Firma"                   char(1) DEFAULT '%s',
-		"load_ts"                 timestamptz NULL
-    );
-	$ddl$, tgt_schema, tgt_table, _firma
-	);
+  FOREACH _suffix IN ARRAY _suffixes LOOP
+    -- jedna litera do kolumny Firma
+    _firma := upper(substr(_suffix,1,1));
 
-  -- 2) Pierwszy insert z bronze -> silver
-EXECUTE format($ins$
-	INSERT INTO %I.%I (
-	    "No"
+    -- 1) Tworzenie tabeli, jeśli nie istnieje
+    EXECUTE format($ddl$
+      CREATE TABLE IF NOT EXISTS %I.bc_projects_%s_test (
+        "No"                      text    PRIMARY KEY,
+        "Description"             text    NULL,
+        "Description_2"           text    NULL,
+        "Status"                  text    NULL,
+        "Creation_Date"           date    NULL,
+        "Manufacturer_Code"       text    NULL,
+        "City"                    text    NULL,
+        "County"                  text    NULL,
+        "Object_Type"             text    NULL,
+        "Project_Source"          text    NULL,
+        "Manufacturer"            text    NULL,
+        "Planned_Delivery_Date"   date    NULL,
+        "Project_Account_Manager" text    NULL,
+        "Salesperson_Code"        text    NULL,
+        "Firma"                   char(1) DEFAULT %L,
+        "load_ts"                 timestamptz NULL
+      );
+    $ddl$, tgt_schema, _suffix, _firma);
+
+    -- 2) Insert z bronze → silver z ON CONFLICT DO UPDATE
+    EXECUTE format($ins$
+      INSERT INTO %I.bc_projects_%s_test (
+          "No"
 		,"Description"
 		,"Description_2"
 		,"Status"
@@ -61,56 +58,48 @@ EXECUTE format($ins$
 		,"Salesperson_Code"
 		,"Firma"
 		,"load_ts"
-    )
-    SELECT
- 		p."No",
-		,TRIM(p."Description")
-		,TRIM(p."Description_2")
-		,p."Status"
-		,NULLIF(p."Creation_Date", DATE '0001-01-01')
-		,p."Manufacturer_Code"
-		,INITCAP(TRIM(p."City"))
-		,p."County"
-		,p."Object_Type"
-		,p."Project_Source"
-		,p."Manufacturer"
-		,NULLIF(p."Planned_Delivery_Date", DATE '0001-01-01')
-		,p."Project_Account_Manager"
-		,p."Salesperson_Code"
-		,%L            -- litera do kolumny Firma
-		,CURRENT_TIMESTAMP
-	FROM %I.%I p;
-		$ins$
-		,tgt_schema
-		,tgt_table
-		,_firma
-		,src_schema
-		,src_table
-);
+      )
+      SELECT
+        p."No",
+        TRIM(p."Description"),
+        TRIM(p."Description_2"),
+        p."Status",
+        NULLIF(p."Creation_Date", DATE '0001-01-01'),
+        p."Manufacturer_Code",
+        INITCAP(TRIM(p."City")),
+        p."County",
+        p."Object_Type",
+        p."Project_Source",
+        p."Manufacturer",
+        NULLIF(p."Planned_Delivery_Date", DATE '0001-01-01'),
+        p."Project_Account_Manager",
+        p."Salesperson_Code",
+        %L,
+        CURRENT_TIMESTAMP
+      FROM %I.bc_projects_%s p
+      ON CONFLICT ("No") DO UPDATE
+        SET
+          "Description"            = EXCLUDED."Description",
+          "Description_2"          = EXCLUDED."Description_2",
+          "Status"                 = EXCLUDED."Status",
+          "Creation_Date"          = EXCLUDED."Creation_Date",
+          "Manufacturer_Code"      = EXCLUDED."Manufacturer_Code",
+          "City"                   = EXCLUDED."City",
+          "County"                 = EXCLUDED."County",
+          "Object_Type"            = EXCLUDED."Object_Type",
+          "Project_Source"         = EXCLUDED."Project_Source",
+          "Manufacturer"           = EXCLUDED."Manufacturer",
+          "Planned_Delivery_Date"  = EXCLUDED."Planned_Delivery_Date",
+          "Project_Account_Manager"= EXCLUDED."Project_Account_Manager",
+          "Salesperson_Code"       = EXCLUDED."Salesperson_Code",
+          "load_ts"                = EXCLUDED."load_ts"
+      ;
+    $ins$, tgt_schema, _suffix, _firma, src_schema, _suffix);
 
+  END LOOP;
 END
 $$;
 
-
-
-
---ON CONFLICT("No") DO UPDATE
---SET
---	"Description"=EXCLUDED."Description"
---	,"Description_2"=EXCLUDED."Description_2"
---	,"Status"=EXCLUDED."Status"
---	,"Creation_Date"=EXCLUDED."Creation_Date"
---	,"Manufacturer_Code"=EXCLUDED."Manufacturer_Code"
---	,"City"=EXCLUDED."City"
---	,"County"=EXCLUDED."County"
---	,"Object_Type"=EXCLUDED."Object_Type"
---	,"Project_Source"=EXCLUDED."Project_Source"
---	,"Manufacturer"=EXCLUDED."Manufacturer"
---	,"Planned_Delivery_Date"=EXCLUDED."Planned_Delivery_Date"
---	,"Project_Account_Manager"=EXCLUDED."Project_Account_Manager"
---	,"Salesperson_Code"=EXCLUDED."Salesperson_Code"
---	,"Firma"=EXCLUDED."Firma"
---	,"load_ts"=CURRENT_TIMESTAMP;
 
 
 --------------------------------------------------------------
