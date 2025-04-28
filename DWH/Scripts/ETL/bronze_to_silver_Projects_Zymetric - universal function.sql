@@ -2,7 +2,6 @@
 --TWORZENIE TABELI W WARSTWIE SILVER I PIERWSZY LOAD
 -----
 
-
 DO $$
 DECLARE
   -- lista suffixów, które chcesz przetworzyć
@@ -107,66 +106,70 @@ $$;
 --------------------------------------------------------------
 
 
-CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_projects_zymetric()
-RETURNS trigger
+-- 1) Jeden trigger‐handler bez parametrów w sygnaturze,
+--    argumenty odbieramy z TG_ARGV
+CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_projects_test()
+RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $function$
+DECLARE
+  p_suffix   TEXT;
+  p_firma    CHAR(1);
+  tgt_schema TEXT := 'silver';
+  tgt_table  TEXT;
 BEGIN
-    INSERT INTO silver.bc_projects_zymetric_test (
-		"No"
-		,"Description"
-		,"Description_2"
-		,"Status"
-		,"Creation_Date"
-		,"Manufacturer_Code"
-		,"City"
-		,"County"
-		,"Object_Type"
-		,"Project_Source"
-		,"Manufacturer"
-		,"Planned_Delivery_Date"
-		,"Project_Account_Manager"
-		,"Salesperson_Code"
-		,"Firma"
-		,"load_ts"
+  -- pobieramy argumenty przekazane w CREATE TRIGGER … EXECUTE FUNCTION …(…)
+  p_suffix := TG_ARGV[0];
+  p_firma  := TG_ARGV[1];
+  tgt_table := format('bc_projects_%s_test', p_suffix);
+
+  EXECUTE format($q$
+    INSERT INTO %I.%I (
+      "No","Description","Description_2","Status","Creation_Date",
+      "Manufacturer_Code","City","County","Object_Type","Project_Source",
+      "Manufacturer","Planned_Delivery_Date","Project_Account_Manager",
+      "Salesperson_Code","Firma","load_ts"
     )
     VALUES (
-		NEW."No"
-		,TRIM(NEW."Description")
-		,TRIM(NEW."Description_2")
-		,NEW."Status"
-		,NULLIF(NEW."Creation_Date",DATE '0001-01-01')
-		,NEW."Manufacturer_Code"
-		,INITCAP(TRIM(NEW."City"))
-		,NEW."County"
-		,NEW."Object_Type"
-		,NEW."Project_Source"
-		,NEW."Manufacturer"
-		,NULLIF(NEW."Planned_Delivery_Date",DATE '0001-01-01')
-		,NEW."Project_Account_Manager"
-		,NEW."Salesperson_Code"
-		,'Z'
-		,CURRENT_TIMESTAMP
+      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
     )
     ON CONFLICT("No") DO UPDATE
-    SET
-		"Description"=EXCLUDED."Description"
-		,"Description_2"=EXCLUDED."Description_2"
-		,"Status"=EXCLUDED."Status"
-		,"Creation_Date"=EXCLUDED."Creation_Date"
-		,"Manufacturer_Code"=EXCLUDED."Manufacturer_Code"
-		,"City"=EXCLUDED."City"
-		,"County"=EXCLUDED."County"
-		,"Object_Type"=EXCLUDED."Object_Type"
-		,"Project_Source"=EXCLUDED."Project_Source"
-		,"Manufacturer"=EXCLUDED."Manufacturer"
-		,"Planned_Delivery_Date"=EXCLUDED."Planned_Delivery_Date"
-		,"Project_Account_Manager"=EXCLUDED."Project_Account_Manager"
-		,"Salesperson_Code"=EXCLUDED."Salesperson_Code"
-		,"Firma"=EXCLUDED."Firma"
-		,"load_ts"=CURRENT_TIMESTAMP;
+      SET
+        "Description"             = EXCLUDED."Description",
+        "Description_2"           = EXCLUDED."Description_2",
+        "Status"                  = EXCLUDED."Status",
+        "Creation_Date"           = EXCLUDED."Creation_Date",
+        "Manufacturer_Code"       = EXCLUDED."Manufacturer_Code",
+        "City"                    = EXCLUDED."City",
+        "County"                  = EXCLUDED."County",
+        "Object_Type"             = EXCLUDED."Object_Type",
+        "Project_Source"          = EXCLUDED."Project_Source",
+        "Manufacturer"            = EXCLUDED."Manufacturer",
+        "Planned_Delivery_Date"   = EXCLUDED."Planned_Delivery_Date",
+        "Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
+        "Salesperson_Code"        = EXCLUDED."Salesperson_Code",
+        "Firma"                   = EXCLUDED."Firma",
+        "load_ts"                 = EXCLUDED."load_ts";
+  $q$, tgt_schema, tgt_table)
+  USING
+    NEW."No",
+    TRIM(NEW."Description"),
+    TRIM(NEW."Description_2"),
+    NEW."Status",
+    NULLIF(NEW."Creation_Date", DATE '0001-01-01'),
+    NEW."Manufacturer_Code",
+    INITCAP(TRIM(NEW."City")),
+    NEW."County",
+    NEW."Object_Type",
+    NEW."Project_Source",
+    NEW."Manufacturer",
+    NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01'),
+    NEW."Project_Account_Manager",
+    NEW."Salesperson_Code",
+    p_firma,
+    CURRENT_TIMESTAMP;
 
-    RETURN NEW;
+  RETURN NEW;
 END;
 $function$;
 
@@ -177,9 +180,23 @@ $function$;
 -----------------------------------------------------
 
 
-CREATE TRIGGER trg_after_upsert_bc_projects_zymetric
-	AFTER INSERT OR UPDATE
-	ON bronze.bc_projects_zymetric
-	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_zymetric();
+-- 2) dla każdej z trzech firm tworzymy wyzwalacz,
+--    który wywoła powyższą funkcję z odpowiednimi argumentami
+DO $$
+BEGIN
+  CREATE TRIGGER trg_upsert_projects_aircon_test
+    AFTER INSERT OR UPDATE ON bronze.bc_projects_aircon
+    FOR EACH ROW
+    EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('aircon','A');
 
+  CREATE TRIGGER trg_upsert_projects_zymetric_test
+    AFTER INSERT OR UPDATE ON bronze.bc_projects_zymetric
+    FOR EACH ROW
+    EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('zymetric','Z');
+
+  CREATE TRIGGER trg_upsert_projects_technab_test
+    AFTER INSERT OR UPDATE ON bronze.bc_projects_technab
+    FOR EACH ROW
+    EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('technab','T');
+END;
+$$;
