@@ -7,7 +7,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY['zymetric', 'aircon','technab'];
+_firmy text[] := ARRAY[ 'aircon', 'zymetric', 'technab'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -81,6 +81,9 @@ BEGIN
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I p
+
+--	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
+--
 --		ON CONFLICT ("No") DO UPDATE
 --		SET
 --			"Description" = EXCLUDED."Description"
@@ -96,12 +99,13 @@ BEGIN
 --			,"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date"
 --			,"Project_Account_Manager" = EXCLUDED."Project_Account_Manager"
 --			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
---			,"load_ts" = EXCLUDED."load_ts"
+--			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
 $$;
+
 
 
 
@@ -128,64 +132,64 @@ BEGIN
 	target_table := format('bc_projects_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
 
 EXECUTE format($etl$
-INSERT INTO silver.%I (
-	"No"
-	,"Description"
-	,"Description_2"
-	,"Status"
-	,"Creation_Date"
-	,"Manufacturer_Code"
-	,"City"
-	,"County"
-	,"Object_Type"
-	,"Project_Source"
-	,"Manufacturer"
-	,"Planned_Delivery_Date"
-	,"Project_Account_Manager"
-	,"Salesperson_Code"
-	,"Firma"
-	,"load_ts"
-)
-SELECT 
-	$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
+	INSERT INTO silver.%I (
+		"No"
+		,"Description"
+		,"Description_2"
+		,"Status"
+		,"Creation_Date"
+		,"Manufacturer_Code"
+		,"City"
+		,"County"
+		,"Object_Type"
+		,"Project_Source"
+		,"Manufacturer"
+		,"Planned_Delivery_Date"
+		,"Project_Account_Manager"
+		,"Salesperson_Code"
+		,"Firma"
+		,"load_ts"
+	)
+	SELECT 
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 
-ON CONFLICT("No") DO UPDATE
-SET
-	"Description" = EXCLUDED."Description",
-	"Description_2" = EXCLUDED."Description_2",
-	"Status" = EXCLUDED."Status",
-	"Creation_Date" = EXCLUDED."Creation_Date",
-	"Manufacturer_Code" = EXCLUDED."Manufacturer_Code",
-	"City" = EXCLUDED."City",
-	"County" = EXCLUDED."County",
-	"Object_Type" = EXCLUDED."Object_Type",
-	"Project_Source" = EXCLUDED."Project_Source",
-	"Manufacturer" = EXCLUDED."Manufacturer",
-	"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date",
-	"Project_Account_Manager" = EXCLUDED."Project_Account_Manager",
-	"Salesperson_Code" = EXCLUDED."Salesperson_Code",
-	"Firma" = EXCLUDED."Firma",
-	"load_ts" = EXCLUDED."load_ts";
-$etl$, target_table)
-USING
-	NEW."No",
-	TRIM(NEW."Description"),
-	TRIM(NEW."Description_2"),
-	NEW."Status",
-	NULLIF(NEW."Creation_Date", DATE '0001-01-01'),
-	NEW."Manufacturer_Code",
-	INITCAP(TRIM(NEW."City")),
-	NEW."County",
-	NEW."Object_Type",
-	NEW."Project_Source",
-	NEW."Manufacturer",
-	NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01'),
-	NEW."Project_Account_Manager",
-	NEW."Salesperson_Code",
-	litera_firmy,
-	CURRENT_TIMESTAMP;
+	ON CONFLICT("No") DO UPDATE
+	SET
+		,"Description" = EXCLUDED."Description"
+		,"Description_2" = EXCLUDED."Description_2"
+		,"Status" = EXCLUDED."Status"
+		,"Creation_Date" = EXCLUDED."Creation_Date"
+		,"Manufacturer_Code" = EXCLUDED."Manufacturer_Code"
+		,"City" = EXCLUDED."City"
+		,"County" = EXCLUDED."County"
+		,"Object_Type" = EXCLUDED."Object_Type"
+		,"Project_Source" = EXCLUDED."Project_Source"
+		,"Manufacturer" = EXCLUDED."Manufacturer"
+		,"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date"
+		,"Project_Account_Manager" = EXCLUDED."Project_Account_Manager"
+		,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
+		,"Firma" = EXCLUDED."Firma"
+		,"load_ts" = EXCLUDED."load_ts";
+	$etl$, target_table)
+	USING
+		NEW."No"
+		,TRIM(NEW."Description")
+		,TRIM(NEW."Description_2")
+		,NEW."Status"
+		,NULLIF(NEW."Creation_Date", DATE '0001-01-01')
+		,NEW."Manufacturer_Code"
+		,INITCAP(TRIM(NEW."City"))
+		,NEW."County"
+		,NEW."Object_Type"
+		,NEW."Project_Source"
+		,NEW."Manufacturer"
+		,NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01')
+		,NEW."Project_Account_Manager"
+		,NEW."Salesperson_Code"
+		,litera_firmy
+		,CURRENT_TIMESTAMP;
 
-	RETURN NEW;
+RETURN NEW;
 END;
 $function$;
 
@@ -197,20 +201,31 @@ $function$;
 
 
 DO $$
+DECLARE
+  grupa_tabel text := 'projects';  -- ZMIENIĆ NAZWĘ GRUPY TABEL
 BEGIN
-	CREATE TRIGGER trg_upsert_bc_projects_aircon
-	AFTER INSERT OR UPDATE ON bronze.bc_projects_aircon
-	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects('aircon');
+  -- trigger dla aircon
+  EXECUTE format($sql$
+    CREATE TRIGGER trg_upsert_bc_%s_aircon
+      AFTER INSERT OR UPDATE ON bronze.bc_%s_aircon
+      FOR EACH ROW
+      EXECUTE FUNCTION bronze.fn_upsert_bc_%s('aircon')
+  $sql$, grupa_tabel);
 
-CREATE TRIGGER trg_upsert_bc_projects_zymetric
-	AFTER INSERT OR UPDATE ON bronze.bc_projects_zymetric
-	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects('zymetric');
+  -- trigger dla zymetric
+  EXECUTE format($sql$
+    CREATE TRIGGER trg_upsert_bc_%s_zymetric
+      AFTER INSERT OR UPDATE ON bronze.bc_%s_zymetric
+      FOR EACH ROW
+      EXECUTE FUNCTION bronze.fn_upsert_bc_%s('zymetric')
+  $sql$, grupa_tabel);
 
-CREATE TRIGGER trg_upsert_bc_projects_technab
-	AFTER INSERT OR UPDATE ON bronze.bc_projects_technab
-	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects('technab');
+  -- trigger dla technab
+  EXECUTE format($sql$
+    CREATE TRIGGER trg_upsert_bc_%s_technab
+      AFTER INSERT OR UPDATE ON bronze.bc_%s_technab
+      FOR EACH ROW
+      EXECUTE FUNCTION bronze.fn_upsert_bc_%s('technab')
+  $sql$, grupa_tabel);
 END;
-$$;
+$$ LANGUAGE plpgsql;
