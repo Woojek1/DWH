@@ -1,7 +1,7 @@
 -----------------------------------------------------------
 -- CREATING CUSTOMERS TABLES IN SILVER LAYER AND FIRST LOAD
 -----------------------------------------------------------
-sad
+
 
 DO $$
 DECLARE
