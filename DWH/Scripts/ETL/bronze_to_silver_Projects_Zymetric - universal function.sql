@@ -1,12 +1,12 @@
-----------------------------------------------------
---TWORZENIE TABELI W WARSTWIE SILVER I PIERWSZY LOAD
-----------------------------------------------------
+----------------------------------------------------------
+-- CREATING PROJECTS TABLES IN SILVER LAYER AND FIRST LOAD
+----------------------------------------------------------
 
 
 
 DO $$
 DECLARE
-
+-- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
 _firmy text[] := ARRAY['zymetric', 'aircon','technab'];
 -- zmienne
 _firma text;
@@ -15,12 +15,12 @@ _litera_firmy char(1);
 
 BEGIN
 	FOREACH _firma IN ARRAY _firmy LOOP
-	-- jedna duża litera do kolumny Firma
+	
 	_litera_firmy := UPPER(SUBSTR(_firma,1,1));
-	_tabela := format('bc_projects_%s', _firma);  -- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ
+	_tabela := format('bc_projects_%s', _firma);  --- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ ---
 
 
--- 1) Tworzenie tabeli, jeśli nie istnieje
+-- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text PRIMARY KEY
@@ -39,10 +39,11 @@ BEGIN
 			,"Salesperson_Code" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
+
 		);
 	$ddl$, _tabela, _litera_firmy);
 
-	-- 2) Insert z bronze → silver z ON CONFLICT DO UPDATE
+-- Pierwsze ładowanie danych z silver do bronze
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
@@ -109,9 +110,7 @@ $$;
 --------------------------------------------------------------
 
 
--- 1) Jeden trigger‐handler bez parametrów w sygnaturze,
---    argumenty odbieramy z TG_ARGV
-CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_projects_test()
+CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_projects()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $function$
@@ -119,15 +118,14 @@ DECLARE
 	firma TEXT;
 	litera_firmy CHAR(1);
 --	tgt_schema TEXT := 'silver';
-	tgt_table TEXT;
+	target_table TEXT;
 
 BEGIN
--- pobieramy argumenty przekazane w CREATE TRIGGER … EXECUTE FUNCTION …(…)
+-- pobiera argumenty przekazane w CREATE TRIGGER 
 	firma := TG_ARGV[0];
 	litera_firmy := UPPER(SUBSTR(firma, 1, 1));
 -- litera := TG_ARGV[1];
--- nazwa tabeli docelowej do uzupełnienia --
-	target_table := format('bc_projects_%s_test', firma);
+	target_table := format('bc_projects_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
 
 EXECUTE format($etl$
 INSERT INTO silver.%I (
@@ -148,9 +146,9 @@ INSERT INTO silver.%I (
 	,"Firma"
 	,"load_ts"
 )
-SELECT (
+SELECT 
 	$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
-)
+
 ON CONFLICT("No") DO UPDATE
 SET
 	"Description" = EXCLUDED."Description",
@@ -184,7 +182,7 @@ USING
 	NULLIF(NEW."Planned_Delivery_Date", DATE '0001-01-01'),
 	NEW."Project_Account_Manager",
 	NEW."Salesperson_Code",
-	litera,
+	litera_firmy,
 	CURRENT_TIMESTAMP;
 
 	RETURN NEW;
@@ -198,23 +196,21 @@ $function$;
 -----------------------------------------------------
 
 
--- 2) dla każdej z trzech firm tworzymy wyzwalacz,
---    który wywoła powyższą funkcję z odpowiednimi argumentami
 DO $$
 BEGIN
-	CREATE TRIGGER trg_upsert_bc_projects_aircon_test
+	CREATE TRIGGER trg_upsert_bc_projects_aircon
 	AFTER INSERT OR UPDATE ON bronze.bc_projects_aircon
 	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('aircon');
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects('aircon');
 
-CREATE TRIGGER trg_upsert_bc_projects_zymetric_test
+CREATE TRIGGER trg_upsert_bc_projects_zymetric
 	AFTER INSERT OR UPDATE ON bronze.bc_projects_zymetric
 	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('zymetric');
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects('zymetric');
 
-CREATE TRIGGER trg_upsert_bc_projects_technab_test
+CREATE TRIGGER trg_upsert_bc_projects_technab
 	AFTER INSERT OR UPDATE ON bronze.bc_projects_technab
 	FOR EACH ROW
-	EXECUTE FUNCTION bronze.fn_upsert_bc_projects_test('technab');
+	EXECUTE FUNCTION bronze.fn_upsert_bc_projects('technab');
 END;
 $$;
