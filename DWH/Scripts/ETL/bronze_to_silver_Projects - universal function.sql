@@ -43,7 +43,7 @@ BEGIN
 		);
 	$ddl$, _tabela, _litera_firmy);
 
--- Pierwsze ładowanie danych z silver do bronze
+-- Pierwsze ładowanie danych z bronze do silver
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
@@ -155,7 +155,7 @@ EXECUTE format($etl$
 
 	ON CONFLICT("No") DO UPDATE
 	SET
-		,"Description" = EXCLUDED."Description"
+		"Description" = EXCLUDED."Description"
 		,"Description_2" = EXCLUDED."Description_2"
 		,"Status" = EXCLUDED."Status"
 		,"Creation_Date" = EXCLUDED."Creation_Date"
@@ -202,30 +202,25 @@ $function$;
 
 DO $$
 DECLARE
-  grupa_tabel text := 'projects';  -- ZMIENIĆ NAZWĘ GRUPY TABEL
+	grupa_tabel text := 'projects'; 		-- ZMIENIĆ NAZWĘ GRUPY TABEL
+	firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
+	firma text;
 BEGIN
-  -- trigger dla aircon
-  EXECUTE format($sql$
-    CREATE TRIGGER trg_upsert_bc_%s_aircon
-      AFTER INSERT OR UPDATE ON bronze.bc_%s_aircon
-      FOR EACH ROW
-      EXECUTE FUNCTION bronze.fn_upsert_bc_%s('aircon')
-  $sql$, grupa_tabel);
-
-  -- trigger dla zymetric
-  EXECUTE format($sql$
-    CREATE TRIGGER trg_upsert_bc_%s_zymetric
-      AFTER INSERT OR UPDATE ON bronze.bc_%s_zymetric
-      FOR EACH ROW
-      EXECUTE FUNCTION bronze.fn_upsert_bc_%s('zymetric')
-  $sql$, grupa_tabel);
-
-  -- trigger dla technab
-  EXECUTE format($sql$
-    CREATE TRIGGER trg_upsert_bc_%s_technab
-      AFTER INSERT OR UPDATE ON bronze.bc_%s_technab
-      FOR EACH ROW
-      EXECUTE FUNCTION bronze.fn_upsert_bc_%s('technab')
-  $sql$, grupa_tabel);
+	FOREACH firma IN ARRAY firmy LOOP
+		EXECUTE format($sql$
+			DROP TRIGGER IF EXISTS trg_upsert_bc_%I_%I ON bronze.bc_%I_%I;
+			CREATE TRIGGER trg_upsert_bc_%I_%I
+			AFTER INSERT OR UPDATE ON bronze.bc_%I_%I
+			FOR EACH ROW
+			EXECUTE FUNCTION bronze.fn_upsert_bc_%I(%L)
+		$sql$, 
+		grupa_tabel, firma,   -- dla DROP
+		grupa_tabel, firma,   -- dla DROP
+		grupa_tabel, firma,   -- dla CREATE
+		grupa_tabel, firma,   -- dla CREATE
+		grupa_tabel,          -- dla funkcji fn_upsert_bc_<grupa_tabel>
+		firma                 -- parametr do funkcji jako tekst
+		);
+	END LOOP;
 END;
 $$ LANGUAGE plpgsql;
