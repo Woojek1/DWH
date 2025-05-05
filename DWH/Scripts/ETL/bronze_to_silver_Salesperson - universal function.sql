@@ -22,7 +22,7 @@ BEGIN
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"Code" text NULL
+			"Code" text PRIMARY KEY
 			,"Name" text NULL
 			,"Job_Title" text NULL
 			,"EDN_Supervisor_Code" text NULL
