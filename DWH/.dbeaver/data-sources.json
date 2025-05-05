@@ -9,8 +9,8 @@
 			"configuration": {
 				"host": "10.0.13.24",
 				"port": "5432",
-				"database": "postgres",
-				"url": "jdbc:postgresql://10.0.13.24:5432/postgres",
+				"database": "dwh",
+				"url": "jdbc:postgresql://10.0.13.24:5432/dwh",
 				"configurationType": "MANUAL",
 				"home": "postgresql_client",
 				"type": "dev",
@@ -22,7 +22,7 @@
 				"auth-model": "native"
 			},
 			"custom-properties": {
-				"resultset.maxrows": "200000"
+				"resultset.maxrows": "20000"
 			}
 		}
 	},
