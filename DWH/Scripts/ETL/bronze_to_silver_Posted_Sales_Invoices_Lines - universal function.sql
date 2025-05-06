@@ -42,7 +42,7 @@ BEGIN
 			,"EDN_Campaign_No" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,CONSTRAINT bc_posted_sales_invoices_lines_zymetric_pkey PRIMARY KEY ("Document_No", "Line_No")
+			,PRIMARY KEY ("Document_No", "Line_No")
 		);
 	$ddl$, _tabela, _litera_firmy);
 
@@ -235,9 +235,9 @@ $function$;
 
 
 
-------------------------------------------------------
--- CREATING TRIGGER IN BRONZE LAYER ON CUSTOMERS TABLE
-------------------------------------------------------
+------------------------------------------------------------------------
+-- CREATING TRIGGER IN BRONZE LAYER ON POSTED SALES INVOICES LINES TABLE
+------------------------------------------------------------------------
 
 
 DO $$
