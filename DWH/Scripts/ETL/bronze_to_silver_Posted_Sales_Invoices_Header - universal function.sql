@@ -250,7 +250,7 @@ EXECUTE format($etl$
 		,"Shipment_Method_Code"=EXCLUDED."Shipment_Method_Code"
 		,"Shipping_Agent_Code"=EXCLUDED."Shipping_Agent_Code"
 		,"Firma" = EXCLUDED."Firma"
-		,"load_ts" = EXCLUDED."load_ts";
+		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."No",
