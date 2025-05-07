@@ -108,7 +108,7 @@ EXECUTE format($etl$
 		,"Job_Title" = EXCLUDED.
 		,"EDN_Supervisor_Code" = EXCLUDED."EDN_Supervisor_Code"
 		,"Firma" = EXCLUDED."Firma"
-		,"load_ts" = EXCLUDED."load_ts";
+		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."Name"

@@ -326,7 +326,7 @@ EXECUTE format($etl$
 		,"Vendor_No" = EXCLUDED."Vendor_No"
 		,"Safety_Stock_Quantity" = EXCLUDED."Safety_Stock_Quantity"
 		,"Firma" = EXCLUDED."Firma"
-		,"load_ts" = EXCLUDED."load_ts";
+		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."No"

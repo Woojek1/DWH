@@ -110,7 +110,7 @@ BEGIN
 --		,"Line_Discount_Percent" = EXCLUDED."Line_Discount_Percent"
 --		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
 --		,"Firma" = EXCLUDED."Firma"
---		,"load_ts" = EXCLUDED."load_ts";
+--		,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -184,7 +184,7 @@ EXECUTE format($etl$
 		,"Line_Discount_Percent" = EXCLUDED."Line_Discount_Percent"
 		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
 		,"Firma" = EXCLUDED."Firma"
-		,"load_ts" = EXCLUDED."load_ts";
+		,"load_ts" = CURRENT_TIMESTAMP
 	$etl$, target_table)
 	USING
 		NEW."Document_No"

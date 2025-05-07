@@ -287,7 +287,7 @@ EXECUTE format($etl$
 		,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
 		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
 		,"Firma" = EXCLUDED."Firma"
-		,"load_ts" = EXCLUDED."load_ts";
+		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."No"

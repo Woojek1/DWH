@@ -39,7 +39,6 @@ BEGIN
 			,"Salesperson_Code" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-
 		);
 	$ddl$, _tabela, _litera_firmy);
 
@@ -169,7 +168,7 @@ EXECUTE format($etl$
 		,"Project_Account_Manager" = EXCLUDED."Project_Account_Manager"
 		,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
 		,"Firma" = EXCLUDED."Firma"
-		,"load_ts" = EXCLUDED."load_ts";
+		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."No"
@@ -188,7 +187,6 @@ EXECUTE format($etl$
 		,NEW."Salesperson_Code"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
-
 RETURN NEW;
 END;
 $function$;
