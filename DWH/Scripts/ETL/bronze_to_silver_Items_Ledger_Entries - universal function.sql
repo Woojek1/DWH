@@ -61,24 +61,8 @@ BEGIN
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("Entry_No")
-		)
-		PARTITION BY RANGE ("Posting_Date");
-	$ddl$, _tabela, _litera_firmy);
-
--- Automatyczne tworzenie partycji rocznych:
-FOR yr IN EXTRACT(YEAR FROM CURRENT_DATE)::int-5 .. EXTRACT(YEAR FROM CURRENT_DATE)::int+1 LOOP
-    EXECUTE format($part$
-        CREATE TABLE IF NOT EXISTS silver.%I_%s
-            PARTITION OF silver.%I
-            FOR VALUES FROM (%L) TO (%L);
-    $part$,
-        _tabela,                     -- nazwa bazowej tabeli
-        yr,                          -- rok partycji
-        _tabela,                     -- bazowa tabela
-        make_date(yr,1,1)::text,     -- od początku roku
-        make_date(yr+1,1,1)::text    -- do początku kolejnego
     );
-END LOOP;
+$ddl$, _tabela, _litera_firmy);	
 
 -- Pierwsze ładowanie danych z bronze do silver
 	EXECUTE format($insert$
@@ -167,8 +151,7 @@ END LOOP;
 
 --		ON CONFLICT ("Entry_No") DO UPDATE
 --		SET
---			,"Entry_No" = EXCLUDED."Entry_No"
---			,"Posting_Date" = EXCLUDED."Posting_Date"
+--			"Posting_Date" = EXCLUDED."Posting_Date"
 --			,"Entry_Type" = EXCLUDED."Entry_Type"
 --			,"Document_Type" = EXCLUDED."Document_Type"
 --			,"Document_No" = EXCLUDED."Document_No"
@@ -281,7 +264,7 @@ EXECUTE format($etl$
 	
 	ON CONFLICT("Entry_No") DO UPDATE
 	SET
-		,"Posting_Date" = EXCLUDED."Posting_Date"
+		"Posting_Date" = EXCLUDED."Posting_Date"
 		,"Entry_Type" = EXCLUDED."Entry_Type"
 		,"Document_Type" = EXCLUDED."Document_Type"
 		,"Document_No" = EXCLUDED."Document_No"
@@ -358,7 +341,6 @@ EXECUTE format($etl$
         ,NEW."EDN_Campaign_Description"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
-
 RETURN NEW;
 END;
 $function$;
