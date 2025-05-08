@@ -30,7 +30,7 @@ BEGIN
 			,"Description" text NULL
 			,"Description_2" text NULL
 			,"Shortcut_Dimension_1_Code" text NULL
-			,"Project number" text NULL
+			,"Shortcut_Dimension_2_Code" text NULL
 			,"Quantity" numeric(14, 2) NULL
 			,"Unit_of_Measure" text NULL
 			,"Unit_Price" numeric(14, 2) NULL
@@ -57,7 +57,7 @@ BEGIN
 			,"Description"
 			,"Description_2"
 			,"Shortcut_Dimension_1_Code"
-			,"Project number"
+			,"Shortcut_Dimension_2_Code"
 			,"Quantity"
 			,"Unit_of_Measure"
 			,"Unit_Price"
@@ -103,7 +103,7 @@ BEGIN
 --		,"Description" = EXCLUDED."Description"
 --		,"Description_2" = EXCLUDED."Description_2"
 --		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
---		,"Project number" = EXCLUDED."Project number"
+--		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
 --		,"Quantity" = EXCLUDED."Quantity"
 --		,"Unit_of_Measure" = EXCLUDED."Unit_of_Measure"
 --		,"Unit_Price" = EXCLUDED."Unit_Price"
@@ -155,7 +155,7 @@ EXECUTE format($etl$
 		,"Description"
 		,"Description_2"
 		,"Shortcut_Dimension_1_Code"
-		,"Project number"
+		,"Shortcut_Dimension_2_Code"
 		,"Quantity"
 		,"Unit_of_Measure"
 		,"Unit_Price"
@@ -179,7 +179,7 @@ EXECUTE format($etl$
 		,"Description" = EXCLUDED."Description"
 		,"Description_2" = EXCLUDED."Description_2"
 		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
-		,"Project number" = EXCLUDED."Project number"
+		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
 		,"Quantity" = EXCLUDED."Quantity"
 		,"Unit_of_Measure" = EXCLUDED."Unit_of_Measure"
 		,"Unit_Price" = EXCLUDED."Unit_Price"
@@ -199,7 +199,7 @@ EXECUTE format($etl$
 	    ,NEW."Description"
 	    ,NEW."Description_2"
 	    ,NEW."Shortcut_Dimension_1_Code"
-	    ,NEW."Project number"
+	    ,NEW."Shortcut_Dimension_2_Code"
 	    ,NEW."Quantity"
 	    ,NEW."Unit_of_Measure"
 	    ,NEW."Unit_Price"
