@@ -22,99 +22,142 @@ BEGIN
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"Document_No" text NOT NULL
-			,"Line_No" int4 NOT NULL
-			,"Sell_to_Customer_No" text NULL
-			,"Type" text NULL
-			,"No" text NULL
-			,"Description" text NULL
-			,"Description_2" text NULL
-			,"Shortcut_Dimension_1_Code" text NULL
-			,"Shortcut_Dimension_2_Code" text NULL
-			,"Quantity" numeric(14, 2) NULL
-			,"Unit_of_Measure" text NULL
-			,"Unit_Price" numeric(14, 2) NULL
-			,"Unit_Cost_LCY" numeric(14, 5) NULL
-			,"Amount" numeric(14, 2) NULL
-			,"Amount_Including_VAT" numeric(14, 2) NULL
-			,"Line_Discount_Percent" numeric(6, 2) NULL
-			,"Line_Discount_Amount" numeric(14, 2) NULL
-			,"EDN_Campaign_No" text NULL
+			"documentNo" text NOT NULL
+			,"lineNo" int4 NOT NULL
+			,amount numeric(14,2) NULL
+			,"amountIncludingVAT" numeric(14,2) NULL
+			,description text NULL
+			,description2 text NULL
+			,"dimensionSetID" int4 NULL
+			,"ednCampaignNo" text NULL
+			,"ednOryUnitCost" numeric(14,5) NULL
+			,"ednOryUnitCostLCY" numeric(14,5) NULL
+			,"ednSalesMargin" numeric(14,4) NULL
+			,"genBusPostingGroup" text NULL
+			,"genProdPostingGroup" text NULL
+			,"lineAmount" numeric(14,2) NULL
+			,"lineDiscount" numeric(6,2) NULL
+			,"lineDiscountAmount" numeric(14,2) NULL
+			,"locationCode" text NULL
+			,"no" text NULL
+			,"postingDate" date NULL
+			,"postingGroup" text NULL
+			,quantity numeric(14,2) NULL
+			,"sellToCustomerNo" text NULL
+			,"shortcutDimension1Code" text NULL
+			,"shortcutDimension2Code" text NULL
+			,"type" text NULL
+			,"unitCost" numeric(14,5) NULL
+			,"unitCostLCY" numeric(14,5) NULL
+			,"unitPrice" numeric(14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,PRIMARY KEY ("Document_No", "Line_No")
+			,PRIMARY KEY ("documentNo", "lineNo")
 		);
 	$ddl$, _tabela, _litera_firmy);
 
 -- Pierwsze ładowanie danych z bronze do silver
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
-			"Document_No"
-			,"Line_No"
-			,"Sell_to_Customer_No"
-			,"Type"
-			,"No"
-			,"Description"
-			,"Description_2"
-			,"Shortcut_Dimension_1_Code"
-			,"Shortcut_Dimension_2_Code"
-			,"Quantity"
-			,"Unit_of_Measure"
-			,"Unit_Price"
-			,"Unit_Cost_LCY"
-			,"Amount"
-			,"Amount_Including_VAT"
-			,"Line_Discount_Percent"
-			,"Line_Discount_Amount"
-			,"EDN_Campaign_No"
+			"documentNo"
+			,"lineNo"
+			,amount
+			,"amountIncludingVAT"
+			,description
+			,description2
+			,"dimensionSetID"
+			,"ednCampaignNo"
+			,"ednOryUnitCost"
+			,"ednOryUnitCostLCY"
+			,"ednSalesMargin"
+			,"genBusPostingGroup"
+			,"genProdPostingGroup"
+			,"lineAmount"
+			,"lineDiscount"
+			,"lineDiscountAmount"
+			,"locationCode"
+			,"no"
+			,"postingDate"
+			,"postingGroup"
+			,quantity
+			,"sellToCustomerNo"
+			,"shortcutDimension1Code"
+			,"shortcutDimension2Code"
+			,"type"
+			,"unitCost"
+			,"unitCostLCY"
+			,"unitPrice"
 			,"Firma"
 			,"load_ts"
 		)
 		SELECT
-			"Document_No"
-			,s."Line_No"
-			,s."Sell_to_Customer_No"
-			,s."Type"
-			,s."No"
-			,s."Description"
-			,s."Description_2"
-			,s."Shortcut_Dimension_1_Code"
-			,s."Shortcut_Dimension_2_Code"
-			,s."Quantity"
-			,s."Unit_of_Measure"
-			,s."Unit_Price"
-			,s."Unit_Cost_LCY"
-			,s."Amount"
-			,s."Amount_Including_VAT"
-			,s."Line_Discount_Percent"
-			,s."Line_Discount_Amount"
-			,s."EDN_Campaign_No"
+			s."documentNo"
+			,s."lineNo"
+			,s."amount"
+			,s."amountIncludingVAT"
+			,s.description
+			,s.description2
+			,s."dimensionSetID"
+			,s."ednCampaignNo"
+			,s."ednOryUnitCost"
+			,s."ednOryUnitCostLCY"
+			,s."ednSalesMargin"
+			,s."genBusPostingGroup"
+			,s."genProdPostingGroup"
+			,s."lineAmount"
+			,s."lineDiscount"
+			,s."lineDiscountAmount"
+			,s."locationCode"
+			,s."no"
+			,s."postingDate"
+			,s."postingGroup"
+			,s.quantity
+			,s."sellToCustomerNo"
+			,s."shortcutDimension1Code"
+			,s."shortcutDimension2Code"
+			,s."type"
+			,s."unitCost"
+			,s."unitCostLCY"
+			,s."unitPrice"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I s
 
 --	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
 
---		ON CONFLICT ("No") DO UPDATE
+--		ON CONFLICT ("documentNo", "lineNo") DO UPDATE
 --		SET
---		"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
---		,"Type" = EXCLUDED."Type"
---		,"No" = EXCLUDED."No"
---		,"Description" = EXCLUDED."Description"
---		,"Description_2" = EXCLUDED."Description_2"
---		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
---		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
---		,"Quantity" = EXCLUDED."Quantity"
---		,"Unit_of_Measure" = EXCLUDED."Unit_of_Measure"
---		,"Unit_Price" = EXCLUDED."Unit_Price"
---		,"Unit_Cost_LCY" = EXCLUDED."Unit_Cost_LCY"
---		,"Amount" = EXCLUDED."Amount"
---		,"Amount_Including_VAT" = EXCLUDED."Amount_Including_VAT"
---		,"Line_Discount_Percent" = EXCLUDED."Line_Discount_Percent"
---		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
---		,"EDN_Campaign_No" = EXCLUDED."EDN_Campaign_No"
---		,"Firma" = EXCLUDED."Firma"
---		,"load_ts" = EXCLUDED."load_ts";
+--			"documentNo" = EXCLUDED."documentNo"
+--			,"lineNo" = EXCLUDED."lineNo"
+--			,amount = EXCLUDED.amount
+--			,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
+--			,description = EXCLUDED.description
+--			,description2 = EXCLUDED.description2
+--			,"dimensionSetID" = EXCLUDED."dimensionSetID"
+--			,"ednCampaignNo" = EXCLUDED."ednCampaignNo"
+--			,"ednOryUnitCost" = EXCLUDED."ednOryUnitCost"
+--			,"ednOryUnitCostLCY" = EXCLUDED."ednOryUnitCostLCY"
+--			,"ednSalesMargin" = EXCLUDED."ednSalesMargin"
+--			,"genBusPostingGroup" = EXCLUDED."genBusPostingGroup"
+--			,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
+--			,"lineAmount" = EXCLUDED."lineAmount"
+--			,"lineDiscount" = EXCLUDED."lineDiscount"
+--			,"lineDiscountAmount" = EXCLUDED."lineDiscountAmount"
+--			,"locationCode" = EXCLUDED."locationCode"
+--			,"no" = EXCLUDED."no"
+--			,"postingDate" = EXCLUDED."postingDate"
+--			,"postingGroup" = EXCLUDED."postingGroup"
+--			,quantity = EXCLUDED.quantity
+--			,"sellToCustomerNo" = EXCLUDED."sellToCustomerNo"
+--			,"shortcutDimension1Code" = EXCLUDED."shortcutDimension1Code"
+--			,"shortcutDimension2Code" = EXCLUDED."shortcutDimension2Code"
+--			,"type" = EXCLUDED."type"
+--			,"unitCost" = EXCLUDED."unitCost"
+--			,"unitCostLCY" = EXCLUDED."unitCostLCY"
+--			,"unitPrice" = EXCLUDED."unitPrice"
+--			,"Firma" = EXCLUDED."Firma"
+--			,"load_ts" = EXCLUDED."load_ts";
+
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -147,68 +190,103 @@ BEGIN
 
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
-		"Document_No"
-		,"Line_No"
-		,"Sell_to_Customer_No"
-		,"Type"
-		,"No"
-		,"Description"
-		,"Description_2"
-		,"Shortcut_Dimension_1_Code"
-		,"Shortcut_Dimension_2_Code"
-		,"Quantity"
-		,"Unit_of_Measure"
-		,"Unit_Price"
-		,"Unit_Cost_LCY"
-		,"Amount"
-		,"Amount_Including_VAT"
-		,"Line_Discount_Percent"
-		,"Line_Discount_Amount"
-		,"EDN_Campaign_No"
+		"documentNo"
+		,"lineNo"
+		,amount
+		,"amountIncludingVAT"
+		,description
+		,description2
+		,"dimensionSetID"
+		,"ednCampaignNo"
+		,"ednOryUnitCost"
+		,"ednOryUnitCostLCY"
+		,"ednSalesMargin"
+		,"genBusPostingGroup"
+		,"genProdPostingGroup"
+		,"lineAmount"
+		,"lineDiscount"
+		,"lineDiscountAmount"
+		,"locationCode"
+		,"no"
+		,"postingDate"
+		,"postingGroup"
+		,quantity
+		,"sellToCustomerNo"
+		,"shortcutDimension1Code"
+		,"shortcutDimension2Code"
+		,"type"
+		,"unitCost"
+		,"unitCostLCY"
+		,"unitPrice"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
+  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
-	ON CONFLICT("Document_No", "Line_No") DO UPDATE
+	ON CONFLICT("documentNo", "lineNo") DO UPDATE
 	SET
-		"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
-		,"Type" = EXCLUDED."Type"
-		,"No" = EXCLUDED."No"
-		,"Description" = EXCLUDED."Description"
-		,"Description_2" = EXCLUDED."Description_2"
-		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
-		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
-		,"Quantity" = EXCLUDED."Quantity"
-		,"Unit_of_Measure" = EXCLUDED."Unit_of_Measure"
-		,"Unit_Price" = EXCLUDED."Unit_Price"
-		,"Unit_Cost_LCY" = EXCLUDED."Unit_Cost_LCY"
-		,"Amount" = EXCLUDED."Amount"
-		,"Amount_Including_VAT" = EXCLUDED."Amount_Including_VAT"
-		,"Line_Discount_Percent" = EXCLUDED."Line_Discount_Percent"
-		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
-		,"EDN_Campaign_No" = EXCLUDED."EDN_Campaign_No"
+		"documentNo" = EXCLUDED."documentNo"
+		,"lineNo" = EXCLUDED."lineNo"
+		,amount = EXCLUDED.amount
+		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
+		,description = EXCLUDED.description
+		,description2 = EXCLUDED.description2
+		,"dimensionSetID" = EXCLUDED."dimensionSetID"
+		,"ednCampaignNo" = EXCLUDED."ednCampaignNo"
+		,"ednOryUnitCost" = EXCLUDED."ednOryUnitCost"
+		,"ednOryUnitCostLCY" = EXCLUDED."ednOryUnitCostLCY"
+		,"ednSalesMargin" = EXCLUDED."ednSalesMargin"
+		,"genBusPostingGroup" = EXCLUDED."genBusPostingGroup"
+		,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
+		,"lineAmount" = EXCLUDED."lineAmount"
+		,"lineDiscount" = EXCLUDED."lineDiscount"
+		,"lineDiscountAmount" = EXCLUDED."lineDiscountAmount"
+		,"locationCode" = EXCLUDED."locationCode"
+		,"no" = EXCLUDED."no"
+		,"postingDate" = EXCLUDED."postingDate"
+		,"postingGroup" = EXCLUDED."postingGroup"
+		,quantity = EXCLUDED.quantity
+		,"sellToCustomerNo" = EXCLUDED."sellToCustomerNo"
+		,"shortcutDimension1Code" = EXCLUDED."shortcutDimension1Code"
+		,"shortcutDimension2Code" = EXCLUDED."shortcutDimension2Code"
+		,"type" = EXCLUDED."type"
+		,"unitCost" = EXCLUDED."unitCost"
+		,"unitCostLCY" = EXCLUDED."unitCostLCY"
+		,"unitPrice" = EXCLUDED."unitPrice"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
-		NEW."Sell_to_Customer_No"
-    	,NEW."Type"
-	    ,NEW."No"
-	    ,NEW."Description"
-	    ,NEW."Description_2"
-	    ,NEW."Shortcut_Dimension_1_Code"
-	    ,NEW."Shortcut_Dimension_2_Code"
-	    ,NEW."Quantity"
-	    ,NEW."Unit_of_Measure"
-	    ,NEW."Unit_Price"
-	    ,NEW."Unit_Cost_LCY"
-	    ,NEW."Amount"
-	    ,NEW."Amount_Including_VAT"
-	    ,NEW."Line_Discount_Percent"
-	    ,NEW."Line_Discount_Amount"
-	    ,NEW."EDN_Campaign_No"
+		NEW."documentNo"
+		,NEW."lineNo"
+		,NEW.amount
+		,NEW."amountIncludingVAT"
+		,NEW.description
+		,NEW.description2
+		,NEW."dimensionSetID"
+		,NEW."ednCampaignNo"
+		,NEW."ednOryUnitCost"
+		,NEW."ednOryUnitCostLCY"
+		,NEW."ednSalesMargin"
+		,NEW."genBusPostingGroup"
+		,NEW."genProdPostingGroup"
+		,NEW."lineAmount"
+		,NEW."lineDiscount"
+		,NEW."lineDiscountAmount"
+		,NEW."locationCode"
+		,NEW."no"
+		,NEW."postingDate"
+		,NEW."postingGroup"
+		,NEW.quantity
+		,NEW."sellToCustomerNo"
+		,NEW."shortcutDimension1Code"
+		,NEW."shortcutDimension2Code"
+		,NEW."type"
+		,NEW."unitCost"
+		,NEW."unitCostLCY"
+		,NEW."unitPrice"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 

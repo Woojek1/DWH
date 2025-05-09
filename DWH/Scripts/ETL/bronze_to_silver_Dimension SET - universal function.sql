@@ -6,7 +6,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY[ 'aircon', 'zymetric', 'technab'];
+_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -29,6 +29,8 @@ BEGIN
 			,"dimensionValueID" int4 NOT NULL
 			,"dimensionValueName" text NULL
 			,"globalDimensionNo" int4 NULL
+			,"Firma" char(1) DEFAULT %L
+			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("dimensionSetID", "dimensionCode", "dimensionValueID")
 		);
 	$ddl$, _tabela, _litera_firmy);
@@ -58,15 +60,12 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I c
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("dimensionSetID", "dimensionCode", "dimensionValueID") DO UPDATE
+--		ON CONFLICT ("dimensionSetID", "dimensionCode", "dimensionValueID") DO UPDATE  -- zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
 --		SET
 --			"dimensionName" = EXCLUDED."dimensionName"
 --			,"dimensionValueCode" = EXCLUDED."dimensionValueCode"
 --			,"dimensionValueName" = EXCLUDED."dimensionValueName"
 --			,"globalDimensionNo" = EXCLUDED."globalDimensionNo"
---			,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
 --			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
@@ -119,8 +118,8 @@ EXECUTE format($etl$
 			,"dimensionValueCode" = EXCLUDED."dimensionValueCode"
 			,"dimensionValueName" = EXCLUDED."dimensionValueName"
 			,"globalDimensionNo" = EXCLUDED."globalDimensionNo"
-			,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
-			,"load_ts" = CURRENT_TIMESTAMP
+			,"Firma" = EXCLUDED."Firma"
+			,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 
 	USING
