@@ -95,8 +95,8 @@ BEGIN
 			,REGEXP_REPLACE(mh."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
 			,mh."Sell_to_Address"
 			,mh."Sell_to_Address_2"
-			,mh."Sell_to_City"
-			,mh."Sell_to_County"
+			,INITCAP(TRIM(mh."Sell_to_City"))
+			,LOWER(TRIM(mh."Sell_to_County"))
 			,mh."Sell_to_Post_Code"
 			,mh."Posting_Date"
 			,mh."Document_Date"
@@ -255,8 +255,8 @@ EXECUTE format($etl$
 		,NEW."VAT_Registration_No"
 		,NEW."Sell_to_Address"
 		,NEW."Sell_to_Address_2"
-		,NEW."Sell_to_City"
-		,NEW."Sell_to_County"
+		,INITCAP(TRIM(NEW."Sell_to_City"))
+		,LOWER(TRIM(NEW."Sell_to_County"))
 		,NEW."Sell_to_Post_Code"
 		,NEW."Posting_Date"
 		,NEW."Document_Date"

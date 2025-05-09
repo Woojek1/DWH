@@ -96,8 +96,8 @@ BEGIN
 			,REGEXP_REPLACE(ih."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
 			,ih."Sell_to_Address"
 			,ih."Sell_to_Address_2"
-			,ih."Sell_to_City"
-			,ih."Sell_to_County"
+			,INITCAP(TRIM(ih."Sell_to_City"))
+			,LOWER(TRIM(ih."Sell_to_County"))
 			,ih."Sell_to_Post_Code"
 			,ih."Document_Date"
 			,ih."Posting_Date"
@@ -126,7 +126,7 @@ BEGIN
 
 --		ON CONFLICT ("No") DO UPDATE
 --		SET
---			,"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
+--			"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
 --			,"Sell_to_Customer_Name" = EXCLUDED."Sell_to_Customer_Name"
 --			,"VAT_Registration_No" = EXCLUDED."VAT_Registration_No"
 --			,"Sell_to_Address" = EXCLUDED."Sell_to_Address"
@@ -222,67 +222,67 @@ EXECUTE format($etl$
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
-		,"Sell_to_Customer_No"=EXCLUDED."Sell_to_Customer_No"
-		,"Sell_to_Customer_Name"=EXCLUDED."Sell_to_Customer_Name"
-		,"VAT_Registration_No"=EXCLUDED."VAT_Registration_No"
-		,"Sell_to_Address"=EXCLUDED."Sell_to_Address"
-		,"Sell_to_Address_2"=EXCLUDED."Sell_to_Address_2"
-		,"Sell_to_City"=EXCLUDED."Sell_to_City"
-		,"Sell_to_County"=EXCLUDED."Sell_to_County"
-		,"Sell_to_Post_Code"=EXCLUDED."Sell_to_Post_Code"
-		,"Document_Date"=EXCLUDED."Document_Date"
-		,"Posting_Date"=EXCLUDED."Posting_Date"
-		,"Due_Date"=EXCLUDED."Due_Date"
-		,"Quote_No"=EXCLUDED."Quote_No"
-		,"Order_No"=EXCLUDED."Order_No"
-		,"Pre_Assigned_No"=EXCLUDED."Pre_Assigned_No"
-		,"External_Document_No"=EXCLUDED."External_Document_No"
-		,"Salesperson_Code"=EXCLUDED."Salesperson_Code"
-		,"EDN_Factoring_Invoice"=EXCLUDED."EDN_Factoring_Invoice"
-		,"EDN_KUKE_Symbol"=EXCLUDED."EDN_KUKE_Symbol"
-		,"Shipment_Date"=EXCLUDED."Shipment_Date"
-		,"Payment_Terms_Code"=EXCLUDED."Payment_Terms_Code"
-		,"Payment_Method_Code"=EXCLUDED."Payment_Method_Code"
-		,"Shortcut_Dimension_1_Code"=EXCLUDED."Shortcut_Dimension_1_Code"
-		,"Shortcut_Dimension_2_Code"=EXCLUDED."Shortcut_Dimension_2_Code"
-		,"Customer_Posting_Group"=EXCLUDED."Customer_Posting_Group"
-		,"Location_Code"=EXCLUDED."Location_Code"
-		,"Shipment_Method_Code"=EXCLUDED."Shipment_Method_Code"
-		,"Shipping_Agent_Code"=EXCLUDED."Shipping_Agent_Code"
+		"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
+		,"Sell_to_Customer_Name" = EXCLUDED."Sell_to_Customer_Name"
+		,"VAT_Registration_No" = EXCLUDED."VAT_Registration_No"
+		,"Sell_to_Address" = EXCLUDED."Sell_to_Address"
+		,"Sell_to_Address_2" = EXCLUDED."Sell_to_Address_2"
+		,"Sell_to_City" = EXCLUDED."Sell_to_City"
+		,"Sell_to_County" = EXCLUDED."Sell_to_County"
+		,"Sell_to_Post_Code" = EXCLUDED."Sell_to_Post_Code"
+		,"Document_Date" = EXCLUDED."Document_Date"
+		,"Posting_Date" = EXCLUDED."Posting_Date"
+		,"Due_Date" = EXCLUDED."Due_Date"
+		,"Quote_No" = EXCLUDED."Quote_No"
+		,"Order_No" = EXCLUDED."Order_No"
+		,"Pre_Assigned_No" = EXCLUDED."Pre_Assigned_No"
+		,"External_Document_No" = EXCLUDED."External_Document_No"
+		,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
+		,"EDN_Factoring_Invoice" = EXCLUDED."EDN_Factoring_Invoice"
+		,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
+		,"Shipment_Date" = EXCLUDED."Shipment_Date"
+		,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
+		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
+		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
+		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
+		,"Customer_Posting_Group" = EXCLUDED."Customer_Posting_Group"
+		,"Location_Code" = EXCLUDED."Location_Code"
+		,"Shipment_Method_Code" = EXCLUDED."Shipment_Method_Code"
+		,"Shipping_Agent_Code" = EXCLUDED."Shipping_Agent_Code"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
-		NEW."No",
-		NEW."Sell_to_Customer_No",
-		NEW."Sell_to_Customer_Name",
-		NEW."VAT_Registration_No",
-		NEW."Sell_to_Address",
-		NEW."Sell_to_Address_2",
-		NEW."Sell_to_City",
-		NEW."Sell_to_County",
-		NEW."Sell_to_Post_Code",
-		NEW."Document_Date",
-		NEW."Posting_Date",
-		NEW."Due_Date",
-		NEW."Quote_No",
-		NEW."Order_No",
-		NEW."Pre_Assigned_No",
-		NEW."External_Document_No",
-		NEW."Salesperson_Code",
-		NEW."EDN_Factoring_Invoice",
-		NEW."EDN_KUKE_Symbol",
-		NEW."Shipment_Date",
-		NEW."Payment_Terms_Code",
-		NEW."Payment_Method_Code",
-		NEW."Shortcut_Dimension_1_Code",
-		NEW."Shortcut_Dimension_2_Code",
-		NEW."Customer_Posting_Group",
-		NEW."Location_Code",
-		NEW."Shipment_Method_Code",
-		NEW."Shipping_Agent_Code",
-		litera_firmy,
-		CURRENT_TIMESTAMP;
+		NEW."No"
+		,NEW."Sell_to_Customer_No"
+		,NEW."Sell_to_Customer_Name"
+		,REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g')
+		,NEW."Sell_to_Address"
+		,NEW."Sell_to_Address_2"
+		,INITCAP(TRIM(NEW."Sell_to_City"))
+		,LOWER(TRIM(NEW."Sell_to_County"))
+		,NEW."Sell_to_Post_Code"
+		,NEW."Document_Date"
+		,NEW."Posting_Date"
+		,NEW."Due_Date"
+		,NEW."Quote_No"
+		,NEW."Order_No"
+		,NEW."Pre_Assigned_No"
+		,NEW."External_Document_No"
+		,NEW."Salesperson_Code"
+		,NEW."EDN_Factoring_Invoice"
+		,NEW."EDN_KUKE_Symbol"
+		,NEW."Shipment_Date"
+		,NEW."Payment_Terms_Code"
+		,NEW."Payment_Method_Code"
+		,NEW."Shortcut_Dimension_1_Code"
+		,NEW."Shortcut_Dimension_2_Code"
+		,NEW."Customer_Posting_Group"
+		,NEW."Location_Code"
+		,NEW."Shipment_Method_Code"
+		,NEW."Shipping_Agent_Code"
+		,litera_firmy
+		,CURRENT_TIMESTAMP;
 
 RETURN NEW;
 END;

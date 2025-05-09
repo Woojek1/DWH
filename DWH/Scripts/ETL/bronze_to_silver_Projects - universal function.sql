@@ -70,7 +70,7 @@ BEGIN
 			,NULLIF(p."Creation_Date", DATE '0001-01-01')
 			,p."Manufacturer_Code"
 			,INITCAP(TRIM(p."City"))
-			,p."County"
+			,LOWER(TRIM(p."County"))
 			,p."Object_Type"
 			,p."Project_Source"
 			,p."Manufacturer"
@@ -178,7 +178,7 @@ EXECUTE format($etl$
 		,NULLIF(NEW."Creation_Date", DATE '0001-01-01')
 		,NEW."Manufacturer_Code"
 		,INITCAP(TRIM(NEW."City"))
-		,NEW."County"
+		,LOWER(TRIM(NEW."County"))
 		,NEW."Object_Type"
 		,NEW."Project_Source"
 		,NEW."Manufacturer"
