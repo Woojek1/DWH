@@ -22,46 +22,52 @@ BEGIN
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"No" text PRIMARY KEY
-			,"PIM_number" text NULL
-			,"Description" text NULL
-			,"EDN_Description_2" text NULL
-			,"Type" text NULL
-			,"Base_Unit_of_Measure" text NULL
-			,"EDN_Weight_Packaging" numeric(14, 4) NULL
-			,"Last_Date_Modified" date NULL
-			,"GTIN" text NULL
-			,"Item_Category_Code" text NULL
-			,"Manufacturer_Code" text NULL
-			,"EDN_Brand_Code" text NULL
-			,"Service_Item_Group" text NULL
-			,"EDN_NAV_Key" text NULL
-			,"Inventory" numeric(14, 4) NULL
-			,"Qty_on_Purch_Order" numeric(14, 4) NULL
-			,"Qty_on_Prod_Order" numeric(14, 4) NULL
-			,"Qty_on_Component_Lines" numeric(14, 4) NULL
-			,"Qty_on_Sales_Order" numeric(14, 4) NULL
-			,"Qty_on_Service_Order" numeric(14, 4) NULL
-			,"Qty_on_Job_Order" numeric(14, 4) NULL
-			,"Qty_on_Assembly_Order" numeric(14, 4) NULL
-			,"Qty_on_Asm_Component" numeric(14, 4) NULL
-			,"Reserved_Qty_on_Inventory" numeric(14, 4) NULL
-			,"Reserved_Qty_on_Purch_Orders" numeric(14, 4) NULL
-			,"EDN_Cooling_Capacity_kW" numeric(14, 4) NULL
-			,"EDN_Heating_Capacity_kW" numeric(14, 4) NULL
-			,"EDN_Refrigerant" text NULL
-			,"EDN_Refrigerant_Quantity" numeric(14, 4) NULL
-			,"EDN_Factor_Equivalent" numeric(14, 4) NULL
-			,"Costing_Method" text NULL
-			,"Standard_Cost" numeric(14, 4) NULL
-			,"Unit_Cost" numeric(14, 4) NULL
-			,"Last_Direct_Cost" numeric(14, 4) NULL
-			,"Gen_Prod_Posting_Group" text NULL
-			,"Inventory_Posting_Group" text NULL
-			,"B2BSales" bool NULL
-			,"ecom" bool NULL
-			,"Vendor_No" text NULL
-			,"Safety_Stock_Quantity" numeric(14, 4) NULL
+			"No" text NULL
+			,baseUnitOfMeasure text NULL
+			,baseGroup text NULL
+			,costingMethod text NULL
+			,description text NULL
+			,description2 text NULL
+			,ednCoolingCapacityKW numeric(14,2) NULL
+			,ednEfficiencyIndex numeric(14,2) NULL
+			,ednFactorType text NULL
+			,ednHeatingCapacityKW numeric(14,2) NULL
+			,ednNAVKey text NULL
+			,ednRefrigerant text NULL
+			,ednRefrigerantQuantityUoM numeric(14,2) NULL
+			,ednTypeA text NULL
+			,ednTypeB text NULL
+			,genProdPostingGroup text NULL
+			,inventory numeric(14,2) NULL
+			,inventoryPostingGroup text NULL
+			,manufacturerCode text NULL
+			,maximumInventory numeric(14,2) NULL
+			,maximumOrderQuantity numeric(14,2) NULL
+			,minimumOrderQuantity numeric(14,2) NULL
+			,negativeAdjmtLCY numeric(14,2) NULL
+			,negativeAdjmtQty numeric(14,2) NULL
+			,netChange numeric(14,2) NULL
+			,netInvoicedQty numeric(14,2) NULL
+			,no2 text NULL
+			,qtyAssignedToShip numeric(14,2) NULL
+			,qtyPicked numeric(14,2) NULL
+			,qtyInTransit numeric(14,2) NULL
+			,qtyOnAsmComponent numeric(14,2) NULL
+			,qtyOnAssemblyOrder numeric(14,2) NULL
+			,qtyOnComponentLines numeric(14,2) NULL
+			,qtyOnJobOrder numeric(14,2) NULL
+			,qtyOnProdOrder numeric(14,2) NULL
+			,qtyOnPurchOrder numeric(14,2) NULL
+			,qtyOnPurchReturn numeric(14,2) NULL
+			,qtyOnSalesOrder numeric(14,2) NULL
+			,qtyOnSalesReturn numeric(14,2) NULL
+			,qtyOnServiceOrder numeric(14,2) NULL
+			,relOrderReceiptQty numeric(14,2) NULL
+			,reservedQtyOnInventory numeric(14,2) NULL
+			,reservedQtyOnProdOrder numeric(14,2) NULL
+			,reservedQtyOnPurchOrders numeric(14,2) NULL
+			,reservedQtyOnSalesOrders numeric(14,2) NULL
+			,unitCost numeric(14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
@@ -73,47 +79,56 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
-			,"PIM_number"
-			,"Description"
-			,"EDN_Description_2"
-			,"Type"
-			,"Base_Unit_of_Measure"
-			,"EDN_Weight_Packaging"
-			,"Last_Date_Modified"
-			,"GTIN"
-			,"Item_Category_Code"
-			,"Manufacturer_Code"
-			,"EDN_Brand_Code"
-			,"Service_Item_Group"
-			,"EDN_NAV_Key"
-			,"Inventory"
-			,"Qty_on_Purch_Order"
-			,"Qty_on_Prod_Order"
-			,"Qty_on_Component_Lines"
-			,"Qty_on_Sales_Order"
-			,"Qty_on_Service_Order"
-			,"Qty_on_Job_Order"
-			,"Qty_on_Assembly_Order"
-			,"Qty_on_Asm_Component"
-			,"Reserved_Qty_on_Inventory"
-			,"Reserved_Qty_on_Purch_Orders"
-			,"EDN_Cooling_Capacity_kW"
-			,"EDN_Heating_Capacity_kW"
-			,"EDN_Refrigerant"
-			,"EDN_Refrigerant_Quantity"
-			,"EDN_Factor_Equivalent"
-			,"Costing_Method"
-			,"Standard_Cost"
-			,"Unit_Cost"
-			,"Last_Direct_Cost"
-			,"Gen_Prod_Posting_Group"
-			,"Inventory_Posting_Group"
-			,"B2BSales"
-			,"ecom"
-			,"Vendor_No"
-			,"Safety_Stock_Quantity"
+			,baseUnitOfMeasure
+			,baseGroup
+			,costingMethod
+			,description
+			,description2
+			,ednCoolingCapacityKW
+			,ednEfficiencyIndex
+			,ednFactorType
+			,ednHeatingCapacityKW
+			,ednNAVKey
+			,ednRefrigerant
+			,ednRefrigerantQuantityUoM
+			,ednTypeA
+			,ednTypeB
+			,genProdPostingGroup
+			,inventory
+			,inventoryPostingGroup
+			,manufacturerCode
+			,maximumInventory
+			,maximumOrderQuantity
+			,minimumOrderQuantity
+			,negativeAdjmtLCY
+			,negativeAdjmtQty
+			,netChange
+			,netInvoicedQty
+			,no2
+			,qtyAssignedToShip
+			,qtyPicked
+			,qtyInTransit
+			,qtyOnAsmComponent
+			,qtyOnAssemblyOrder
+			,qtyOnComponentLines
+			,qtyOnJobOrder
+			,qtyOnProdOrder
+			,qtyOnPurchOrder
+			,qtyOnPurchReturn
+			,qtyOnSalesOrder
+			,qtyOnSalesReturn
+			,qtyOnServiceOrder
+			,relOrderReceiptQty
+			,reservedQtyOnInventory
+			,reservedQtyOnProdOrder
+			,reservedQtyOnPurchOrders
+			,reservedQtyOnSalesOrders
+			,unitCost
 			,"Firma"
 			,"load_ts"
+
+------------------ DO TEGO MIEJSCA JEST DOBRZE --------------------------------
+
 		)
 		SELECT
 			i."No"
