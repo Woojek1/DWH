@@ -23,51 +23,51 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text NULL
-			,baseUnitOfMeasure text NULL
-			,baseGroup text NULL
-			,costingMethod text NULL
-			,description text NULL
-			,description2 text NULL
-			,ednCoolingCapacityKW numeric(14,2) NULL
-			,ednEfficiencyIndex numeric(14,2) NULL
-			,ednFactorType text NULL
-			,ednHeatingCapacityKW numeric(14,2) NULL
-			,ednNAVKey text NULL
-			,ednRefrigerant text NULL
-			,ednRefrigerantQuantityUoM numeric(14,2) NULL
-			,ednTypeA text NULL
-			,ednTypeB text NULL
-			,genProdPostingGroup text NULL
-			,inventory numeric(14,2) NULL
-			,inventoryPostingGroup text NULL
-			,manufacturerCode text NULL
-			,maximumInventory numeric(14,2) NULL
-			,maximumOrderQuantity numeric(14,2) NULL
-			,minimumOrderQuantity numeric(14,2) NULL
-			,negativeAdjmtLCY numeric(14,2) NULL
-			,negativeAdjmtQty numeric(14,2) NULL
-			,netChange numeric(14,2) NULL
-			,netInvoicedQty numeric(14,2) NULL
-			,no2 text NULL
-			,qtyAssignedToShip numeric(14,2) NULL
-			,qtyPicked numeric(14,2) NULL
-			,qtyInTransit numeric(14,2) NULL
-			,qtyOnAsmComponent numeric(14,2) NULL
-			,qtyOnAssemblyOrder numeric(14,2) NULL
-			,qtyOnComponentLines numeric(14,2) NULL
-			,qtyOnJobOrder numeric(14,2) NULL
-			,qtyOnProdOrder numeric(14,2) NULL
-			,qtyOnPurchOrder numeric(14,2) NULL
-			,qtyOnPurchReturn numeric(14,2) NULL
-			,qtyOnSalesOrder numeric(14,2) NULL
-			,qtyOnSalesReturn numeric(14,2) NULL
-			,qtyOnServiceOrder numeric(14,2) NULL
-			,relOrderReceiptQty numeric(14,2) NULL
-			,reservedQtyOnInventory numeric(14,2) NULL
-			,reservedQtyOnProdOrder numeric(14,2) NULL
-			,reservedQtyOnPurchOrders numeric(14,2) NULL
-			,reservedQtyOnSalesOrders numeric(14,2) NULL
-			,unitCost numeric(14,2) NULL
+			,"baseUnitOfMeasure" text NULL
+			,"baseGroup" text NULL
+			,"costingMethod" text NULL
+			,"description" text NULL
+			,"description2" text NULL
+			,"ednCoolingCapacityKW" numeric(14,2) NULL
+			,"ednEfficiencyIndex" numeric(14,2) NULL
+			,"ednFactorType" text NULL
+			,"ednHeatingCapacityKW" numeric(14,2) NULL
+			,"ednNAVKey" text NULL
+			,"ednRefrigerant" text NULL
+			,"ednRefrigerantQuantityUoM" numeric(14,2) NULL
+			,"ednTypeA" text NULL
+			,"ednTypeB" text NULL
+			,"genProdPostingGroup" text NULL
+			,"inventory" numeric(14,2) NULL
+			,"inventoryPostingGroup" text NULL
+			,"manufacturerCode" text NULL
+			,"maximumInventory" numeric(14,2) NULL
+			,"maximumOrderQuantity" numeric(14,2) NULL
+			,"minimumOrderQuantity" numeric(14,2) NULL
+			,"negativeAdjmtLCY" numeric(14,2) NULL
+			,"negativeAdjmtQty" numeric(14,2) NULL
+			,"netChange" numeric(14,2) NULL
+			,"netInvoicedQty" numeric(14,2) NULL
+			,"no2" text NULL
+			,"qtyAssignedToShip" numeric(14,2) NULL
+			,"qtyPicked" numeric(14,2) NULL
+			,"qtyInTransit" numeric(14,2) NULL
+			,"qtyOnAsmComponent" numeric(14,2) NULL
+			,"qtyOnAssemblyOrder" numeric(14,2) NULL
+			,"qtyOnComponentLines" numeric(14,2) NULL
+			,"qtyOnJobOrder" numeric(14,2) NULL
+			,"qtyOnProdOrder" numeric(14,2) NULL
+			,"qtyOnPurchOrder" numeric(14,2) NULL
+			,"qtyOnPurchReturn" numeric(14,2) NULL
+			,"qtyOnSalesOrder" numeric(14,2) NULL
+			,"qtyOnSalesReturn" numeric(14,2) NULL
+			,"qtyOnServiceOrder" numeric(14,2) NULL
+			,"relOrderReceiptQty" numeric(14,2) NULL
+			,"reservedQtyOnInventory" numeric(14,2) NULL
+			,"reservedQtyOnProdOrder" numeric(14,2) NULL
+			,"reservedQtyOnPurchOrders" numeric(14,2) NULL
+			,"reservedQtyOnSalesOrders" numeric(14,2) NULL
+			,"unitCost" numeric(14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
@@ -79,98 +79,102 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
-			,baseUnitOfMeasure
-			,baseGroup
-			,costingMethod
-			,description
-			,description2
-			,ednCoolingCapacityKW
-			,ednEfficiencyIndex
-			,ednFactorType
-			,ednHeatingCapacityKW
-			,ednNAVKey
-			,ednRefrigerant
-			,ednRefrigerantQuantityUoM
-			,ednTypeA
-			,ednTypeB
-			,genProdPostingGroup
-			,inventory
-			,inventoryPostingGroup
-			,manufacturerCode
-			,maximumInventory
-			,maximumOrderQuantity
-			,minimumOrderQuantity
-			,negativeAdjmtLCY
-			,negativeAdjmtQty
-			,netChange
-			,netInvoicedQty
-			,no2
-			,qtyAssignedToShip
-			,qtyPicked
-			,qtyInTransit
-			,qtyOnAsmComponent
-			,qtyOnAssemblyOrder
-			,qtyOnComponentLines
-			,qtyOnJobOrder
-			,qtyOnProdOrder
-			,qtyOnPurchOrder
-			,qtyOnPurchReturn
-			,qtyOnSalesOrder
-			,qtyOnSalesReturn
-			,qtyOnServiceOrder
-			,relOrderReceiptQty
-			,reservedQtyOnInventory
-			,reservedQtyOnProdOrder
-			,reservedQtyOnPurchOrders
-			,reservedQtyOnSalesOrders
-			,unitCost
+			,"baseUnitOfMeasure"
+			,"baseGroup"
+			,"costingMethod"
+			,"description"
+			,"description2"
+			,"ednCoolingCapacityKW"
+			,"ednEfficiencyIndex"
+			,"ednFactorType"
+			,"ednHeatingCapacityKW"
+			,"ednNAVKey"
+			,"ednRefrigerant"
+			,"ednRefrigerantQuantityUoM"
+			,"ednTypeA"
+			,"ednTypeB"
+			,"genProdPostingGroup"
+			,"inventory"
+			,"inventoryPostingGroup"
+			,"manufacturerCode"
+			,"maximumInventory"
+			,"maximumOrderQuantity"
+			,"minimumOrderQuantity"
+			,"negativeAdjmtLCY"
+			,"negativeAdjmtQty"
+			,"netChange"
+			,"netInvoicedQty"
+			,"no2"
+			,"qtyAssignedToShip"
+			,"qtyPicked"
+			,"qtyInTransit"
+			,"qtyOnAsmComponent"
+			,"qtyOnAssemblyOrder"
+			,"qtyOnComponentLines"
+			,"qtyOnJobOrder"
+			,"qtyOnProdOrder"
+			,"qtyOnPurchOrder"
+			,"qtyOnPurchReturn"
+			,"qtyOnSalesOrder"
+			,"qtyOnSalesReturn"
+			,"qtyOnServiceOrder"
+			,"relOrderReceiptQty"
+			,"reservedQtyOnInventory"
+			,"reservedQtyOnProdOrder"
+			,"reservedQtyOnPurchOrders"
+			,"reservedQtyOnSalesOrders"
+			,"unitCost"
 			,"Firma"
 			,"load_ts"
 
------------------- DO TEGO MIEJSCA JEST DOBRZE --------------------------------
-
 		)
 		SELECT
-			i."No"
-			,i."PIM_number"
-			,i."Description"
-			,i."EDN_Description_2"
-			,i."Type"
-			,i."Base_Unit_of_Measure"
-			,i."EDN_Weight_Packaging"
-			,i."Last_Date_Modified"
-			,i."GTIN"
-			,i."Item_Category_Code"
-			,i."Manufacturer_Code"
-			,i."EDN_Brand_Code"
-			,i."Service_Item_Group"
-			,i."EDN_NAV_Key"
-			,i."Inventory"
-			,i."Qty_on_Purch_Order"
-			,i."Qty_on_Prod_Order"
-			,i."Qty_on_Component_Lines"
-			,i."Qty_on_Sales_Order"
-			,i."Qty_on_Service_Order"
-			,i."Qty_on_Job_Order"
-			,i."Qty_on_Assembly_Order"
-			,i."Qty_on_Asm_Component"
-			,i."Reserved_Qty_on_Inventory"
-			,i."Reserved_Qty_on_Purch_Orders"
-			,i."EDN_Cooling_Capacity_kW"
-			,i."EDN_Heating_Capacity_kW"
-			,i."EDN_Refrigerant"
-			,i."EDN_Refrigerant_Quantity__x005B_UoM_x005D_"
-    		,i."EDN_Factor_Equivalent__x005B_UoM_x005D_"
-			,i."Costing_Method"
-			,i."Standard_Cost"
-			,i."Unit_Cost"
-			,i."Last_Direct_Cost"
-			,i."Gen_Prod_Posting_Group"
-			,i."Inventory_Posting_Group"
-			,i."B2BSales"
-			,i."ecom"
-			,i."Vendor_No"
-			,i."Safety_Stock_Quantity"
+			"No"
+			,i."baseUnitOfMeasure"
+			,i."baseGroup"
+			,i."costingMethod"
+			,i."description"
+			,i."description2"
+			,i."ednCoolingCapacityKW"
+			,i."ednEfficiencyIndex"
+			,i."ednFactorType"
+			,i."ednHeatingCapacityKW"
+			,i."ednNAVKey"
+			,i."ednRefrigerant"
+			,i."ednRefrigerantQuantityUoM"
+			,i."ednTypeA"
+			,i."ednTypeB"
+			,i."genProdPostingGroup"
+			,i."inventory"
+			,i."inventoryPostingGroup"
+			,i."manufacturerCode"
+			,i."maximumInventory"
+			,i."maximumOrderQuantity"
+			,i."minimumOrderQuantity"
+			,i."negativeAdjmtLCY"
+			,i."negativeAdjmtQty"
+			,i."netChange"
+			,i."netInvoicedQty"
+			,i."no2"
+			,i."qtyAssignedToShip"
+			,i."qtyPicked"
+			,i."qtyInTransit"
+			,i."qtyOnAsmComponent"
+			,i."qtyOnAssemblyOrder"
+			,i."qtyOnComponentLines"
+			,i."qtyOnJobOrder"
+			,i."qtyOnProdOrder"
+			,i."qtyOnPurchOrder"
+			,i."qtyOnPurchReturn"
+			,i."qtyOnSalesOrder"
+			,i."qtyOnSalesReturn"
+			,i."qtyOnServiceOrder"
+			,i."relOrderReceiptQty"
+			,i."reservedQtyOnInventory"
+			,i."reservedQtyOnProdOrder"
+			,i."reservedQtyOnPurchOrders"
+			,i."reservedQtyOnSalesOrders"
+			,i."unitCost"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I as i
@@ -179,45 +183,52 @@ BEGIN
 
 --		ON CONFLICT ("No") DO UPDATE
 --		SET
---			"PIM_number" = EXCLUDED."PIM_number"
---			,"Description" = EXCLUDED."Description"
---			,"EDN_Description_2" = EXCLUDED."EDN_Description_2"
---			,"Type" = EXCLUDED."Type"
---			,"Base_Unit_of_Measure" = EXCLUDED."Base_Unit_of_Measure"
---			,"EDN_Weight_Packaging" = EXCLUDED."EDN_Weight_Packaging"
---			,"Last_Date_Modified" = EXCLUDED."Last_Date_Modified"
---			,"GTIN" = EXCLUDED."GTIN"
---			,"Item_Category_Code" = EXCLUDED."Item_Category_Code"
---			,"Manufacturer_Code" = EXCLUDED."Manufacturer_Code"
---			,"EDN_Brand_Code" = EXCLUDED."EDN_Brand_Code"
---			,"Service_Item_Group" = EXCLUDED."Service_Item_Group"
---			,"EDN_NAV_Key" = EXCLUDED."EDN_NAV_Key"
---			,"Inventory" = EXCLUDED."Inventory"
---			,"Qty_on_Purch_Order" = EXCLUDED."Qty_on_Purch_Order"
---			,"Qty_on_Prod_Order" = EXCLUDED."Qty_on_Prod_Order"
---			,"Qty_on_Component_Lines" = EXCLUDED."Qty_on_Component_Lines"
---			,"Qty_on_Sales_Order" = EXCLUDED."Qty_on_Sales_Order"
---			,"Qty_on_Service_Order" = EXCLUDED."Qty_on_Service_Order"
---			,"Qty_on_Job_Order" = EXCLUDED."Qty_on_Job_Order"
---			,"Qty_on_Assembly_Order" = EXCLUDED."Qty_on_Assembly_Order"
---			,"Qty_on_Asm_Component" = EXCLUDED."Qty_on_Asm_Component"
---			,"Reserved_Qty_on_Inventory" = EXCLUDED."Reserved_Qty_on_Inventory"
---			,"Reserved_Qty_on_Purch_Orders" = EXCLUDED."Reserved_Qty_on_Purch_Orders"
---			,"EDN_Cooling_Capacity_kW" = EXCLUDED."EDN_Cooling_Capacity_kW"
---			,"EDN_Heating_Capacity_kW" = EXCLUDED."EDN_Heating_Capacity_kW"
---			,"EDN_Refrigerant" = EXCLUDED."EDN_Refrigerant"
---			,"EDN_Refrigerant_Quantity" = EXCLUDED."EDN_Refrigerant_Quantity"
---			,"EDN_Factor_Equivalent" = EXCLUDED."EDN_Factor_Equivalent"
---			,"Costing_Method" = EXCLUDED."Costing_Method"
---			,"Standard_Cost" = EXCLUDED."Standard_Cost"
---			,"Unit_Cost" = EXCLUDED."Unit_Cost"
---			,"Last_Direct_Cost" = EXCLUDED."Last_Direct_Cost"
---			,"Gen_Prod_Posting_Group" = EXCLUDED."Gen_Prod_Posting_Group"
---			,"Inventory_Posting_Group" = EXCLUDED."Inventory_Posting_Group"
---			,"B2BSales" = EXCLUDED."B2BSales"
---			,"ecom" = EXCLUDED."ecom"
---			,"Vendor_No" = EXCLUDED."Vendor_No"
---			,"Safety_Stock_Quantity" = EXCLUDED."Safety_Stock_Quantity"
+--			"No" = EXCLUDED."No"
+--			,"baseUnitOfMeasure" = EXCLUDED."baseUnitOfMeasure"
+--			,"baseGroup" = EXCLUDED."baseGroup"
+--			,"costingMethod" = EXCLUDED."costingMethod"
+--			,"description" = EXCLUDED."description"
+--			,"description2" = EXCLUDED."description2"
+--			,"ednCoolingCapacityKW" = EXCLUDED."ednCoolingCapacityKW"
+--			,"ednEfficiencyIndex" = EXCLUDED."ednEfficiencyIndex"
+--			,"ednFactorType" = EXCLUDED."ednFactorType"
+--			,"ednHeatingCapacityKW" = EXCLUDED."ednHeatingCapacityKW"
+--			,"ednNAVKey" = EXCLUDED."ednNAVKey"
+--			,"ednRefrigerant" = EXCLUDED."ednRefrigerant"
+--			,"ednRefrigerantQuantityUoM" = EXCLUDED."ednRefrigerantQuantityUoM"
+--			,"ednTypeA" = EXCLUDED."ednTypeA"
+--			,"ednTypeB" = EXCLUDED."ednTypeB"
+--			,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
+--			,"inventory" = EXCLUDED."inventory"
+--			,"inventoryPostingGroup" = EXCLUDED."inventoryPostingGroup"
+--			,"manufacturerCode" = EXCLUDED."manufacturerCode"
+--			,"maximumInventory" = EXCLUDED."maximumInventory"
+--			,"maximumOrderQuantity" = EXCLUDED."maximumOrderQuantity"
+--			,"minimumOrderQuantity" = EXCLUDED."minimumOrderQuantity"
+--			,"negativeAdjmtLCY" = EXCLUDED."negativeAdjmtLCY"
+--			,"negativeAdjmtQty" = EXCLUDED."negativeAdjmtQty"
+--			,"netChange" = EXCLUDED."netChange"
+--			,"netInvoicedQty" = EXCLUDED."netInvoicedQty"
+--			,"no2" = EXCLUDED."no2"
+--			,"qtyAssignedToShip" = EXCLUDED."qtyAssignedToShip"
+--			,"qtyPicked" = EXCLUDED."qtyPicked"
+--			,"qtyInTransit" = EXCLUDED."qtyInTransit"
+--			,"qtyOnAsmComponent" = EXCLUDED."qtyOnAsmComponent"
+--			,"qtyOnAssemblyOrder" = EXCLUDED."qtyOnAssemblyOrder"
+--			,"qtyOnComponentLines" = EXCLUDED."qtyOnComponentLines"
+--			,"qtyOnJobOrder" = EXCLUDED."qtyOnJobOrder"
+--			,"qtyOnProdOrder" = EXCLUDED."qtyOnProdOrder"
+--			,"qtyOnPurchOrder" = EXCLUDED."qtyOnPurchOrder"
+--			,"qtyOnPurchReturn" = EXCLUDED."qtyOnPurchReturn"
+--			,"qtyOnSalesOrder" = EXCLUDED."qtyOnSalesOrder"
+--			,"qtyOnSalesReturn" = EXCLUDED."qtyOnSalesReturn"
+--			,"qtyOnServiceOrder" = EXCLUDED."qtyOnServiceOrder"
+--			,"relOrderReceiptQty" = EXCLUDED."relOrderReceiptQty"
+--			,"reservedQtyOnInventory" = EXCLUDED."reservedQtyOnInventory"
+--			,"reservedQtyOnProdOrder" = EXCLUDED."reservedQtyOnProdOrder"
+--			,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
+--			,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
+--			,"unitCost" = EXCLUDED."unitCost"
 --			,"Firma" = EXCLUDED."Firma"
 --			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
@@ -253,137 +264,156 @@ BEGIN
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"No"
-		,"PIM_number"
-		,"Description"
-		,"EDN_Description_2"
-		,"Type"
-		,"Base_Unit_of_Measure"
-		,"EDN_Weight_Packaging"
-		,"Last_Date_Modified"
-		,"GTIN"
-		,"Item_Category_Code"
-		,"Manufacturer_Code"
-		,"EDN_Brand_Code"
-		,"Service_Item_Group"
-		,"EDN_NAV_Key"
-		,"Inventory"
-		,"Qty_on_Purch_Order"
-		,"Qty_on_Prod_Order"
-		,"Qty_on_Component_Lines"
-		,"Qty_on_Sales_Order"
-		,"Qty_on_Service_Order"
-		,"Qty_on_Job_Order"
-		,"Qty_on_Assembly_Order"
-		,"Qty_on_Asm_Component"
-		,"Reserved_Qty_on_Inventory"
-		,"Reserved_Qty_on_Purch_Orders"
-		,"EDN_Cooling_Capacity_kW"
-		,"EDN_Heating_Capacity_kW"
-		,"EDN_Refrigerant"
-		,"EDN_Refrigerant_Quantity"
-		,"EDN_Factor_Equivalent"
-		,"Costing_Method"
-		,"Standard_Cost"
-		,"Unit_Cost"
-		,"Last_Direct_Cost"
-		,"Gen_Prod_Posting_Group"
-		,"Inventory_Posting_Group"
-		,"B2BSales"
-		,"ecom"
-		,"Vendor_No"
-		,"Safety_Stock_Quantity"
+		,"baseUnitOfMeasure"
+		,"baseGroup"
+		,"costingMethod"
+		,"description"
+		,"description2"
+		,"ednCoolingCapacityKW"
+		,"ednEfficiencyIndex"
+		,"ednFactorType"
+		,"ednHeatingCapacityKW"
+		,"ednNAVKey"
+		,"ednRefrigerant"
+		,"ednRefrigerantQuantityUoM"
+		,"ednTypeA"
+		,"ednTypeB"
+		,"genProdPostingGroup"
+		,"inventory"
+		,"inventoryPostingGroup"
+		,"manufacturerCode"
+		,"maximumInventory"
+		,"maximumOrderQuantity"
+		,"minimumOrderQuantity"
+		,"negativeAdjmtLCY"
+		,"negativeAdjmtQty"
+		,"netChange"
+		,"netInvoicedQty"
+		,"no2"
+		,"qtyAssignedToShip"
+		,"qtyPicked"
+		,"qtyInTransit"
+		,"qtyOnAsmComponent"
+		,"qtyOnAssemblyOrder"
+		,"qtyOnComponentLines"
+		,"qtyOnJobOrder"
+		,"qtyOnProdOrder"
+		,"qtyOnPurchOrder"
+		,"qtyOnPurchReturn"
+		,"qtyOnSalesOrder"
+		,"qtyOnSalesReturn"
+		,"qtyOnServiceOrder"
+		,"relOrderReceiptQty"
+		,"reservedQtyOnInventory"
+		,"reservedQtyOnProdOrder"
+		,"reservedQtyOnPurchOrders"
+		,"reservedQtyOnSalesOrders"
+		,"unitCost"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
-		"PIM_number" = EXCLUDED."PIM_number"
-		,"Description" = EXCLUDED."Description"
-		,"EDN_Description_2" = EXCLUDED."EDN_Description_2"
-		,"Type" = EXCLUDED."Type"
-		,"Base_Unit_of_Measure" = EXCLUDED."Base_Unit_of_Measure"
-		,"EDN_Weight_Packaging" = EXCLUDED."EDN_Weight_Packaging"
-		,"Last_Date_Modified" = EXCLUDED."Last_Date_Modified"
-		,"GTIN" = EXCLUDED."GTIN"
-		,"Item_Category_Code" = EXCLUDED."Item_Category_Code"
-		,"Manufacturer_Code" = EXCLUDED."Manufacturer_Code"
-		,"EDN_Brand_Code" = EXCLUDED."EDN_Brand_Code"
-		,"Service_Item_Group" = EXCLUDED."Service_Item_Group"
-		,"EDN_NAV_Key" = EXCLUDED."EDN_NAV_Key"
-		,"Inventory" = EXCLUDED."Inventory"
-		,"Qty_on_Purch_Order" = EXCLUDED."Qty_on_Purch_Order"
-		,"Qty_on_Prod_Order" = EXCLUDED."Qty_on_Prod_Order"
-		,"Qty_on_Component_Lines" = EXCLUDED."Qty_on_Component_Lines"
-		,"Qty_on_Sales_Order" = EXCLUDED."Qty_on_Sales_Order"
-		,"Qty_on_Service_Order" = EXCLUDED."Qty_on_Service_Order"
-		,"Qty_on_Job_Order" = EXCLUDED."Qty_on_Job_Order"
-		,"Qty_on_Assembly_Order" = EXCLUDED."Qty_on_Assembly_Order"
-		,"Qty_on_Asm_Component" = EXCLUDED."Qty_on_Asm_Component"
-		,"Reserved_Qty_on_Inventory" = EXCLUDED."Reserved_Qty_on_Inventory"
-		,"Reserved_Qty_on_Purch_Orders" = EXCLUDED."Reserved_Qty_on_Purch_Orders"
-		,"EDN_Cooling_Capacity_kW" = EXCLUDED."EDN_Cooling_Capacity_kW"
-		,"EDN_Heating_Capacity_kW" = EXCLUDED."EDN_Heating_Capacity_kW"
-		,"EDN_Refrigerant" = EXCLUDED."EDN_Refrigerant"
-		,"EDN_Refrigerant_Quantity" = EXCLUDED."EDN_Refrigerant_Quantity"
-		,"EDN_Factor_Equivalent" = EXCLUDED."EDN_Factor_Equivalent"
-		,"Costing_Method" = EXCLUDED."Costing_Method"
-		,"Standard_Cost" = EXCLUDED."Standard_Cost"
-		,"Unit_Cost" = EXCLUDED."Unit_Cost"
-		,"Last_Direct_Cost" = EXCLUDED."Last_Direct_Cost"
-		,"Gen_Prod_Posting_Group" = EXCLUDED."Gen_Prod_Posting_Group"
-		,"Inventory_Posting_Group" = EXCLUDED."Inventory_Posting_Group"
-		,"B2BSales" = EXCLUDED."B2BSales"
-		,"ecom" = EXCLUDED."ecom"
-		,"Vendor_No" = EXCLUDED."Vendor_No"
-		,"Safety_Stock_Quantity" = EXCLUDED."Safety_Stock_Quantity"
+		"No" = EXCLUDED."No"
+		,"baseUnitOfMeasure" = EXCLUDED."baseUnitOfMeasure"
+		,"baseGroup" = EXCLUDED."baseGroup"
+		,"costingMethod" = EXCLUDED."costingMethod"
+		,"description" = EXCLUDED."description"
+		,"description2" = EXCLUDED."description2"
+		,"ednCoolingCapacityKW" = EXCLUDED."ednCoolingCapacityKW"
+		,"ednEfficiencyIndex" = EXCLUDED."ednEfficiencyIndex"
+		,"ednFactorType" = EXCLUDED."ednFactorType"
+		,"ednHeatingCapacityKW" = EXCLUDED."ednHeatingCapacityKW"
+		,"ednNAVKey" = EXCLUDED."ednNAVKey"
+		,"ednRefrigerant" = EXCLUDED."ednRefrigerant"
+		,"ednRefrigerantQuantityUoM" = EXCLUDED."ednRefrigerantQuantityUoM"
+		,"ednTypeA" = EXCLUDED."ednTypeA"
+		,"ednTypeB" = EXCLUDED."ednTypeB"
+		,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
+		,"inventory" = EXCLUDED."inventory"
+		,"inventoryPostingGroup" = EXCLUDED."inventoryPostingGroup"
+		,"manufacturerCode" = EXCLUDED."manufacturerCode"
+		,"maximumInventory" = EXCLUDED."maximumInventory"
+		,"maximumOrderQuantity" = EXCLUDED."maximumOrderQuantity"
+		,"minimumOrderQuantity" = EXCLUDED."minimumOrderQuantity"
+		,"negativeAdjmtLCY" = EXCLUDED."negativeAdjmtLCY"
+		,"negativeAdjmtQty" = EXCLUDED."negativeAdjmtQty"
+		,"netChange" = EXCLUDED."netChange"
+		,"netInvoicedQty" = EXCLUDED."netInvoicedQty"
+		,"no2" = EXCLUDED."no2"
+		,"qtyAssignedToShip" = EXCLUDED."qtyAssignedToShip"
+		,"qtyPicked" = EXCLUDED."qtyPicked"
+		,"qtyInTransit" = EXCLUDED."qtyInTransit"
+		,"qtyOnAsmComponent" = EXCLUDED."qtyOnAsmComponent"
+		,"qtyOnAssemblyOrder" = EXCLUDED."qtyOnAssemblyOrder"
+		,"qtyOnComponentLines" = EXCLUDED."qtyOnComponentLines"
+		,"qtyOnJobOrder" = EXCLUDED."qtyOnJobOrder"
+		,"qtyOnProdOrder" = EXCLUDED."qtyOnProdOrder"
+		,"qtyOnPurchOrder" = EXCLUDED."qtyOnPurchOrder"
+		,"qtyOnPurchReturn" = EXCLUDED."qtyOnPurchReturn"
+		,"qtyOnSalesOrder" = EXCLUDED."qtyOnSalesOrder"
+		,"qtyOnSalesReturn" = EXCLUDED."qtyOnSalesReturn"
+		,"qtyOnServiceOrder" = EXCLUDED."qtyOnServiceOrder"
+		,"relOrderReceiptQty" = EXCLUDED."relOrderReceiptQty"
+		,"reservedQtyOnInventory" = EXCLUDED."reservedQtyOnInventory"
+		,"reservedQtyOnProdOrder" = EXCLUDED."reservedQtyOnProdOrder"
+		,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
+		,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
+		,"unitCost" = EXCLUDED."unitCost"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."No"
-		,NEW."PIM_number"
-		,NEW."Description"
-		,NEW."EDN_Description_2"
-		,NEW."Type"
-		,NEW."Base_Unit_of_Measure"
-		,NEW."EDN_Weight_Packaging"
-		,NEW."Last_Date_Modified"
-		,NEW."GTIN"
-		,NEW."Item_Category_Code"
-		,NEW."Manufacturer_Code"
-		,NEW."EDN_Brand_Code"
-		,NEW."Service_Item_Group"
-		,NEW."EDN_NAV_Key"
-		,NEW."Inventory"
-		,NEW."Qty_on_Purch_Order"
-		,NEW."Qty_on_Prod_Order"
-		,NEW."Qty_on_Component_Lines"
-		,NEW."Qty_on_Sales_Order"
-		,NEW."Qty_on_Service_Order"
-		,NEW."Qty_on_Job_Order"
-		,NEW."Qty_on_Assembly_Order"
-		,NEW."Qty_on_Asm_Component"
-		,NEW."Reserved_Qty_on_Inventory"
-		,NEW."Reserved_Qty_on_Purch_Orders"
-		,NEW."EDN_Cooling_Capacity_kW"
-		,NEW."EDN_Heating_Capacity_kW"
-		,NEW."EDN_Refrigerant"
-		,NEW."EDN_Refrigerant_Quantity__x005B_UoM_x005D_"
-		,NEW."EDN_Factor_Equivalent__x005B_UoM_x005D_"
-		,NEW."Costing_Method"
-		,NEW."Standard_Cost"
-		,NEW."Unit_Cost"
-		,NEW."Last_Direct_Cost"
-		,NEW."Gen_Prod_Posting_Group"
-		,NEW."Inventory_Posting_Group"
-		,NEW."B2BSales"
-		,NEW."ecom"
-		,NEW."Vendor_No"
-		,NEW."Safety_Stock_Quantity"
+		,NEW."baseUnitOfMeasure"
+		,NEW."baseGroup"
+		,NEW."costingMethod"
+		,NEW."description"
+		,NEW."description2"
+		,NEW."ednCoolingCapacityKW"
+		,NEW."ednEfficiencyIndex"
+		,NEW."ednFactorType"
+		,NEW."ednHeatingCapacityKW"
+		,NEW."ednNAVKey"
+		,NEW."ednRefrigerant"
+		,NEW."ednRefrigerantQuantityUoM"
+		,NEW."ednTypeA"
+		,NEW."ednTypeB"
+		,NEW."genProdPostingGroup"
+		,NEW."inventory"
+		,NEW."inventoryPostingGroup"
+		,NEW."manufacturerCode"
+		,NEW."maximumInventory"
+		,NEW."maximumOrderQuantity"
+		,NEW."minimumOrderQuantity"
+		,NEW."negativeAdjmtLCY"
+		,NEW."negativeAdjmtQty"
+		,NEW."netChange"
+		,NEW."netInvoicedQty"
+		,NEW."no2"
+		,NEW."qtyAssignedToShip"
+		,NEW."qtyPicked"
+		,NEW."qtyInTransit"
+		,NEW."qtyOnAsmComponent"
+		,NEW."qtyOnAssemblyOrder"
+		,NEW."qtyOnComponentLines"
+		,NEW."qtyOnJobOrder"
+		,NEW."qtyOnProdOrder"
+		,NEW."qtyOnPurchOrder"
+		,NEW."qtyOnPurchReturn"
+		,NEW."qtyOnSalesOrder"
+		,NEW."qtyOnSalesReturn"
+		,NEW."qtyOnServiceOrder"
+		,NEW."relOrderReceiptQty"
+		,NEW."reservedQtyOnInventory"
+		,NEW."reservedQtyOnProdOrder"
+		,NEW."reservedQtyOnPurchOrders"
+		,NEW."reservedQtyOnSalesOrders"
+		,NEW."unitCost"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 
