@@ -101,17 +101,18 @@ EXECUTE format($etl$
 	SELECT 
 		$1,$2,$3,$4,$5,$6  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
-	ON CONFLICT("No") DO UPDATE
+	ON CONFLICT("Code") DO UPDATE
 	SET
 		"Code" = EXCLUDED."Code"
 		,"Name" = EXCLUDED."Name"
-		,"Job_Title" = EXCLUDED.
+		,"Job_Title" = EXCLUDED."Job_Title"
 		,"EDN_Supervisor_Code" = EXCLUDED."EDN_Supervisor_Code"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
-		NEW."Name"
+		NEW."Code"
+		,NEW."Name"
 		,NEW."Job_Title"
 		,NEW."EDN_Supervisor_Code"
 		,litera_firmy

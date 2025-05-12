@@ -377,8 +377,6 @@ EXECUTE format($etl$
 		,NEW."sellToCustomerNo"
 		,NEW."shortcutDimension1Code"
 		,NEW."shortcutDimension2Code"
-		,NEW."Firma"
-		,NEW."load_ts"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 

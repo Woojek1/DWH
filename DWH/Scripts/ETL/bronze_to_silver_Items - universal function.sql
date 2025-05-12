@@ -70,6 +70,7 @@ BEGIN
 			,"unitCost" numeric(14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
+			,PRIMARY KEY ("No")
 		);
 	$ddl$, _tabela, _litera_firmy);
 
