@@ -22,6 +22,7 @@ select
 	,sil."lineNo" as "Nr wiersza"
 	,sih."Quote_No" as "Nr oferty"
 	,sil."postingDate" as "Data faktury"
+	,sih."VAT_Registration_No" as "NIP"
 	,sil."amount" as "Wartosc"
 	,sil."ednSalesMargin" as "Marza"
 	,sil."amountIncludingVAT" as "Wartosc z VAT"
@@ -30,6 +31,8 @@ select
 	,max(case when ds."dimensionCode" = 'PRACOWNIK' then ds."dimensionValueName" end) as "PRACOWNIK"
 	,max(case when ds."dimensionCode" = 'PROJEKT' then ds."dimensionValueName" end) as "PROJEKT"
 	,max(case when ds."dimensionCode" = 'REGION' then ds."dimensionValueName" end) as "REGION"
+	,sil."shortcutDimension1Code" as "MPK"
+	,sil."shortcutDimension2Code" as "Nr projektu"
 from
 	silver.bc_posted_sales_invoices_lines_zymetric sil
 inner join
@@ -46,9 +49,12 @@ GROUP BY
 	,sil."lineNo"
 	,sih."Quote_No"
 	,sil."postingDate"
+	,sih."VAT_Registration_No"
 	,sil."amount"
 	,sil."ednSalesMargin"
 	,sil."amountIncludingVAT"
 	,sil."description"
 	,sil."description2"
-order by sil."postingDate" desc, sil."documentNo" asc
+	,sil."shortcutDimension1Code"
+	,sil."shortcutDimension2Code"
+order by sil."postingDate" desc, sil."documentNo" asc, sil."lineNo" asc
