@@ -23,7 +23,7 @@ WITH Oferty_Aircon AS (
 		sl."documentNo" = qh."No"
 ),
 
-Oferty_Technab AS
+Oferty_Technab as (
 	SELECT
 		CONCAT(sl."Firma", '_', sl."documentNo") as "Klucz oferty"
 		,sl."documentType"
@@ -43,7 +43,7 @@ Oferty_Technab AS
 		sl."documentNo" = qh."No"
 ),
 
-Oferty_Zymetric AS
+Oferty_Zymetric AS (
 	SELECT
 		CONCAT(sl."Firma", '_', sl."documentNo") as "Klucz oferty"
 		,sl."documentType"
@@ -56,9 +56,9 @@ Oferty_Zymetric AS
 		,sl."lineAmount" as "Wartosc PLN"
 		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"	
 	FROM
-		silver.bc_sales_lines_technab sl
+		silver.bc_sales_lines_zymetric sl
 	INNER JOIN
-		silver.bc_sales_quotes_header_technab qh
+		silver.bc_sales_quotes_header_zymetric qh
 	ON 
 		sl."documentNo" = qh."No"
 )
