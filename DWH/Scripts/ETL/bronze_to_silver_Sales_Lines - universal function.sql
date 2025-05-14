@@ -3,6 +3,7 @@
 -------------------------------------------------------------
 
 
+
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
@@ -26,6 +27,7 @@ BEGIN
 			,"documentNo" text NOT NULL
 			,"lineNo" int4 NOT NULL
 			,"amount" numeric(14,2) NULL
+			,"amount_LCY" numeric(14,2) NULL
 			,"amountIncludingVAT" numeric(14,2) NULL
 			,"bomItemNo" text NULL
 			,"description" text NULL
@@ -76,6 +78,7 @@ BEGIN
 			,"documentNo"
 			,"lineNo"
 			,"amount"
+			,"amount_LCY"
 			,"amountIncludingVAT"
 			,"bomItemNo"
 			,"description"
@@ -121,6 +124,7 @@ BEGIN
 			,sl."documentNo"
 			,sl."lineNo"
 			,sl."amount"
+			,(sl."amount" * sl."ednPriceListExchangeRate")
 			,sl."amountIncludingVAT"
 			,sl."bomItemNo"
 			,sl."description"
@@ -162,7 +166,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I sl
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
+--	ON CONFLICT zostaje dla przeładowania danych po dodaniu dodatkowej kolumny w tabeli
 
 --		ON CONFLICT ("documentNo", "lineNo") DO UPDATE
 --		SET
@@ -170,6 +174,7 @@ BEGIN
 --		,"documentNo" = EXCLUDED."documentNo"
 --		,"lineNo" = EXCLUDED."lineNo"
 --		,"amount" = EXCLUDED."amount"
+--		,"amount_LCY" = EXCLUDED."amount_LCY"
 --		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
 --		,"bomItemNo" = EXCLUDED."bomItemNo"
 --		,"description" = EXCLUDED."description"
@@ -245,6 +250,7 @@ EXECUTE format($etl$
 		,"documentNo"
 		,"lineNo"
 		,"amount"
+		,"amount_LCY"
 		,"amountIncludingVAT"
 		,"bomItemNo"
 		,"description"
@@ -286,7 +292,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("documentNo", "lineNo") DO UPDATE
@@ -295,6 +301,7 @@ EXECUTE format($etl$
 		,"documentNo" = EXCLUDED."documentNo"
 		,"lineNo" = EXCLUDED."lineNo"
 		,"amount" = EXCLUDED."amount"
+		,"amount_LCY" = EXCLUDED."amount_LCY"
 		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
 		,"bomItemNo" = EXCLUDED."bomItemNo"
 		,"description" = EXCLUDED."description"
@@ -340,6 +347,7 @@ EXECUTE format($etl$
 		,NEW."documentNo"
 		,NEW."lineNo"
 		,NEW."amount"
+		,NEW."amount" * NEW."ednPriceListExchangeRate"
 		,NEW."amountIncludingVAT"
 		,NEW."bomItemNo"
 		,NEW."description"
