@@ -14,7 +14,8 @@ WITH Oferty_Aircon AS (
 		,qh."Document_Date" as "Data dokumentu"
 		,sl."no" as "Symbol urzadzenia"
 		,sl."lineAmount" as "Wartosc PLN"
-		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"	
+		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"
+		,sl."Firma"
 	FROM
 		silver.bc_sales_lines_aircon sl
 	INNER JOIN
@@ -35,7 +36,8 @@ Oferty_Technab as (
 		,sl."no" as "Symbol urzadzenia"
 		,sl."lineAmount" as "Wartosc PLN"
 		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"	
-	FROM
+		,sl."Firma"
+		FROM
 		silver.bc_sales_lines_technab sl
 	INNER JOIN
 		silver.bc_sales_quotes_header_technab qh
@@ -55,7 +57,8 @@ Oferty_Zymetric AS (
 		,sl."no" as "Symbol urzadzenia"
 		,sl."lineAmount" as "Wartosc PLN"
 		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"	
-	FROM
+		,sl."Firma"
+		FROM
 		silver.bc_sales_lines_zymetric sl
 	INNER JOIN
 		silver.bc_sales_quotes_header_zymetric qh

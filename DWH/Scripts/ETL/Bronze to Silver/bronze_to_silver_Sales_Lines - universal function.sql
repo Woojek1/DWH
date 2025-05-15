@@ -51,7 +51,7 @@ BEGIN
 			,"genBusPostingGroup" text NULL
 			,"genProdPostingGroup" text NULL
 			,"lineAmount" numeric(14,2) NULL
-			,"lineDiscount" numeric(6,2) NULL
+			,"lineDiscount" numeric(14,2) NULL
 			,"lineDiscountAmount" numeric(14,2) NULL
 			,"lineDiscountCalculation" text NULL
 			,"locationCode" text NULL
