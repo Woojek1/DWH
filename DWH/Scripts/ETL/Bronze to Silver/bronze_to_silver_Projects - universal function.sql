@@ -154,7 +154,8 @@ EXECUTE format($etl$
 
 	ON CONFLICT("No") DO UPDATE
 	SET
-		"Description" = EXCLUDED."Description"
+		"No" = EXCLUDED."No"
+		,"Description" = EXCLUDED."Description"
 		,"Description_2" = EXCLUDED."Description_2"
 		,"Status" = EXCLUDED."Status"
 		,"Creation_Date" = EXCLUDED."Creation_Date"
