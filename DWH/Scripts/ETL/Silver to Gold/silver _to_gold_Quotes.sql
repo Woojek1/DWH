@@ -1,8 +1,4 @@
-select * from silver.bc_sales_lines_zymetric
-
--------------------------------------------------
-
-CREATE OR REPLACE VIEW gold.v_Oferty AS
+CREATE OR REPLACE MATERIALIZED VIEW gold.Mv_Oferty AS
 WITH Oferty_Aircon AS (
 	SELECT
 		CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz oferty"
@@ -32,7 +28,7 @@ WITH Oferty_Aircon AS (
 		sl."documentNo" = qh."No"
 ),
 
-Oferty_Technab as (
+Oferty_Technab AS (
 	SELECT
 		CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz oferty"
 		,sl."documentType"
@@ -52,7 +48,7 @@ Oferty_Technab as (
 		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
-		,'Technab' as "Firma"
+		,'Technab' AS "Firma"
 	FROM
 		silver.bc_sales_lines_technab sl
 	INNER JOIN
@@ -81,7 +77,7 @@ Oferty_Zymetric AS (
 		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
-		,'Zymetric' as "Firma"
+		,'Zymetric' AS "Firma"
 	FROM
 		silver.bc_sales_lines_zymetric sl
 	INNER JOIN
@@ -98,4 +94,7 @@ SELECT *
 UNION ALL
 SELECT *
 	FROM Oferty_Zymetric
-;
+WITH DATA;
+
+
+SELECT version()
