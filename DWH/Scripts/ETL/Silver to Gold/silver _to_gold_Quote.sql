@@ -5,19 +5,25 @@ select * from silver.bc_sales_lines_zymetric
 CREATE OR REPLACE VIEW gold.v_Oferty AS
 WITH Oferty_Aircon AS (
 	SELECT
-		CONCAT(sl."Firma", '_', sl."documentNo") as "Klucz oferty"
+		CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz oferty"
 		,sl."documentType"
-		,sl."documentNo" as "Numer oferty"
-		,sl."lineNo" as "Linia oferty"
-		,sl."shortcutDimension2Code" as "Nr projektu"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") as "Klucz projektu"
-		,qh."Document_Date" as "Data dokumentu"
-		,sl."no" as "Symbol urzadzenia"
-		,sl."lineAmount" as "Wartosc PLN"
-		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"
-		,qh."Sell_to_Customer_No" as "Nr klienta"
-		,qh."Sell_to_Customer_Name" as "Nazwa klienta"
-		,'Aircon' as "Firma"
+		,sl."documentNo" AS "Numer oferty"
+		,sl."lineNo" AS "Linia oferty"
+		,sl."shortcutDimension2Code" AS "Nr projektu"
+		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "Klucz projektu"
+		,qh."Document_Date" AS "Data dokumentu"
+		,sl."no" AS "Symbol urzadzenia"
+		,sl."lineAmount" AS "Wartosc PLN"
+--		,sl."quantity"
+--		,sl."ednOryUnitCostLCY" as "koszt"
+		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
+		,(sl."lineAmount") - ((sl."ednOryUnitCostLCY") * (sl."quantity")) AS "Zysk PLN"
+		,sl."ednCoolingCapacityKW" AS "Moc chłodnicza"
+		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "Nr klienta"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
+		,qh."Salesperson_Code" AS "Handlowiec"
+		,qh."Status" AS "Status oferty"
+		,'Aircon' AS "Firma"
 	FROM
 		silver.bc_sales_lines_aircon sl
 	INNER JOIN
@@ -28,16 +34,24 @@ WITH Oferty_Aircon AS (
 
 Oferty_Technab as (
 	SELECT
-		CONCAT(sl."Firma", '_', sl."documentNo") as "Klucz oferty"
+		CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz oferty"
 		,sl."documentType"
-		,sl."documentNo" as "Numer oferty"
-		,sl."lineNo" as "Linia oferty"
-		,sl."shortcutDimension2Code" as "Nr projektu"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") as "Klucz projektu"
-		,qh."Document_Date" as "Data dokumentu"
-		,sl."no" as "Symbol urzadzenia"
-		,sl."lineAmount" as "Wartosc PLN"
-		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"	
+		,sl."documentNo" AS "Numer oferty"
+		,sl."lineNo" AS "Linia oferty"
+		,sl."shortcutDimension2Code" AS "Nr projektu"
+		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "Klucz projektu"
+		,qh."Document_Date" AS "Data dokumentu"
+		,sl."no" AS "Symbol urzadzenia"
+		,sl."lineAmount" AS "Wartosc PLN"
+--		,sl."quantity"
+--		,sl."ednOryUnitCostLCY" as "koszt"
+		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
+		,(sl."lineAmount") - ((sl."ednOryUnitCostLCY") * (sl."quantity")) AS "Zysk PLN"
+		,sl."ednCoolingCapacityKW" AS "Moc chłodnicza"
+		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "Nr klienta"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
+		,qh."Salesperson_Code" AS "Handlowiec"
+		,qh."Status" AS "Status oferty"
 		,'Technab' as "Firma"
 	FROM
 		silver.bc_sales_lines_technab sl
@@ -49,16 +63,24 @@ Oferty_Technab as (
 
 Oferty_Zymetric AS (
 	SELECT
-		CONCAT(sl."Firma", '_', sl."documentNo") as "Klucz oferty"
+		CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz oferty"
 		,sl."documentType"
-		,sl."documentNo" as "Numer oferty"
-		,sl."lineNo" as "Linia oferty"
-		,sl."shortcutDimension2Code" as "Nr projektu"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") as "Klucz projektu"
-		,qh."Document_Date" as "Data dokumentu"
-		,sl."no" as "Symbol urzadzenia"
-		,sl."lineAmount" as "Wartosc PLN"
-		,sl."ednCoolingCapacityKW" as "Moc chłodnicza"	
+		,sl."documentNo" AS "Numer oferty"
+		,sl."lineNo" AS "Linia oferty"
+		,sl."shortcutDimension2Code" AS "Nr projektu"
+		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "Klucz projektu"
+		,qh."Document_Date" AS "Data dokumentu"
+		,sl."no" AS "Symbol urzadzenia"
+		,sl."lineAmount" AS "Wartosc PLN"
+--		,sl."quantity"
+--		,sl."ednOryUnitCostLCY" as "koszt"
+		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
+		,(sl."lineAmount") - ((sl."ednOryUnitCostLCY") * (sl."quantity")) AS "Zysk PLN"
+		,sl."ednCoolingCapacityKW" AS "Moc chłodnicza"
+		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "Nr klienta"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
+		,qh."Salesperson_Code" AS "Handlowiec"
+		,qh."Status" AS "Status oferty"
 		,'Zymetric' as "Firma"
 	FROM
 		silver.bc_sales_lines_zymetric sl
