@@ -26,6 +26,7 @@ BEGIN
 			"documentType" text NOT NULL
 			,"documentNo" text NOT NULL
 			,"lineNo" int4 NOT NULL
+			,"quantity" numeric(14,2) NULL
 			,"amount" numeric(14,2) NULL
 			,"amountIncludingVAT" numeric(14,2) NULL
 			,"bomItemNo" text NULL
@@ -76,6 +77,7 @@ BEGIN
 			"documentType"
 			,"documentNo"
 			,"lineNo"
+			,"quantity"
 			,"amount"
 			,"amountIncludingVAT"
 			,"bomItemNo"
@@ -121,6 +123,7 @@ BEGIN
 			sl."documentType"
 			,sl."documentNo"
 			,sl."lineNo"
+			,sl."quantity"
 			,sl."amount"
 			,sl."amountIncludingVAT"
 			,sl."bomItemNo"
@@ -170,6 +173,7 @@ BEGIN
 --		"documentType" = EXCLUDED."documentType"
 --		,"documentNo" = EXCLUDED."documentNo"
 --		,"lineNo" = EXCLUDED."lineNo"
+--		,"quantity" = EXCLUDED."quantity"
 --		,"amount" = EXCLUDED."amount"
 --		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
 --		,"bomItemNo" = EXCLUDED."bomItemNo"
@@ -245,6 +249,7 @@ EXECUTE format($etl$
 		"documentType"
 		,"documentNo"
 		,"lineNo"
+		,"quantity"
 		,"amount"
 		,"amountIncludingVAT"
 		,"bomItemNo"
@@ -295,6 +300,7 @@ EXECUTE format($etl$
 		"documentType" = EXCLUDED."documentType"
 		,"documentNo" = EXCLUDED."documentNo"
 		,"lineNo" = EXCLUDED."lineNo"
+		,"quantity" = EXCLUDED."quantity"
 		,"amount" = EXCLUDED."amount"
 		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
 		,"bomItemNo" = EXCLUDED."bomItemNo"
@@ -340,6 +346,7 @@ EXECUTE format($etl$
 		NEW."documentType"
 		,NEW."documentNo"
 		,NEW."lineNo"
+		,NEW."quantity"
 		,NEW."amount"
 		,NEW."amountIncludingVAT"
 		,NEW."bomItemNo"
