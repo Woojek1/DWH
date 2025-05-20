@@ -20,6 +20,7 @@ with Projekty_Aircon as (
 		,"Planned_Delivery_Date" as "Planowana data dostawy"
 		,"Project_Account_Manager" as "Account Manager"
 		,"Salesperson_Code" as "Kod sprzedawcy"
+		,'Aircon' AS "Firma"
 	from
 		silver.bc_projects_aircon
 ),
@@ -41,6 +42,7 @@ Projekty_Technab as (
 		,"Planned_Delivery_Date" as "Planowana data dostawy"
 		,"Project_Account_Manager" as "Account Manager"
 		,"Salesperson_Code" as "Kod sprzedawcy"
+		,'Technab' AS "Firma"
 	from
 		silver.bc_projects_technab
 ),
@@ -62,6 +64,7 @@ Projekty_Zymetric as (
 		,"Planned_Delivery_Date" as "Planowana data dostawy"
 		,"Project_Account_Manager" as "Account Manager"
 		,"Salesperson_Code" as "Kod sprzedawcy"
+		,'Zymetric' AS "Firma"
 	from
 		silver.bc_projects_zymetric
 )

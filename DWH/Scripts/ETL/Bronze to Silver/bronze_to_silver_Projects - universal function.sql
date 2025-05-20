@@ -66,7 +66,7 @@ BEGIN
 			p."No"
 			,TRIM(p."Description")
 			,TRIM(p."Description_2")
-			,REPLACE(p."Status", '0 %', '0%')
+			,REPLACE(p."Status", '0 %%', '0%%')
 			,NULLIF(p."Creation_Date", DATE '0001-01-01')
 			,p."Manufacturer_Code"
 			,INITCAP(TRIM(p."City"))
@@ -175,7 +175,7 @@ EXECUTE format($etl$
 		NEW."No"
 		,TRIM(NEW."Description")
 		,TRIM(NEW."Description_2")
-		,REPLACE(NEW."Status", '0 %', '0%')
+		,REPLACE(NEW."Status", '0 %%', '0%%')
 		,NULLIF(NEW."Creation_Date", DATE '0001-01-01')
 		,NEW."Manufacturer_Code"
 		,INITCAP(TRIM(NEW."City"))
