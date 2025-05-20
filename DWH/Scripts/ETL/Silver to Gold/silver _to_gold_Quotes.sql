@@ -1,4 +1,4 @@
-CREATE OR REPLACE MATERIALIZED VIEW gold.Mv_Oferty AS
+CREATE OR REPLACE VIEW gold.v_Oferty AS
 WITH Oferty_Aircon AS (
 	SELECT
 		CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz oferty"
@@ -10,7 +10,7 @@ WITH Oferty_Aircon AS (
 		,qh."Document_Date" AS "Data dokumentu"
 		,sl."no" AS "Symbol urzadzenia"
 		,sl."lineAmount" AS "Wartosc PLN"
---		,sl."quantity"
+		,sl."quantity" AS "Ilosc"
 --		,sl."ednOryUnitCostLCY" as "koszt"
 		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
 		,(sl."lineAmount") - ((sl."ednOryUnitCostLCY") * (sl."quantity")) AS "Zysk PLN"
@@ -19,6 +19,7 @@ WITH Oferty_Aircon AS (
 		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
+		,qh."EDN_Quote_Type_Code" AS "Kod typu oferty"
 		,'Aircon' AS "Firma"
 	FROM
 		silver.bc_sales_lines_aircon sl
@@ -39,7 +40,7 @@ Oferty_Technab AS (
 		,qh."Document_Date" AS "Data dokumentu"
 		,sl."no" AS "Symbol urzadzenia"
 		,sl."lineAmount" AS "Wartosc PLN"
---		,sl."quantity"
+		,sl."quantity" AS "Ilosc"
 --		,sl."ednOryUnitCostLCY" as "koszt"
 		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
 		,(sl."lineAmount") - ((sl."ednOryUnitCostLCY") * (sl."quantity")) AS "Zysk PLN"
@@ -48,6 +49,7 @@ Oferty_Technab AS (
 		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
+		,qh."EDN_Quote_Type_Code" AS "Kod typu oferty"
 		,'Technab' AS "Firma"
 	FROM
 		silver.bc_sales_lines_technab sl
@@ -68,7 +70,7 @@ Oferty_Zymetric AS (
 		,qh."Document_Date" AS "Data dokumentu"
 		,sl."no" AS "Symbol urzadzenia"
 		,sl."lineAmount" AS "Wartosc PLN"
---		,sl."quantity"
+		,sl."quantity" AS "Ilosc"
 --		,sl."ednOryUnitCostLCY" as "koszt"
 		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
 		,(sl."lineAmount") - ((sl."ednOryUnitCostLCY") * (sl."quantity")) AS "Zysk PLN"
@@ -77,6 +79,7 @@ Oferty_Zymetric AS (
 		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
+		,qh."EDN_Quote_Type_Code" AS "Kod typu oferty"
 		,'Zymetric' AS "Firma"
 	FROM
 		silver.bc_sales_lines_zymetric sl
@@ -94,7 +97,6 @@ SELECT *
 UNION ALL
 SELECT *
 	FROM Oferty_Zymetric
-WITH DATA;
+;
 
 
-SELECT version()
