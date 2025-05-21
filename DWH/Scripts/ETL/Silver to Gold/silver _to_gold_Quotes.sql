@@ -28,7 +28,7 @@ WITH Oferty_Aircon AS (
 			AS "Zysk PLN"
 		,sl."ednCoolingCapacityKW" AS "Moc chLodnicza"
 		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "Klucz nabywcy"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
-		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
+		,qh."Sell_to_Customer_Name" AS "Nazwa nabywcy"
 --		,qh."VAT_Registration_No" AS "NIP"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
@@ -71,7 +71,7 @@ Oferty_Technab AS (
 			AS "Zysk PLN"
 		,sl."ednCoolingCapacityKW" AS "Moc chLodnicza"
 		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "Klucz nabywcy"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
-		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
+		,qh."Sell_to_Customer_Name" AS "Nazwa nabywcy"
 --		,qh."VAT_Registration_No" AS "NIP"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
@@ -114,7 +114,7 @@ Oferty_Zymetric AS (
 			AS "Zysk PLN"
 		,sl."ednCoolingCapacityKW" AS "Moc chLodnicza"
 		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "Klucz nabywcy"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
-		,qh."Sell_to_Customer_Name" AS "Nazwa klienta"
+		,qh."Sell_to_Customer_Name" AS "Nazwa nabywcy"
 --		,qh."VAT_Registration_No" AS "NIP"
 		,qh."Salesperson_Code" AS "Handlowiec"
 		,qh."Status" AS "Status oferty"
