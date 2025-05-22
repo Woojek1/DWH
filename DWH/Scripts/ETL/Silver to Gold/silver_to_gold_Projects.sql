@@ -2,71 +2,74 @@ select * from silver.bc_projects_aircon
 
 -------------------------------------------------
 
-create or replace view gold.v_Projekty AS
+create or replace view gold.v_projects AS
 with Projekty_Aircon as (
 	select
-		concat("Firma", '_', "No") as "Klucz projektu"
-		,"No" as "Numer projektu"
-		,"Description" as "Nazwa projektu"
-		,"Description_2" as "Etap projektu"
-		,"Status" as "Status"
-		,"Creation_Date" as "Data utworzenia"
-		,"Manufacturer_Code" as "Kod Producenta"
-		,"City" as "Miasto"
-		,"County" as "Wojewodztwo"
-		,"Object_Type" as "Typ obiektu"
-		,"Project_Source" as "Zrodlo projektu"
-		,"Manufacturer" as "Producent"
-		,"Planned_Delivery_Date" as "Planowana data dostawy"
-		,"Project_Account_Manager" as "Account Manager"
-		,"Salesperson_Code" as "Kod sprzedawcy"
+		p."No" as "NoProject"
+		,concat(p."Firma", '_', p."No") as "KeyNoProject"
+		,p."Description" as "ProjectName"
+		,p."Description_2" as "ProjectStage"
+		,p."Status" as "Status"
+		,p."Creation_Date" as "CreationDate"
+		,p."Manufacturer_Code" as "Manufacturer_Code"
+		,p."City" as "City"
+		,p."County" as "County"
+		,p."Object_Type" as "ObjectType"
+		,p."Project_Source" as "ProjectSource"
+		,p."Manufacturer" as "Manufacturer"
+		,p."Planned_Delivery_Date" as "PlannedDeliveryDate"
+		,p."Project_Account_Manager" as "AccountManager"
+		,p."Salesperson_Code" as "Salesperson_Code"
+		,p."load_ts" AS "LoadDate" 
 		,'Aircon' AS "Firma"
 	from
-		silver.bc_projects_aircon
+		silver.bc_projects_aircon p
 ),
 
 Projekty_Technab as (
 	select
-		concat("Firma", '_', "No") as "Klucz projektu"
-		,"No" as "Numer projektu"
-		,"Description" as "Nazwa projektu"
-		,"Description_2" as "Etap projektu"
-		,"Status" as "Status"
-		,"Creation_Date" as "Data utworzenia"
-		,"Manufacturer_Code" as "Kod Producenta"
-		,"City" as "Miasto"
-		,"County" as "Wojewodztwo"
-		,"Object_Type" as "Typ obiektu"
-		,"Project_Source" as "Zrodlo projektu"
-		,"Manufacturer" as "Producent"
-		,"Planned_Delivery_Date" as "Planowana data dostawy"
-		,"Project_Account_Manager" as "Account Manager"
-		,"Salesperson_Code" as "Kod sprzedawcy"
+		p."No" as "NoProject"
+		,concat(p."Firma", '_', p."No") as "KeyNoProject"
+		,p."Description" as "ProjectName"
+		,p."Description_2" as "ProjectStage"
+		,p."Status" as "Status"
+		,p."Creation_Date" as "CreationDate"
+		,p."Manufacturer_Code" as "Manufacturer_Code"
+		,p."City" as "City"
+		,p."County" as "County"
+		,p."Object_Type" as "ObjectType"
+		,p."Project_Source" as "ProjectSource"
+		,p."Manufacturer" as "Manufacturer"
+		,p."Planned_Delivery_Date" as "PlannedDeliveryDate"
+		,p."Project_Account_Manager" as "AccountManager"
+		,p."Salesperson_Code" as "Salesperson_Code"
+		,p."load_ts" AS "LoadDate" 
 		,'Technab' AS "Firma"
 	from
-		silver.bc_projects_technab
+		silver.bc_projects_technab p
 ),
 
 Projekty_Zymetric as (
 	select
-		concat("Firma", '_', "No") as "Klucz projektu"
-		,"No" as "Numer projektu"
-		,"Description" as "Nazwa projektu"
-		,"Description_2" as "Etap projektu"
-		,"Status" as "Status"
-		,"Creation_Date" as "Data utworzenia"
-		,"Manufacturer_Code" as "Kod Producenta"
-		,"City" as "Miasto"
-		,"County" as "Wojewodztwo"
-		,"Object_Type" as "Typ obiektu"
-		,"Project_Source" as "Zrodlo projektu"
-		,"Manufacturer" as "Producent"
-		,"Planned_Delivery_Date" as "Planowana data dostawy"
-		,"Project_Account_Manager" as "Account Manager"
-		,"Salesperson_Code" as "Kod sprzedawcy"
+		p."No" as "NoProject"
+		,concat(p."Firma", '_', p."No") as "KeyNoProject"
+		,p."Description" as "ProjectName"
+		,p."Description_2" as "ProjectStage"
+		,p."Status" as "Status"
+		,p."Creation_Date" as "CreationDate"
+		,p."Manufacturer_Code" as "Manufacturer_Code"
+		,p."City" as "City"
+		,p."County" as "County"
+		,p."Object_Type" as "ObjectType"
+		,p."Project_Source" as "ProjectSource"
+		,p."Manufacturer" as "Manufacturer"
+		,p."Planned_Delivery_Date" as "PlannedDeliveryDate"
+		,p."Project_Account_Manager" as "AccountManager"
+		,p."Salesperson_Code" as "Salesperson_Code"
+		,p."load_ts" AS "LoadDate" 
 		,'Zymetric' AS "Firma"
 	from
-		silver.bc_projects_zymetric
+		silver.bc_projects_zymetric p
 )
 
 select *
