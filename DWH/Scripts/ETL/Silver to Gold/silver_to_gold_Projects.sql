@@ -1,9 +1,5 @@
-select * from silver.bc_projects_aircon
-
--------------------------------------------------
-
 create or replace view gold.v_projects AS
-with Projekty_Aircon as (
+with Projects_Aircon as (
 	select
 		p."No" as "NoProject"
 		,concat(p."Firma", '_', p."No") as "KeyNoProject"
@@ -20,13 +16,13 @@ with Projekty_Aircon as (
 		,p."Planned_Delivery_Date" as "PlannedDeliveryDate"
 		,p."Project_Account_Manager" as "AccountManager"
 		,p."Salesperson_Code" as "Salesperson_Code"
-		,p."load_ts" AS "LoadDate" 
-		,'Aircon' AS "Firma"
+		,p."load_ts" as "LoadDate" 
+		,'Aircon' as "Firma"
 	from
 		silver.bc_projects_aircon p
 ),
 
-Projekty_Technab as (
+Projects_Technab as (
 	select
 		p."No" as "NoProject"
 		,concat(p."Firma", '_', p."No") as "KeyNoProject"
@@ -43,13 +39,13 @@ Projekty_Technab as (
 		,p."Planned_Delivery_Date" as "PlannedDeliveryDate"
 		,p."Project_Account_Manager" as "AccountManager"
 		,p."Salesperson_Code" as "Salesperson_Code"
-		,p."load_ts" AS "LoadDate" 
-		,'Technab' AS "Firma"
+		,p."load_ts" as "LoadDate" 
+		,'Technab' as "Firma"
 	from
 		silver.bc_projects_technab p
 ),
 
-Projekty_Zymetric as (
+Projects_Zymetric as (
 	select
 		p."No" as "NoProject"
 		,concat(p."Firma", '_', p."No") as "KeyNoProject"
@@ -66,18 +62,18 @@ Projekty_Zymetric as (
 		,p."Planned_Delivery_Date" as "PlannedDeliveryDate"
 		,p."Project_Account_Manager" as "AccountManager"
 		,p."Salesperson_Code" as "Salesperson_Code"
-		,p."load_ts" AS "LoadDate" 
-		,'Zymetric' AS "Firma"
+		,p."load_ts" as "LoadDate" 
+		,'Zymetric' as "Firma"
 	from
 		silver.bc_projects_zymetric p
 )
 
 select *
-	from Projekty_Aircon
+	from Projects_Aircon
 union all
 select *
-	from Projekty_Technab
+	from Projects_Technab
 union all
 select *
-	from Projekty_Zymetric
+	from Projects_Zymetric
 ;
