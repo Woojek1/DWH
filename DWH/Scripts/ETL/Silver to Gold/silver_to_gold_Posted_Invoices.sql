@@ -16,35 +16,36 @@ on sil."dimensionSetID" = ds."dimensionSetID"
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE VIEW  gold.v_faktury AS
-WITH Faktury_Aircon AS (
-	SELECT 
-		CONCAT(sil."Firma", '_', sil."documentNo") AS "Klucz faktury"
-		,sil."documentNo" AS "Nr faktury"
-		,sil."lineNo" AS "Nr wiersza"
-		,sih."Quote_No" AS "Nr oferty"
-		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "Klucz oferty"
-		,sil."shortcutDimension2Code" AS "Nr projektu"
-		,CONCAT(sIl."Firma", '_', sIl."shortcutDimension2Code") AS "Klucz projektu"
-		,sih."Order_No" AS "Nr zamowienia"
-		,CONCAT(sil."Firma", '_', sih."Order_No") AS "Klucz zamówienia"	
-		,sil."postingDate" AS "Data faktury"
+CREATE OR REPLACE VIEW  gold.v_Invoices AS
+WITH Invoices_Aircon AS (
+	select
+		sil."documentNo" AS "NoInvoice"
+		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
+		,sil."lineNo" AS "InvoiceLine"
+		,sih."Quote_No" AS "NoQuote"
+		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "KeyNoQuote"
+		,sil."shortcutDimension2Code" AS "NoProject"
+		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
+		,sih."Order_No" AS "NoOrder"
+		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
+		,sil."postingDate" AS "InvoiceDate"
 		,sih."VAT_Registration_No" AS "NIP"
-		,sil."amount" AS "Wartosc"
-		,sil."quantity" AS "Ilosc"
+		,sil."quantity" AS "Quantity"
+		,sil."amount" AS "Amount"
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt urzadzen PLN"
-		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "Zysk PLN"		
-		,sil."ednSalesMargin" AS "Marza"
-		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "Nr klienta"
-		,MAX(sih."Sell_to_Customer_Name") AS "Nazwa klienta"
-		,sil."amountIncludingVAT" AS "Wartosc z VAT"
-		,sil."no" AS "Symbol urzadzenia"
-		,sil."description2" AS "Opis urzadzenia"
-		,MAX(CASE WHEN ds."dimensionCode" = 'PRACOWNIK' THEN ds."dimensionValueName" END) AS "Pracownik"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsPLN"
+		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "ProfitPLN"		
+		,sil."ednSalesMargin" AS "Margin"
+		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "NoCustomer"
+		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
+		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,sil."no" AS "NoItem"
+		,sil."description2" AS "ItemDescription"
+		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
-		,'Aircon' AS "Firma"
+		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
+		,'Aircon' AS "Company"
 	FROM
 		silver.bc_posted_sales_invoices_lines_aircon sil
 	INNER JOIN
@@ -78,33 +79,34 @@ WITH Faktury_Aircon AS (
 		,sil."no" ASC
 	),
 	
-Faktury_Technab AS (
+Invoices_Technab AS (
 	SELECT 
-		CONCAT(sil."Firma", '_', sil."documentNo") AS "Klucz faktury"
-		,sil."documentNo" AS "Nr faktury"
-		,sil."lineNo" AS "Nr wiersza"
-		,sih."Quote_No" AS "Nr oferty"
-		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "Klucz oferty"
-		,sil."shortcutDimension2Code" AS "Nr projektu"
-		,CONCAT(sIl."Firma", '_', sIl."shortcutDimension2Code") AS "Klucz projektu"
-		,sih."Order_No" AS "Nr zamowienia"
-		,CONCAT(sil."Firma", '_', sih."Order_No") AS "Klucz zamówienia"	
-		,sil."postingDate" AS "Data faktury"
+		sil."documentNo" AS "NoInvoice"
+		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
+		,sil."lineNo" AS "InvoiceLine"
+		,sih."Quote_No" AS "NoQuote"
+		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "KeyNoQuote"
+		,sil."shortcutDimension2Code" AS "NoProject"
+		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
+		,sih."Order_No" AS "NoOrder"
+		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
+		,sil."postingDate" AS "InvoiceDate"
 		,sih."VAT_Registration_No" AS "NIP"
-		,sil."amount" AS "Wartosc"
-		,sil."quantity" AS "Ilosc"
+		,sil."quantity" AS "Quantity"
+		,sil."amount" AS "Amount"
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt urzadzen PLN"
-		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "Zysk PLN"		
-		,sil."ednSalesMargin" AS "Marza"
-		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "Nr klienta"
-		,MAX(sih."Sell_to_Customer_Name") AS "Nazwa klienta"
-		,sil."amountIncludingVAT" AS "Wartosc z VAT"
-		,sil."no" AS "Symbol urzadzenia"
-		,sil."description2" AS "Opis urzadzenia"
-		,MAX(CASE WHEN ds."dimensionCode" = 'PRACOWNIK' THEN ds."dimensionValueName" END) AS "Pracownik"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsPLN"
+		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "ProfitPLN"		
+		,sil."ednSalesMargin" AS "Margin"
+		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "NoCustomer"
+		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
+		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,sil."no" AS "NoItem"
+		,sil."description2" AS "ItemDescription"
+		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
+		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Technab' AS "Firma"
 	FROM
 		silver.bc_posted_sales_invoices_lines_technab sil
@@ -139,33 +141,34 @@ Faktury_Technab AS (
 		,sil."no" ASC
 ),
 
-Faktury_Zymetric AS (
+Invoices_Zymetric AS (
 	SELECT 
-				CONCAT(sil."Firma", '_', sil."documentNo") AS "Klucz faktury"
-		,sil."documentNo" AS "Nr faktury"
-		,sil."lineNo" AS "Nr wiersza"
-		,sih."Quote_No" AS "Nr oferty"
-		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "Klucz oferty"
-		,sil."shortcutDimension2Code" AS "Nr projektu"
-		,CONCAT(sIl."Firma", '_', sIl."shortcutDimension2Code") AS "Klucz projektu"
-		,sih."Order_No" AS "Nr zamowienia"
-		,CONCAT(sil."Firma", '_', sih."Order_No") AS "Klucz zamówienia"	
-		,sil."postingDate" AS "Data faktury"
+		sil."documentNo" AS "NoInvoice"
+		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
+		,sil."lineNo" AS "InvoiceLine"
+		,sih."Quote_No" AS "NoQuote"
+		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "KeyNoQuote"
+		,sil."shortcutDimension2Code" AS "NoProject"
+		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
+		,sih."Order_No" AS "NoOrder"
+		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
+		,sil."postingDate" AS "InvoiceDate"
 		,sih."VAT_Registration_No" AS "NIP"
-		,sil."amount" AS "Wartosc"
-		,sil."quantity" AS "Ilosc"
+		,sil."quantity" AS "Quantity"
+		,sil."amount" AS "Amount"
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt urzadzen PLN"
-		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "Zysk PLN"		
-		,sil."ednSalesMargin" AS "Marza"
-		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "Nr klienta"
-		,MAX(sih."Sell_to_Customer_Name") AS "Nazwa klienta"
-		,sil."amountIncludingVAT" AS "Wartosc z VAT"
-		,sil."no" AS "Symbol urzadzenia"
-		,sil."description2" AS "Opis urzadzenia"
-		,MAX(CASE WHEN ds."dimensionCode" = 'PRACOWNIK' THEN ds."dimensionValueName" END) AS "Pracownik"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsPLN"
+		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "ProfitPLN"		
+		,sil."ednSalesMargin" AS "Margin"
+		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "NoCustomer"
+		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
+		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,sil."no" AS "NoItem"
+		,sil."description2" AS "ItemDescription"
+		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
+		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Zymetric' AS "Firma"
 	FROM
 		silver.bc_posted_sales_invoices_lines_zymetric sil
@@ -201,11 +204,11 @@ Faktury_Zymetric AS (
 	)
 	
 SELECT *
-	FROM Faktury_Aircon
+	FROM Invoices_Aircon
 UNION ALL
 SELECT *
-	FROM Faktury_Technab
+	FROM Invoices_Technab
 UNION ALL
 SELECT *
-	FROM Faktury_Zymetric
+	FROM Invoices_Zymetric
 ;
