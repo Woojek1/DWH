@@ -1,9 +1,9 @@
-CREATE OR REPLACE VIEW gold.v_oferty AS
+CREATE OR REPLACE VIEW gold.v_quotes AS
 WITH Quotes_Aircon AS (
 	SELECT
 		sl."documentNo" AS "NoQuote"
 		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoQuote"
-		,sl."documentType" AS "documentType"
+		,sl."documentType" AS "DocumentType"
 		,sl."shortcutDimension2Code" AS "NoProject"
 		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
 		,qh."Document_Date" AS "QuoteDate"
@@ -12,7 +12,7 @@ WITH Quotes_Aircon AS (
 		,sl."quantity" AS "Quantity"
 		,sl."lineAmount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate (do zmiany)"
+		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
 			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
 			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
@@ -26,7 +26,7 @@ WITH Quotes_Aircon AS (
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
 		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
-		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "NoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,qh."Sell_to_Customer_Name" AS "CustomerName"
 --		,qh."VAT_Registration_No" AS "NIP"
 		,qh."Salesperson_Code" AS "SalespersonCode"
@@ -46,7 +46,7 @@ Quotes_Technab AS (
 		SELECT
 		sl."documentNo" AS "NoQuote"
 		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoQuote"
-		,sl."documentType" AS "documentType"
+		,sl."documentType" AS "DocumentType"
 		,sl."shortcutDimension2Code" AS "NoProject"
 		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
 		,qh."Document_Date" AS "QuoteDate"
@@ -55,7 +55,7 @@ Quotes_Technab AS (
 		,sl."quantity" AS "Quantity"
 		,sl."lineAmount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate (do zmiany)"
+		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
 			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
 			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
@@ -69,7 +69,7 @@ Quotes_Technab AS (
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
 		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
-		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "NoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,qh."Sell_to_Customer_Name" AS "CustomerName"
 --		,qh."VAT_Registration_No" AS "NIP"
 		,qh."Salesperson_Code" AS "SalespersonCode"
@@ -89,7 +89,7 @@ Quotes_Zymetric AS (
 	SELECT
 		sl."documentNo" AS "NoQuote"
 		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoQuote"
-		,sl."documentType" AS "documentType"
+		,sl."documentType" AS "DocumentType"
 		,sl."shortcutDimension2Code" AS "NoProject"
 		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
 		,qh."Document_Date" AS "QuoteDate"
@@ -98,7 +98,7 @@ Quotes_Zymetric AS (
 		,sl."quantity" AS "Quantity"
 		,sl."lineAmount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate (do zmiany)"
+		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
 			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
 			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
@@ -112,7 +112,7 @@ Quotes_Zymetric AS (
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
 		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
-		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "NoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,qh."Sell_to_Customer_Name" AS "CustomerName"
 --		,qh."VAT_Registration_No" AS "NIP"
 		,qh."Salesperson_Code" AS "SalespersonCode"
