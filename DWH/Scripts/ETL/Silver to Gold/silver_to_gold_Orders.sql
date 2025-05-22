@@ -2,43 +2,44 @@ select * from silver.bc_sales_lines_zymetric
 
 -------------------------------------------------
 
-CREATE OR REPLACE VIEW gold.v_zamowienia AS
-WITH Zamowienia_Aircon AS (
+CREATE OR REPLACE VIEW gold.v_orders AS
+WITH Orders_Aircon AS (
 	SELECT
-		sl."documentNo" AS "Nr zamowienia"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz zamowienia"
-		,sl."documentType" as "Typ dokumentu"
-		,sl."shortcutDimension2Code" AS "Nr projektu"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "Klucz projektu"
-		,oh."Quote_No" as "Nr oferty"
-		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "Klucz oferty"
-		,oh."Posting_Date" AS "Data zamowienia"
-		,sl."lineNo" AS "Linia zamowienia"
-		,sl."no" AS "Symbol urzadzenia"
-		,sl."quantity" AS "Ilosc"		
-		,sl."lineAmount" AS "Wartosc"
-		,oh."Currency_Code" as "Kod waluty dokumentu"
-		,sl."ednPriceListExchangeRate" AS "Kurs wymiany (do zmiany)"
+		sl."documentNo" AS "NoOrder"
+		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoOrder"
+		,sl."documentType" as "DocumentType"
+		,sl."shortcutDimension2Code" AS "NoProject"
+		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
+		,oh."Quote_No" as "NoQuote"
+		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "KeyNoQuote"
+		,oh."Posting_Date" AS "OrderDate"
+		,sl."lineNo" AS "OrderLine"
+		,sl."no" AS "NoItem"
+		,sl."quantity" AS "Quantity"		
+		,sl."lineAmount" AS "LineAmount"
+		,oh."Currency_Code" as "CurrencyCode"
+		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
 			WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
 			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
-		END AS "Wartosc PLN"
+		END AS "LineAmountPLN"
 --		,sl."ednOryUnitCostLCY" as "koszt"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
+		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
 		,(
 			CASE
 				WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
 				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
-			AS "Zysk PLN"
-		,sl."ednCoolingCapacityKW" AS "Moc chłodnicza"
-		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "Klucz nabywcy"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
-		,oh."Sell_to_Customer_Name" AS "Nazwa nabywcy"
-		,oh."Salesperson_Code" AS "Handlowiec"
-		,oh."Status" AS "Stan"
-		,oh."OrderStatus" AS "Status zamowienia" 
-		,'Aircon' AS "Firma"
+			AS "ProfitPLN"
+		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,oh."Sell_to_Customer_Name" AS "CustomerName"
+		,oh."Salesperson_Code" AS "SalespersonCode"
+		,oh."Status" AS "Status"
+		,oh."OrderStatus" AS "OrderStatus"
+		,GREATEST(oh."load_ts", sl."load_ts") as "LoadDate"
+		,'Aircon' AS "Company"
 	FROM
 		silver.bc_sales_lines_aircon sl
 	INNER JOIN
@@ -47,41 +48,42 @@ WITH Zamowienia_Aircon AS (
 		sl."documentNo" = oh."No"
 ),
 
-Zamowienia_Technab AS (
+Orders_Technab AS (
 	SELECT
-		sl."documentNo" AS "Nr zamowienia"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz zamowienia"
-		,sl."documentType" as "Typ dokumentu"
-		,sl."shortcutDimension2Code" AS "Nr projektu"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "Klucz projektu"
-		,oh."Quote_No" as "Nr oferty"
-		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "Klucz oferty"
-		,oh."Posting_Date" AS "Data zamowienia"
-		,sl."lineNo" AS "Linia zamowienia"
-		,sl."no" AS "Symbol urzadzenia"
-		,sl."quantity" AS "Ilosc"		
-		,sl."lineAmount" AS "Wartosc"
-		,oh."Currency_Code" as "Kod waluty dokumentu"
-		,sl."ednPriceListExchangeRate" AS "Kurs wymiany (do zmiany)"
+		sl."documentNo" AS "NoOrder"
+		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoOrder"
+		,sl."documentType" as "DocumentType"
+		,sl."shortcutDimension2Code" AS "NoProject"
+		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
+		,oh."Quote_No" as "NoQuote"
+		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "KeyNoQuote"
+		,oh."Posting_Date" AS "OrderDate"
+		,sl."lineNo" AS "OrderLine"
+		,sl."no" AS "NoItem"
+		,sl."quantity" AS "Quantity"		
+		,sl."lineAmount" AS "LineAmount"
+		,oh."Currency_Code" as "CurrencyCode"
+		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
 			WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
 			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
-		END AS "Wartosc PLN"
+		END AS "LineAmountPLN"
 --		,sl."ednOryUnitCostLCY" as "koszt"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
+		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
 		,(
 			CASE
 				WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
 				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
-			AS "Zysk PLN"
-		,sl."ednCoolingCapacityKW" AS "Moc chłodnicza"
-		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "Klucz nabywcy"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
-		,oh."Sell_to_Customer_Name" AS "Nazwa nabywcy"
-		,oh."Salesperson_Code" AS "Handlowiec"
-		,oh."Status" AS "Stan"
-		,oh."OrderStatus" AS "Status zamowienia" 
+			AS "ProfitPLN"
+		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,oh."Sell_to_Customer_Name" AS "CustomerName"
+		,oh."Salesperson_Code" AS "SalespersonCode"
+		,oh."Status" AS "Status"
+		,oh."OrderStatus" AS "OrderStatus"
+		,GREATEST(oh."load_ts", sl."load_ts") as "LoadDate"
 		,'Technab' AS "Firma"
 	FROM
 		silver.bc_sales_lines_technab sl
@@ -91,41 +93,42 @@ Zamowienia_Technab AS (
 		sl."documentNo" = oh."No"
 	),
 	
-Zamowienia_Zymetric AS (
+Orders_Zymetric AS (
 	SELECT
-		sl."documentNo" AS "Nr zamowienia"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "Klucz zamowienia"
-		,sl."documentType" as "Typ dokumentu"
-		,sl."shortcutDimension2Code" AS "Nr projektu"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "Klucz projektu"
-		,oh."Quote_No" as "Nr oferty"
-		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "Klucz oferty"
-		,oh."Posting_Date" AS "Data zamowienia"
-		,sl."lineNo" AS "Linia zamowienia"
-		,sl."no" AS "Symbol urzadzenia"
-		,sl."quantity" AS "Ilosc"		
-		,sl."lineAmount" AS "Wartosc"
-		,oh."Currency_Code" as "Kod waluty dokumentu"
-		,sl."ednPriceListExchangeRate" AS "Kurs wymiany (do zmiany)"
+		sl."documentNo" AS "NoOrder"
+		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoOrder"
+		,sl."documentType" as "DocumentType"
+		,sl."shortcutDimension2Code" AS "NoProject"
+		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
+		,oh."Quote_No" as "NoQuote"
+		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "KeyNoQuote"
+		,oh."Posting_Date" AS "OrderDate"
+		,sl."lineNo" AS "OrderLine"
+		,sl."no" AS "NoItem"
+		,sl."quantity" AS "Quantity"		
+		,sl."lineAmount" AS "LineAmount"
+		,oh."Currency_Code" as "CurrencyCode"
+		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
 			WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
 			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
-		END AS "Wartosc PLN"
+		END AS "LineAmountPLN"
 --		,sl."ednOryUnitCostLCY" as "koszt"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "Koszt urzadzen PLN"
+		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
 		,(
 			CASE
 				WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
 				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
-			AS "Zysk PLN"
-		,sl."ednCoolingCapacityKW" AS "Moc chłodnicza"
-		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "Klucz nabywcy"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
-		,oh."Sell_to_Customer_Name" AS "Nazwa nabywcy"
-		,oh."Salesperson_Code" AS "Handlowiec"
-		,oh."Status" AS "Stan"
-		,oh."OrderStatus" AS "Status zamowienia" 
+			AS "ProfitPLN"
+		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
+		,oh."Sell_to_Customer_Name" AS "CustomerName"
+		,oh."Salesperson_Code" AS "SalespersonCode"
+		,oh."Status" AS "Status"
+		,oh."OrderStatus" AS "OrderStatus"
+		,GREATEST(oh."load_ts", sl."load_ts") as "LoadDate"
 		,'Zymetric' AS "Firma"
 	FROM
 		silver.bc_sales_lines_zymetric sl
@@ -136,11 +139,11 @@ Zamowienia_Zymetric AS (
 )
 
 SELECT *
-	FROM Zamowienia_Aircon
+	FROM Orders_Aircon
 UNION ALL
 SELECT *
-	FROM Zamowienia_Technab
+	FROM Orders_Technab
 UNION ALL
 SELECT *
-	FROM Zamowienia_Zymetric
+	FROM Orders_Zymetric
 ;

@@ -104,7 +104,7 @@ BEGIN
 	END LOOP;
 END;
 $$;
-
+ 
 
 
 
@@ -175,7 +175,7 @@ EXECUTE format($etl$
 		NEW."No"
 		,TRIM(NEW."Description")
 		,TRIM(NEW."Description_2")
-		,REPLACE(NEW."Status", '0 %%', '0%%')
+		,REPLACE(NEW."Status", '0 %', '0%')
 		,NULLIF(NEW."Creation_Date", DATE '0001-01-01')
 		,NEW."Manufacturer_Code"
 		,INITCAP(TRIM(NEW."City"))
