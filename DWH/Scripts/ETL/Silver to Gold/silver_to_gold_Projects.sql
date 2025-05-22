@@ -17,7 +17,7 @@ with Projects_Aircon as (
 		,p."Project_Account_Manager" as "AccountManager"
 		,p."Salesperson_Code" as "Salesperson_Code"
 		,p."load_ts" as "LoadDate" 
-		,'Aircon' as "Firma"
+		,'Aircon' as "Company"
 	from
 		silver.bc_projects_aircon p
 ),
@@ -40,7 +40,7 @@ Projects_Technab as (
 		,p."Project_Account_Manager" as "AccountManager"
 		,p."Salesperson_Code" as "Salesperson_Code"
 		,p."load_ts" as "LoadDate" 
-		,'Technab' as "Firma"
+		,'Technab' as "Company"
 	from
 		silver.bc_projects_technab p
 ),
@@ -63,7 +63,7 @@ Projects_Zymetric as (
 		,p."Project_Account_Manager" as "AccountManager"
 		,p."Salesperson_Code" as "Salesperson_Code"
 		,p."load_ts" as "LoadDate" 
-		,'Zymetric' as "Firma"
+		,'Zymetric' as "Company"
 	from
 		silver.bc_projects_zymetric p
 )
