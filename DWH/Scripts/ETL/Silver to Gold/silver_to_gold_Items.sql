@@ -1,148 +1,121 @@
-CREATE OR REPLACE VIEW gold.v_Zapasy AS
-WITH Zapasy_Aircon AS (
+CREATE OR REPLACE VIEW gold.v_Items AS
+WITH Items_Aircon AS (
 	SELECT 
-		i."No" AS "Nr"
-		,CONCAT(i."Firma", '_', "No") AS "Klucz Nr"
+		i."No" AS "NoItem"
+		,CONCAT(i."Firma", '_', "No") AS "KeyNoItem"
 		,i."no2" AS "Indeks PIM"
-		,i."inventory" AS "Ilosc zapasu"
-		,i."unitCost" AS "Koszt jednostkowy"
-		,i."baseUnitOfMeasure"  AS "Jednostka miary"
-		,i."baseGroup" AS "Grupa zapasow"
-		,i."ednTypeA" AS "Typ A"
-		,i."ednTypeB" AS "Typ B"
-		,i."costingMethod" AS "Metoda wyceny"
-		,i."description" AS "Opis"
-		,i."description2" AS "Opis2"
-		,i."ednCoolingCapacityKW" AS "Wydajnosc chłodnicza"
-		,i."ednHeatingCapacityKW" AS "Wydajnosc grzewcza" 
-		,i."ednEfficiencyIndex" AS "Wskaznik wydajnosci"
-		,i."ednFactorType" AS "Czynnik chlodniczy"
-		,i."ednRefrigerantQuantityUoM" AS "Ilosc czynnika"
-		,i."genProdPostingGroup" AS "Glowna tow grupa ksiegowa"
-		,i."inventoryPostingGroup" AS "Grupa ksiegowa zapasow"
-		,i."manufacturerCode" AS "Kod producenta"
---		,i."qtyAssignedToShip"
---		,i."qtyPicked"
---		,i."qtyInTransit"
---		,i."qtyOnAsmComponent"
---		,i."qtyOnAssemblyOrder"	
---		,i."qtyOnComponentLines"
---		,i."qtyOnJobOrder"	
---		,i."qtyOnProdOrder"
-		,i."qtyOnPurchOrder" AS "Ilosc na zamowieniu zakupu"
---		,i."qtyOnPurchReturn"
-		,i."qtyOnSalesOrder" AS "Ilosc na zamowieniu sprzedazy"
---		,i."qtyOnSalesReturn"	
-		,i."qtyOnServiceOrder" AS "Ilosc na zleceniu serwisowym"	
---		,i."relOrderReceiptQty"
-		,i."reservedQtyOnInventory" AS "Ilosc zarezerwowana w zapasach"
---		,i."reservedQtyOnProdOrder"	
-		,i."reservedQtyOnPurchOrders" AS "Ilosc zarezerwowana w zamowieniach zakupu"
-		,i."reservedQtyOnSalesOrders" AS "Ilosc zarezerwowana na zamowieniach sprzedazy"
-		,'Aircon' AS "Firma"
+		,i."inventory" AS "StockQuantity"
+		,i."unitCost" AS "UnitCost"
+		,i."baseUnitOfMeasure"  AS "UnitOfMeasure"
+		,i."baseGroup" AS "InventoryGroup"
+		,i."ednTypeA" AS "ItemTypeA"
+		,i."ednTypeB" AS "ItemTypeB"
+		,i."costingMethod" AS "ValuationMethod"
+		,i."description" AS "Description"
+		,i."description2" AS "Description2"
+		,i."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,i."ednHeatingCapacityKW" AS "HeatingCapacity" 
+		,i."ednEfficiencyIndex" AS "PerformanceIndex"
+		,i."ednFactorType" AS "Refrigerant"
+		,i."ednRefrigerantQuantityUoM" AS "RefrigerantQuantity"
+		,i."genProdPostingGroup" AS "MainInventoryAccountingGroup"
+		,i."inventoryPostingGroup" AS "InventoryPostingGroup"
+		,i."manufacturerCode" AS "ManufacturerCode"
+		,i."qtyOnPurchOrder" AS "PurchaseOrderQuantity"
+		,i."qtyOnSalesOrder" AS "SalesOrderQuantity"
+		,i."qtyOnServiceOrder" AS "ServiceOrderQuantity"	
+		,i."reservedQtyOnInventory" AS "ReservedInventoryQuantity"
+		,i."reservedQtyOnPurchOrders" AS "ReservedPurchaseOrderQuantity"
+		,i."reservedQtyOnSalesOrders" AS "ReservedSalesOrderQuantity"
+		,i."load_ts" AS "LoadDate" 
+		,'Aircon' AS "Company"
 	FROM
 		silver.bc_items_aircon i
-	),
+	WHERE 
+		i."inventoryPostingGroup" <> 'USŁUGI'
+),
 	
-	Zapasy_Technab AS (
+Items_Technab AS (
 	SELECT 
-		i."No" AS "Nr"
-		,CONCAT(i."Firma", '_', "No") AS "Klucz Nr"
+		i."No" AS "NoItem"
+		,CONCAT(i."Firma", '_', "No") AS "KeyNoItem"
 		,i."no2" AS "Indeks PIM"
-		,i."inventory" AS "Ilosc zapasu"
-		,i."unitCost" AS "Koszt jednostkowy"
-		,i."baseUnitOfMeasure"  AS "Jednostka miary"
-		,i."baseGroup" AS "Grupa zapasow"
-		,i."ednTypeA" AS "Typ A"
-		,i."ednTypeB" AS "Typ B"
-		,i."costingMethod" AS "Metoda wyceny"
-		,i."description" AS "Opis"
-		,i."description2" AS "Opis2"
-		,i."ednCoolingCapacityKW" AS "Wydajnosc chłodnicza"
-		,i."ednHeatingCapacityKW" AS "Wydajnosc grzewcza" 
-		,i."ednEfficiencyIndex" AS "Wskaznik wydajnosci"
-		,i."ednFactorType" AS "Czynnik chlodniczy"
-		,i."ednRefrigerantQuantityUoM" AS "Ilosc czynnika"
-		,i."genProdPostingGroup" AS "Glowna tow grupa ksiegowa"
-		,i."inventoryPostingGroup" AS "Grupa ksiegowa zapasow"
-		,i."manufacturerCode" AS "Kod producenta"
---		,i."qtyAssignedToShip"
---		,i."qtyPicked"
---		,i."qtyInTransit"
---		,i."qtyOnAsmComponent"
---		,i."qtyOnAssemblyOrder"	
---		,i."qtyOnComponentLines"
---		,i."qtyOnJobOrder"	
---		,i."qtyOnProdOrder"
-		,i."qtyOnPurchOrder" AS "Ilosc na zamowieniu zakupu"
---		,i."qtyOnPurchReturn"
-		,i."qtyOnSalesOrder" AS "Ilosc na zamowieniu sprzedazy"
---		,i."qtyOnSalesReturn"	
-		,i."qtyOnServiceOrder" AS "Ilosc na zleceniu serwisowym"	
---		,i."relOrderReceiptQty"
-		,i."reservedQtyOnInventory" AS "Ilosc zarezerwowana w zapasach"
---		,i."reservedQtyOnProdOrder"	
-		,i."reservedQtyOnPurchOrders" AS "Ilosc zarezerwowana w zamowieniach zakupu"
-		,i."reservedQtyOnSalesOrders" AS "Ilosc zarezerwowana na zamowieniach sprzedazy"
+		,i."inventory" AS "StockQuantity"
+		,i."unitCost" AS "UnitCost"
+		,i."baseUnitOfMeasure"  AS "UnitOfMeasure"
+		,i."baseGroup" AS "InventoryGroup"
+		,i."ednTypeA" AS "ItemTypeA"
+		,i."ednTypeB" AS "ItemTypeB"
+		,i."costingMethod" AS "ValuationMethod"
+		,i."description" AS "Description"
+		,i."description2" AS "Description2"
+		,i."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,i."ednHeatingCapacityKW" AS "HeatingCapacity" 
+		,i."ednEfficiencyIndex" AS "PerformanceIndex"
+		,i."ednFactorType" AS "Refrigerant"
+		,i."ednRefrigerantQuantityUoM" AS "RefrigerantQuantity"
+		,i."genProdPostingGroup" AS "MainInventoryAccountingGroup"
+		,i."inventoryPostingGroup" AS "InventoryPostingGroup"
+		,i."manufacturerCode" AS "ManufacturerCode"
+		,i."qtyOnPurchOrder" AS "PurchaseOrderQuantity"
+		,i."qtyOnSalesOrder" AS "SalesOrderQuantity"
+		,i."qtyOnServiceOrder" AS "ServiceOrderQuantity"	
+		,i."reservedQtyOnInventory" AS "ReservedInventoryQuantity"
+		,i."reservedQtyOnPurchOrders" AS "ReservedPurchaseOrderQuantity"
+		,i."reservedQtyOnSalesOrders" AS "ReservedSalesOrderQuantity"
+		,i."load_ts" AS "LoadDate" 
 		,'Technab' AS "Firma"
 	FROM
 		silver.bc_items_technab i
-	),
+	WHERE 
+		i."inventoryPostingGroup" <> 'USŁUGI'
+),
 	
-	Zapasy_Zymetric AS (
+Items_Zymetric AS (
 	SELECT 
-		i."No" AS "Nr"
-		,CONCAT(i."Firma", '_', "No") AS "Klucz Nr"
+		i."No" AS "NoItem"
+		,CONCAT(i."Firma", '_', "No") AS "KeyNoItem"
 		,i."no2" AS "Indeks PIM"
-		,i."inventory" AS "Ilosc zapasu"
-		,i."unitCost" AS "Koszt jednostkowy"
-		,i."baseUnitOfMeasure"  AS "Jednostka miary"
-		,i."baseGroup" AS "Grupa zapasow"
-		,i."ednTypeA" AS "Typ A"
-		,i."ednTypeB" AS "Typ B"
-		,i."costingMethod" AS "Metoda wyceny"
-		,i."description" AS "Opis"
-		,i."description2" AS "Opis2"
-		,i."ednCoolingCapacityKW" AS "Wydajnosc chłodnicza"
-		,i."ednHeatingCapacityKW" AS "Wydajnosc grzewcza" 
-		,i."ednEfficiencyIndex" AS "Wskaznik wydajnosci"
-		,i."ednFactorType" AS "Czynnik chlodniczy"
-		,i."ednRefrigerantQuantityUoM" AS "Ilosc czynnika"
-		,i."genProdPostingGroup" AS "Glowna tow grupa ksiegowa"
-		,i."inventoryPostingGroup" AS "Grupa ksiegowa zapasow"
-		,i."manufacturerCode" AS "Kod producenta"
---		,i."qtyAssignedToShip"
---		,i."qtyPicked"
---		,i."qtyInTransit"
---		,i."qtyOnAsmComponent"
---		,i."qtyOnAssemblyOrder"	
---		,i."qtyOnComponentLines"
---		,i."qtyOnJobOrder"	
---		,i."qtyOnProdOrder"
-		,i."qtyOnPurchOrder" AS "Ilosc na zamowieniu zakupu"
---		,i."qtyOnPurchReturn"
-		,i."qtyOnSalesOrder" AS "Ilosc na zamowieniu sprzedazy"
---		,i."qtyOnSalesReturn"	
-		,i."qtyOnServiceOrder" AS "Ilosc na zleceniu serwisowym"	
---		,i."relOrderReceiptQty"
-		,i."reservedQtyOnInventory" AS "Ilosc zarezerwowana w zapasach"
---		,i."reservedQtyOnProdOrder"	
-		,i."reservedQtyOnPurchOrders" AS "Ilosc zarezerwowana w zamowieniach zakupu"
-		,i."reservedQtyOnSalesOrders" AS "Ilosc zarezerwowana na zamowieniach sprzedazy"
+		,i."inventory" AS "StockQuantity"
+		,i."unitCost" AS "UnitCost"
+		,i."baseUnitOfMeasure"  AS "UnitOfMeasure"
+		,i."baseGroup" AS "InventoryGroup"
+		,i."ednTypeA" AS "ItemTypeA"
+		,i."ednTypeB" AS "ItemTypeB"
+		,i."costingMethod" AS "ValuationMethod"
+		,i."description" AS "Description"
+		,i."description2" AS "Description2"
+		,i."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,i."ednHeatingCapacityKW" AS "HeatingCapacity" 
+		,i."ednEfficiencyIndex" AS "PerformanceIndex"
+		,i."ednFactorType" AS "Refrigerant"
+		,i."ednRefrigerantQuantityUoM" AS "RefrigerantQuantity"
+		,i."genProdPostingGroup" AS "MainInventoryAccountingGroup"
+		,i."inventoryPostingGroup" AS "InventoryPostingGroup"
+		,i."manufacturerCode" AS "ManufacturerCode"
+		,i."qtyOnPurchOrder" AS "PurchaseOrderQuantity"
+		,i."qtyOnSalesOrder" AS "SalesOrderQuantity"
+		,i."qtyOnServiceOrder" AS "ServiceOrderQuantity"	
+		,i."reservedQtyOnInventory" AS "ReservedInventoryQuantity"
+		,i."reservedQtyOnPurchOrders" AS "ReservedPurchaseOrderQuantity"
+		,i."reservedQtyOnSalesOrders" AS "ReservedSalesOrderQuantity"
+		,i."load_ts" AS "LoadDate"
 		,'Zymetric' AS "Firma"
 	FROM
 		silver.bc_items_zymetric i
-	)
+	WHERE 
+		i."inventoryPostingGroup" <> 'USŁUGI'
+)
 	
 SELECT *
 FROM
-	Zapasy_Aircon
+	Items_Aircon
 UNION ALL
 SELECT *
 FROM
-	Zapasy_Technab
+	Items_Technab
 UNION ALL
 SELECT *
 FROM
-	Zapasy_Zymetric
+	Items_Zymetric
 ;
