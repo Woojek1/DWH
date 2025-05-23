@@ -47,7 +47,7 @@ BEGIN
 			,"Location_Code" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-		);
+		); 
 	$ddl$, _tabela, _litera_firmy);
 
 -- Pierwsze ładowanie danych z bronze do silver
