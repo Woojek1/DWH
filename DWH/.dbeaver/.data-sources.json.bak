@@ -22,7 +22,7 @@
 				"auth-model": "native"
 			},
 			"custom-properties": {
-				"resultset.maxrows": "1"
+				"resultset.maxrows": "15000"
 			}
 		}
 	},
