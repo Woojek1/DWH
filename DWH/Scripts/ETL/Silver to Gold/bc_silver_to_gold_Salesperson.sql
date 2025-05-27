@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW gold.v_bc_customers AS
+CREATE OR REPLACE VIEW gold.v_bc_salesperson AS
 WITH Salespersons_Aircon AS (
 	SELECT 	
 		sp."Code" as "Code"
