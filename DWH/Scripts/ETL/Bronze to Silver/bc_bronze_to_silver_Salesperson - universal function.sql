@@ -24,6 +24,7 @@ BEGIN
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"Code" text PRIMARY KEY
 			,"Name" text NULL
+			,"E_Mail" text NULL
 			,"Job_Title" text NULL
 			,"EDN_Supervisor_Code" text NULL
 			,"Firma" char(1) DEFAULT %L
@@ -36,16 +37,18 @@ BEGIN
 		INSERT INTO silver.%I (
 			"Code"
 			,"Name"
+			,"E_Mail"
 			,"Job_Title"
 			,"EDN_Supervisor_Code"
 			,"Firma"
 			,"load_ts"
 		)
 		SELECT
-			"Code"
-			,"Name"
-			,"Job_Title"
-			,"EDN_Supervisor_Code"
+			s."Code"
+			,s."Name"
+			,s."E_Mail"
+			,s."Job_Title"
+			,s."EDN_Supervisor_Code"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I s
@@ -55,7 +58,8 @@ BEGIN
 --		ON CONFLICT ("Code") DO UPDATE
 --		SET
 --			"Name" = EXCLUDED."Name"
---			,"Job_Title" = EXCLUDED.
+--			"E-Mail" = EXCLUDED."E-Mail"
+--			,"Job_Title" = EXCLUDED."Job_Title"
 --			,"EDN_Supervisor_Code" = EXCLUDED."EDN_Supervisor_Code"
 --			,"Firma" = EXCLUDED."Firma"		
 --			,"load_ts" = CURRENT_TIMESTAMP
@@ -93,18 +97,20 @@ EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"Code"
 		,"Name"
+		,"E_Mail"
 		,"Job_Title"
 		,"EDN_Supervisor_Code"
 		,"Firma"
 		,"load_ts"
 		)
 	SELECT 
-		$1,$2,$3,$4,$5,$6  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Code") DO UPDATE
 	SET
 		"Code" = EXCLUDED."Code"
 		,"Name" = EXCLUDED."Name"
+		,"E_Mail" = EXCLUDED."E_Mail"
 		,"Job_Title" = EXCLUDED."Job_Title"
 		,"EDN_Supervisor_Code" = EXCLUDED."EDN_Supervisor_Code"
 		,"Firma" = EXCLUDED."Firma"
@@ -113,6 +119,7 @@ EXECUTE format($etl$
 	USING
 		NEW."Code"
 		,NEW."Name"
+		,NEW."E_Mail"
 		,NEW."Job_Title"
 		,NEW."EDN_Supervisor_Code"
 		,litera_firmy
