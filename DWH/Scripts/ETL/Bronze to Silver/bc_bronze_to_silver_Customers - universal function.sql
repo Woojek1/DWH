@@ -104,8 +104,8 @@ BEGIN
 		SELECT
 			c."No"
 			,c."Contact_Type"
-			,c."Name"
-			,c."Name_2"
+			,REGEXP_REPLACE(c."Name", '''', '', 'g') as "Name"
+			,REGEXP_REPLACE(c."Name_2", '''', '', 'g') as "Name_2"
 			,c."Search_Name"
 			,c."IC_Partner_Code"
 			,c."Balance_LCY"
@@ -292,8 +292,8 @@ EXECUTE format($etl$
 	USING
 		NEW."No"
 		,NEW."Contact_Type"
-		,NEW."Name"
-		,NEW."Name_2"
+		,REGEXP_REPLACE(NEW."Name", '''', '', 'g')
+		,REGEXP_REPLACE(NEW."Name_2", '''', '', 'g')
 		,NEW."Search_Name"
 		,NEW."IC_Partner_Code"
 		,NEW."Balance_LCY"
