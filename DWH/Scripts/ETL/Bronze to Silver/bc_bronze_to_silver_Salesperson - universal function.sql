@@ -6,7 +6,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY[ 'aircon', 'zymetric', 'technab'];
+_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
 -- zmienne
 _firma text;
 _tabela text;
