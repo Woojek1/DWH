@@ -75,7 +75,7 @@ BEGIN
 	$ddl$, _tabela, _litera_firmy);
 
 
-
+ 
 -- Pierwsze ładowanie danych z bronze do silver
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
@@ -127,15 +127,14 @@ BEGIN
 			,"unitCost"
 			,"Firma"
 			,"load_ts"
-
 		)
 		SELECT
 			"No"
 			,i."baseUnitOfMeasure"
 			,i."baseGroup"
 			,i."costingMethod"
-			,i."description"
-			,REGEXP_REPLACE(i."description2", E'[\\''?]', '', 'g') AS "description2"
+			,REGEXP_REPLACE(i."description", '''', '', 'g')
+			,REGEXP_REPLACE(i."description2", '''', '', 'g')
 			,i."ednCoolingCapacityKW"
 			,i."ednEfficiencyIndex"
 			,i."ednFactorType"
@@ -373,8 +372,8 @@ EXECUTE format($etl$
 		,NEW."baseUnitOfMeasure"
 		,NEW."baseGroup"
 		,NEW."costingMethod"
-		,NEW."description"
-		,REGEXP_REPLACE(i."description2", E'[\\''?]', '', 'g') AS "description2"
+		,REGEXP_REPLACE(NEW."description", '''', '', 'g')
+		,REGEXP_REPLACE(NEW."description2", '''', '', 'g')
 		,NEW."ednCoolingCapacityKW"
 		,NEW."ednEfficiencyIndex"
 		,NEW."ednFactorType"
