@@ -279,7 +279,7 @@ EXECUTE format($etl$
 		,NEW."no"
 		,NEW."postingDate"
 		,NEW."postingGroup"
-		,NEW.quantity
+		,NEW."quantity"
 		,NEW."sellToCustomerNo"
 		,NEW."shortcutDimension1Code"
 		,NEW."shortcutDimension2Code"

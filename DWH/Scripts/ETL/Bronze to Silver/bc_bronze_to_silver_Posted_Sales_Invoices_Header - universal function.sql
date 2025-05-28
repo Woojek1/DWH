@@ -2,7 +2,7 @@
 -- CREATING POSTED SALES INVOICES LINES TABLES IN SILVER LAYER AND FIRST LOAD
 -----------------------------------------------------------------------------
 
-
+ 
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
@@ -41,6 +41,8 @@ BEGIN
 			,"Salesperson_Code" text NULL	
 			,"EDN_Factoring_Invoice" bool NULL
 			,"EDN_KUKE_Symbol" text NULL
+			,"Currency_Code" text NULL
+			,"Currency_Factor" numeric(14,4) NULL
 			,"Shipment_Date" date NULL
 			,"Payment_Terms_Code" text NULL
 			,"Payment_Method_Code" text NULL
@@ -77,6 +79,8 @@ BEGIN
 			,"Salesperson_Code"
 			,"EDN_Factoring_Invoice"
 			,"EDN_KUKE_Symbol"
+			,"Currency_Code"
+			,"Currency_Factor"
 			,"Shipment_Date"
 			,"Payment_Terms_Code"
 			,"Payment_Method_Code"
@@ -109,6 +113,8 @@ BEGIN
 			,ih."Salesperson_Code"
 			,ih."EDN_Factoring_Invoice"
 			,ih."EDN_KUKE_Symbol"
+			,ih."Currency_Code"
+			,NULL
 			,ih."Shipment_Date"
 			,ih."Payment_Terms_Code"
 			,ih."Payment_Method_Code"
@@ -144,6 +150,8 @@ BEGIN
 --			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
 --			,"EDN_Factoring_Invoice" = EXCLUDED."EDN_Factoring_Invoice"
 --			,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
+--			,"Currency_Code" = EXCLUDED."Currency_Code"
+--			,"Currency_Factor" = EXCLUDED."Currency_Factor"
 --			,"Shipment_Date" = EXCLUDED."Shipment_Date"
 --			,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
 --			,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
@@ -205,6 +213,8 @@ EXECUTE format($etl$
 		,"Salesperson_Code"
 		,"EDN_Factoring_Invoice"
 		,"EDN_KUKE_Symbol"
+		,"Currency_Code"
+		,"Currency_Factor"
 		,"Shipment_Date"
 		,"Payment_Terms_Code"
 		,"Payment_Method_Code"
@@ -218,7 +228,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -240,6 +250,8 @@ EXECUTE format($etl$
 		,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
 		,"EDN_Factoring_Invoice" = EXCLUDED."EDN_Factoring_Invoice"
 		,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
+		,"Currency_Code" = EXCLUDED."Currency_Code"
+		,"Currency_Factor" = EXCLUDED."Currency_Factor"
 		,"Shipment_Date" = EXCLUDED."Shipment_Date"
 		,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
 		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
@@ -272,6 +284,8 @@ EXECUTE format($etl$
 		,NEW."Salesperson_Code"
 		,NEW."EDN_Factoring_Invoice"
 		,NEW."EDN_KUKE_Symbol"
+		,NEW."Currency_Code"
+		,NEW."Currency_Factor"
 		,NEW."Shipment_Date"
 		,NEW."Payment_Terms_Code"
 		,NEW."Payment_Method_Code"
