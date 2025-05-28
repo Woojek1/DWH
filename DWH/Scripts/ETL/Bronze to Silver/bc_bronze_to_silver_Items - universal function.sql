@@ -69,6 +69,7 @@ BEGIN
 			,"reservedQtyOnPurchOrders" numeric(14,2) NULL
 			,"reservedQtyOnSalesOrders" numeric(14,2) NULL
 			,"systemId" text NULL
+			,"systemModifiedAt" timestamptz NULL
 			,"unitCost" numeric(14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
@@ -128,6 +129,7 @@ BEGIN
 			,"reservedQtyOnPurchOrders"
 			,"reservedQtyOnSalesOrders"
 			,"systemId"
+			,"systemModifiedAt"
 			,"unitCost"
 			,"Firma"
 			,"load_ts"
@@ -180,6 +182,7 @@ BEGIN
 			,i."reservedQtyOnPurchOrders"
 			,i."reservedQtyOnSalesOrders"
 			,i."systemId"
+			,i."systemModifiedAt"
 			,i."unitCost"
 			,%L
         	,CURRENT_TIMESTAMP
@@ -236,6 +239,7 @@ BEGIN
 --			,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
 --			,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
 --			,"systemId" = EXCLUDED."systemId"
+--			,"systemModifiedAt" = EXCLUDED."systemModifiedAt"
 --			,"unitCost" = EXCLUDED."unitCost"
 --			,"Firma" = EXCLUDED."Firma"
 --			,"load_ts" = CURRENT_TIMESTAMP
@@ -318,12 +322,14 @@ EXECUTE format($etl$
 		,"reservedQtyOnPurchOrders"
 		,"reservedQtyOnSalesOrders"
 		,"systemId"
+		,"systemModifiedAt"
 		,"unitCost"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
+		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
@@ -375,6 +381,7 @@ EXECUTE format($etl$
 		,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
 		,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
 		,"systemId" = EXCLUDED."systemId"
+		,"systemModifiedAt" = EXCLUDED."systemModifiedAt"
 		,"unitCost" = EXCLUDED."unitCost"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
@@ -427,6 +434,7 @@ EXECUTE format($etl$
 		,NEW."reservedQtyOnPurchOrders"
 		,NEW."reservedQtyOnSalesOrders"
 		,NEW."systemId"
+		,NEW."systemModifiedAt"
 		,NEW."unitCost"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;

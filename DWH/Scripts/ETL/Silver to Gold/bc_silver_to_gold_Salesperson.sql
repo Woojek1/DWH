@@ -2,7 +2,7 @@ CREATE OR REPLACE VIEW gold.v_bc_salesperson AS
 WITH Salespersons_Aircon AS (
 	SELECT 	
 		sp."Code" as "Code"
-		,concat(sp."Firma", '_', sp."Code") as "KeyNoCustomer"
+		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
 		,sp."Name" as "Name"
 		,sp."E_Mail" as "Email"
 		,sp."Job_Title" as "JobTitle"
@@ -16,7 +16,7 @@ WITH Salespersons_Aircon AS (
 Salespersons_Technab as (
 	SELECT 	
 		sp."Code" as "Code"
-		,concat(sp."Firma", '_', sp."Code") as "KeyNoCustomer"
+		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
 		,sp."Name" as "Name"
 		,sp."E_Mail" as "Email"
 		,sp."Job_Title" as "JobTitle"
@@ -30,7 +30,7 @@ Salespersons_Technab as (
 Salespersons_Zymetric as (
 	SELECT 	
 		sp."Code" as "Code"
-		,concat(sp."Firma", '_', sp."Code") as "KeyNoCustomer"
+		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
 		,sp."Name" as "Name"
 		,sp."E_Mail" as "Email"
 		,sp."Job_Title" as "JobTitle"
