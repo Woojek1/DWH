@@ -12,11 +12,10 @@ inner join
 	silver.bc_dimension_set_zymetric ds
 on sil."dimensionSetID" = ds."dimensionSetID"
 
-
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE VIEW  gold.v_bc_posted_invoices AS
+CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices AS
 WITH Invoices_Aircon AS (
 	select
 		sil."documentNo" AS "NoInvoice"
@@ -33,17 +32,28 @@ WITH Invoices_Aircon AS (
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
 		,sih."VAT_Registration_No" AS "NIP"
+		,MAX(sih."Currency_Code") as "CurrencyCode"
+		,MAX(sih."Currency_Factor") as "CurrencyFactor"
+		,sil."type" as "Type"
 		,sil."no" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
 		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
 		,sil."amount" AS "Amount"
-		
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			else sil."amount"
+		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsPLN"
-		
-		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "ProfitPLN"	
-		,sil."ednSalesMargin" AS "Margin"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+		,((case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			else sil."amount"
+		end) - 
+		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
+		,(sil."lineDiscount"/100) as "LineDiscount"
+		,sil."lineDiscountAmount" as "LineDiscountAmount"
+		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
@@ -84,7 +94,7 @@ WITH Invoices_Aircon AS (
 	),
 	
 Invoices_Technab AS (
-	SELECT 
+		select
 		sil."documentNo" AS "NoInvoice"
 		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
 		,sil."lineNo" AS "InvoiceLine"
@@ -95,18 +105,33 @@ Invoices_Technab AS (
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
+		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
+		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
+		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
 		,sih."VAT_Registration_No" AS "NIP"
+		,MAX(sih."Currency_Code") as "CurrencyCode"
+		,MAX(sih."Currency_Factor") as "CurrencyFactor"
+		,sil."type" as "Type"
+		,sil."no" AS "NoItem"
+		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
+		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
 		,sil."amount" AS "Amount"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			else sil."amount"
+		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsPLN"
-		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "ProfitPLN"		
-		,sil."ednSalesMargin" AS "Margin"
-		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "NoCustomer"
-		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+		,((case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			else sil."amount"
+		end) - 
+		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
+		,(sil."lineDiscount"/100) as "LineDiscount"
+		,sil."lineDiscountAmount" as "LineDiscountAmount"
+		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
-		,sil."no" AS "NoItem"
-		,sil."description2" AS "ItemDescription"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -146,7 +171,7 @@ Invoices_Technab AS (
 ),
 
 Invoices_Zymetric AS (
-	SELECT 
+		select
 		sil."documentNo" AS "NoInvoice"
 		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
 		,sil."lineNo" AS "InvoiceLine"
@@ -157,18 +182,33 @@ Invoices_Zymetric AS (
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
+		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
+		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
+		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
 		,sih."VAT_Registration_No" AS "NIP"
+		,MAX(sih."Currency_Code") as "CurrencyCode"
+		,MAX(sih."Currency_Factor") as "CurrencyFactor"
+		,sil."type" as "Type"
+		,sil."no" AS "NoItem"
+		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
+		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
 		,sil."amount" AS "Amount"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			else sil."amount"
+		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsPLN"
-		,(sil."amount") - ((sil."unitCostLCY") * (sil."quantity")) AS "ProfitPLN"		
-		,sil."ednSalesMargin" AS "Margin"
-		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "NoCustomer"
-		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+		,((case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			else sil."amount"
+		end) - 
+		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
+		,(sil."lineDiscount"/100) as "LineDiscount"
+		,sil."lineDiscountAmount" as "LineDiscountAmount"
+		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
-		,sil."no" AS "NoItem"
-		,sil."description2" AS "ItemDescription"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
