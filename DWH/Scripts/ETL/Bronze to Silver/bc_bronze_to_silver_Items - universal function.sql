@@ -25,6 +25,7 @@ BEGIN
 			"No" text NULL
 			,"baseUnitOfMeasure" text NULL
 			,"baseGroup" text NULL
+			,"blocked" bool NULL
 			,"costingMethod" text NULL
 			,"description" text NULL
 			,"description2" text NULL
@@ -67,6 +68,7 @@ BEGIN
 			,"reservedQtyOnProdOrder" numeric(14,2) NULL
 			,"reservedQtyOnPurchOrders" numeric(14,2) NULL
 			,"reservedQtyOnSalesOrders" numeric(14,2) NULL
+			,"systemId" text NULL
 			,"unitCost" numeric(14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
@@ -82,6 +84,7 @@ BEGIN
 			"No"
 			,"baseUnitOfMeasure"
 			,"baseGroup"
+			,"blocked"
 			,"costingMethod"
 			,"description"
 			,"description2"
@@ -124,6 +127,7 @@ BEGIN
 			,"reservedQtyOnProdOrder"
 			,"reservedQtyOnPurchOrders"
 			,"reservedQtyOnSalesOrders"
+			,"systemId"
 			,"unitCost"
 			,"Firma"
 			,"load_ts"
@@ -132,6 +136,7 @@ BEGIN
 			"No"
 			,i."baseUnitOfMeasure"
 			,i."baseGroup"
+			,i."blocked"
 			,i."costingMethod"
 			,REGEXP_REPLACE(i."description", '''', '', 'g')
 			,REGEXP_REPLACE(i."description2", '''', '', 'g')
@@ -174,6 +179,7 @@ BEGIN
 			,i."reservedQtyOnProdOrder"
 			,i."reservedQtyOnPurchOrders"
 			,i."reservedQtyOnSalesOrders"
+			,i."systemId"
 			,i."unitCost"
 			,%L
         	,CURRENT_TIMESTAMP
@@ -186,6 +192,7 @@ BEGIN
 --			"No" = EXCLUDED."No"
 --			,"baseUnitOfMeasure" = EXCLUDED."baseUnitOfMeasure"
 --			,"baseGroup" = EXCLUDED."baseGroup"
+--			,"blocked" = EXCLUDED."blocked"
 --			,"costingMethod" = EXCLUDED."costingMethod"
 --			,"description" = EXCLUDED."description"
 --			,"description2" = EXCLUDED."description2"
@@ -228,6 +235,7 @@ BEGIN
 --			,"reservedQtyOnProdOrder" = EXCLUDED."reservedQtyOnProdOrder"
 --			,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
 --			,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
+--			,"systemId" = EXCLUDED."systemId"
 --			,"unitCost" = EXCLUDED."unitCost"
 --			,"Firma" = EXCLUDED."Firma"
 --			,"load_ts" = CURRENT_TIMESTAMP
@@ -266,6 +274,7 @@ EXECUTE format($etl$
 		"No"
 		,"baseUnitOfMeasure"
 		,"baseGroup"
+		,"blocked"
 		,"costingMethod"
 		,"description"
 		,"description2"
@@ -308,12 +317,13 @@ EXECUTE format($etl$
 		,"reservedQtyOnProdOrder"
 		,"reservedQtyOnPurchOrders"
 		,"reservedQtyOnSalesOrders"
+		,"systemId"
 		,"unitCost"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
@@ -321,6 +331,7 @@ EXECUTE format($etl$
 		"No" = EXCLUDED."No"
 		,"baseUnitOfMeasure" = EXCLUDED."baseUnitOfMeasure"
 		,"baseGroup" = EXCLUDED."baseGroup"
+		,"blocked" = EXCLUDED."blocked"
 		,"costingMethod" = EXCLUDED."costingMethod"
 		,"description" = EXCLUDED."description"
 		,"description2" = EXCLUDED."description2"
@@ -363,6 +374,7 @@ EXECUTE format($etl$
 		,"reservedQtyOnProdOrder" = EXCLUDED."reservedQtyOnProdOrder"
 		,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
 		,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
+		,"systemId" = EXCLUDED."systemId"
 		,"unitCost" = EXCLUDED."unitCost"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
@@ -371,6 +383,7 @@ EXECUTE format($etl$
 		NEW."No"
 		,NEW."baseUnitOfMeasure"
 		,NEW."baseGroup"
+		,NEW."blocked"
 		,NEW."costingMethod"
 		,REGEXP_REPLACE(NEW."description", '''', '', 'g')
 		,REGEXP_REPLACE(NEW."description2", '''', '', 'g')
@@ -413,6 +426,7 @@ EXECUTE format($etl$
 		,NEW."reservedQtyOnProdOrder"
 		,NEW."reservedQtyOnPurchOrders"
 		,NEW."reservedQtyOnSalesOrders"
+		,NEW."systemId"
 		,NEW."unitCost"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
