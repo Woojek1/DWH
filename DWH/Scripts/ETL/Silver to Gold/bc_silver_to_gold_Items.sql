@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW gold.v_Items AS
+CREATE OR REPLACE VIEW gold.v_bc_items AS
 WITH Items_Aircon AS (
 	SELECT 
 		i."No" AS "NoItem"
@@ -27,6 +27,9 @@ WITH Items_Aircon AS (
 		,i."reservedQtyOnInventory" AS "ReservedInventoryQuantity"
 		,i."reservedQtyOnPurchOrders" AS "ReservedPurchaseOrderQuantity"
 		,i."reservedQtyOnSalesOrders" AS "ReservedSalesOrderQuantity"
+		,i."blocked" AS "Blocked"
+		,i."systemId" AS "SystemID"
+		,i."systemModifiedAt" as "SystemModifiedAt"
 		,i."load_ts" AS "LoadDate" 
 		,'Aircon' AS "Company"
 	FROM
@@ -63,6 +66,9 @@ Items_Technab AS (
 		,i."reservedQtyOnInventory" AS "ReservedInventoryQuantity"
 		,i."reservedQtyOnPurchOrders" AS "ReservedPurchaseOrderQuantity"
 		,i."reservedQtyOnSalesOrders" AS "ReservedSalesOrderQuantity"
+		,i."blocked" AS "Blocked"
+		,i."systemId" AS "SystemID"
+		,i."systemModifiedAt" as "SystemModifiedAt"
 		,i."load_ts" AS "LoadDate" 
 		,'Technab' AS "Firma"
 	FROM
@@ -99,6 +105,9 @@ Items_Zymetric AS (
 		,i."reservedQtyOnInventory" AS "ReservedInventoryQuantity"
 		,i."reservedQtyOnPurchOrders" AS "ReservedPurchaseOrderQuantity"
 		,i."reservedQtyOnSalesOrders" AS "ReservedSalesOrderQuantity"
+		,i."blocked" AS "Blocked"
+		,i."systemId" AS "SystemID"
+		,i."systemModifiedAt" as "SystemModifiedAt"
 		,i."load_ts" AS "LoadDate"
 		,'Zymetric' AS "Firma"
 	FROM

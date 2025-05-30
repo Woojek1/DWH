@@ -41,6 +41,7 @@ BEGIN
 			,"Salesperson_Code" text NULL	
 			,"EDN_Factoring_Invoice" bool NULL
 			,"EDN_KUKE_Symbol" text NULL
+			,"Remaining_Amount" numeric(14,2) null
 			,"Currency_Code" text NULL
 			,"Currency_Factor" numeric(14,4) NULL
 			,"Shipment_Date" date NULL
@@ -79,6 +80,7 @@ BEGIN
 			,"Salesperson_Code"
 			,"EDN_Factoring_Invoice"
 			,"EDN_KUKE_Symbol"
+			,"Remaining_Amount"
 			,"Currency_Code"
 			,"Currency_Factor"
 			,"Shipment_Date"
@@ -113,8 +115,9 @@ BEGIN
 			,ih."Salesperson_Code"
 			,ih."EDN_Factoring_Invoice"
 			,ih."EDN_KUKE_Symbol"
+			,ih."Remaining_Amount"
 			,ih."Currency_Code"
-			,NULL
+			,ih."Currency_Factor"
 			,ih."Shipment_Date"
 			,ih."Payment_Terms_Code"
 			,ih."Payment_Method_Code"
@@ -128,40 +131,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I ih
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
 
---		ON CONFLICT ("No") DO UPDATE
---		SET
---			"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
---			,"Sell_to_Customer_Name" = EXCLUDED."Sell_to_Customer_Name"
---			,"VAT_Registration_No" = EXCLUDED."VAT_Registration_No"
---			,"Sell_to_Address" = EXCLUDED."Sell_to_Address"
---			,"Sell_to_Address_2" = EXCLUDED."Sell_to_Address_2"
---			,"Sell_to_City" = EXCLUDED."Sell_to_City"
---			,"Sell_to_County" = EXCLUDED."Sell_to_County"
---			,"Sell_to_Post_Code" = EXCLUDED."Sell_to_Post_Code"
---			,"Document_Date" = EXCLUDED."Document_Date"
---			,"Posting_Date" = EXCLUDED."Posting_Date"
---			,"Due_Date" = EXCLUDED."Due_Date"
---			,"Quote_No" = EXCLUDED."Quote_No"
---			,"Order_No" = EXCLUDED."Order_No"
---			,"Pre_Assigned_No" = EXCLUDED."Pre_Assigned_No"
---			,"External_Document_No" = EXCLUDED."External_Document_No"
---			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
---			,"EDN_Factoring_Invoice" = EXCLUDED."EDN_Factoring_Invoice"
---			,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
---			,"Currency_Code" = EXCLUDED."Currency_Code"
---			,"Currency_Factor" = EXCLUDED."Currency_Factor"
---			,"Shipment_Date" = EXCLUDED."Shipment_Date"
---			,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
---			,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
---			,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
---			,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
---			,"Customer_Posting_Group" = EXCLUDED."Customer_Posting_Group"
---			,"Location_Code" = EXCLUDED."Location_Code"
---			,"Shipment_Method_Code" = EXCLUDED."Shipment_Method_Code"
---			,"Shipping_Agent_Code" = EXCLUDED."Shipping_Agent_Code"
---			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -213,6 +183,7 @@ EXECUTE format($etl$
 		,"Salesperson_Code"
 		,"EDN_Factoring_Invoice"
 		,"EDN_KUKE_Symbol"
+		,"Remaining_Amount"
 		,"Currency_Code"
 		,"Currency_Factor"
 		,"Shipment_Date"
@@ -228,7 +199,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -250,6 +221,7 @@ EXECUTE format($etl$
 		,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
 		,"EDN_Factoring_Invoice" = EXCLUDED."EDN_Factoring_Invoice"
 		,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
+		,"Remaining_Amount" = EXCLUDED."Remaining_Amount"
 		,"Currency_Code" = EXCLUDED."Currency_Code"
 		,"Currency_Factor" = EXCLUDED."Currency_Factor"
 		,"Shipment_Date" = EXCLUDED."Shipment_Date"
@@ -284,6 +256,7 @@ EXECUTE format($etl$
 		,NEW."Salesperson_Code"
 		,NEW."EDN_Factoring_Invoice"
 		,NEW."EDN_KUKE_Symbol"
+		,NEW."Remaining_Amount"
 		,NEW."Currency_Code"
 		,NEW."Currency_Factor"
 		,NEW."Shipment_Date"
