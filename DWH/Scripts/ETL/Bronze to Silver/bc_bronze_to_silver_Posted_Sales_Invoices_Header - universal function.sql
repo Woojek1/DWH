@@ -116,7 +116,7 @@ BEGIN
 			,ih."EDN_Factoring_Invoice"
 			,ih."EDN_KUKE_Symbol"
 			,ih."Remaining_Amount"
-			,ih."Currency_Code"
+			,COALESCE(ih."Currency_Code", 'PLN')
 			,ih."Currency_Factor"
 			,ih."Shipment_Date"
 			,ih."Payment_Terms_Code"
@@ -257,7 +257,7 @@ EXECUTE format($etl$
 		,NEW."EDN_Factoring_Invoice"
 		,NEW."EDN_KUKE_Symbol"
 		,NEW."Remaining_Amount"
-		,NEW."Currency_Code"
+		,COALESCE(NEW."Currency_Code", 'PLN')
 		,NEW."Currency_Factor"
 		,NEW."Shipment_Date"
 		,NEW."Payment_Terms_Code"

@@ -41,13 +41,13 @@ WITH Invoices_Aircon AS (
 		,sil."quantity" AS "Quantity"
 		,sil."amount" AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
 			else sil."amount"
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
 		,((case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
 		end) - 
 		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
@@ -55,6 +55,7 @@ WITH Invoices_Aircon AS (
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,max(sih."Remaining_Amount") as "RemainingAmount"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -118,13 +119,13 @@ Invoices_Technab AS (
 		,sil."quantity" AS "Quantity"
 		,sil."amount" AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
 			else sil."amount"
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
 		,((case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
 		end) - 
 		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
@@ -132,6 +133,7 @@ Invoices_Technab AS (
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,max(sih."Remaining_Amount") as "RemainingAmount"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -171,7 +173,7 @@ Invoices_Technab AS (
 ),
 
 Invoices_Zymetric AS (
-		select
+	select
 		sil."documentNo" AS "NoInvoice"
 		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
 		,sil."lineNo" AS "InvoiceLine"
@@ -195,13 +197,13 @@ Invoices_Zymetric AS (
 		,sil."quantity" AS "Quantity"
 		,sil."amount" AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
 			else sil."amount"
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
 		,((case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then ((Max(sih."Currency_Factor")) * sil."amount") 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
 		end) - 
 		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
@@ -209,6 +211,7 @@ Invoices_Zymetric AS (
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,max(sih."Remaining_Amount") as "RemainingAmount"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
