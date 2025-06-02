@@ -41,6 +41,7 @@ BEGIN
 			,"genProdPostingGroup" text NULL
 			,"inventory" numeric(14,2) NULL
 			,"inventoryPostingGroup" text NULL
+			,"mkGLQuantity" numeric(14, 2) NULL
 			,"manufacturerCode" text NULL
 			,"maximumInventory" numeric(14,2) NULL
 			,"maximumOrderQuantity" numeric(14,2) NULL
@@ -101,6 +102,7 @@ BEGIN
 			,"genProdPostingGroup"
 			,"inventory"
 			,"inventoryPostingGroup"
+			,"mkGLQuantity"
 			,"manufacturerCode"
 			,"maximumInventory"
 			,"maximumOrderQuantity"
@@ -154,6 +156,7 @@ BEGIN
 			,i."genProdPostingGroup"
 			,i."inventory"
 			,REPLACE(i."inventoryPostingGroup", 'USLUGI', 'USŁUGI')
+			,i."mkGLQuantity"
 			,i."manufacturerCode"
 			,i."maximumInventory"
 			,i."maximumOrderQuantity"
@@ -294,6 +297,7 @@ EXECUTE format($etl$
 		,"genProdPostingGroup"
 		,"inventory"
 		,"inventoryPostingGroup"
+		,"mkGLQuantity"
 		,"manufacturerCode"
 		,"maximumInventory"
 		,"maximumOrderQuantity"
@@ -329,7 +333,7 @@ EXECUTE format($etl$
 	)
 	SELECT 
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
-		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51
+		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
@@ -353,6 +357,7 @@ EXECUTE format($etl$
 		,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
 		,"inventory" = EXCLUDED."inventory"
 		,"inventoryPostingGroup" = EXCLUDED."inventoryPostingGroup"
+		,"mkGLQuantity" = EXCLUDED."mkGLQuantity"
 		,"manufacturerCode" = EXCLUDED."manufacturerCode"
 		,"maximumInventory" = EXCLUDED."maximumInventory"
 		,"maximumOrderQuantity" = EXCLUDED."maximumOrderQuantity"
@@ -406,6 +411,7 @@ EXECUTE format($etl$
 		,NEW."genProdPostingGroup"
 		,NEW."inventory"
 		,REPLACE(NEW."inventoryPostingGroup", 'USLUGI', 'USŁUGI')
+		,NEW."mkGLQuantity"
 		,NEW."manufacturerCode"
 		,NEW."maximumInventory"
 		,NEW."maximumOrderQuantity"
