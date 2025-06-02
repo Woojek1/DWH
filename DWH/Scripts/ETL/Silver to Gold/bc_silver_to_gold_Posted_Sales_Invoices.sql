@@ -28,6 +28,7 @@ WITH Invoices_Aircon AS (
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
+		,MAX(sih."Due_Date") as "DueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -55,7 +56,15 @@ WITH Invoices_Aircon AS (
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
+			else sil."amountIncludingVAT"
+		end as "AmountIncludingVatLCY"		
 		,max(sih."Remaining_Amount") as "RemainingAmount"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
+			else MAX(sih."Remaining_Amount")
+		end as "RemainingAmountLCY"				
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -106,6 +115,7 @@ Invoices_Technab AS (
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
+		,MAX(sih."Due_Date") as "DueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -133,7 +143,15 @@ Invoices_Technab AS (
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
+			else sil."amountIncludingVAT"
+		end as "AmountIncludingVatLCY"		
 		,max(sih."Remaining_Amount") as "RemainingAmount"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
+			else MAX(sih."Remaining_Amount")
+		end as "RemainingAmountLCY"				
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -184,6 +202,7 @@ Invoices_Zymetric AS (
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
+		,MAX(sih."Due_Date") as "DueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -211,7 +230,15 @@ Invoices_Zymetric AS (
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
+			else sil."amountIncludingVAT"
+		end as "AmountIncludingVatLCY"		
 		,max(sih."Remaining_Amount") as "RemainingAmount"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
+			else MAX(sih."Remaining_Amount")
+		end as "RemainingAmountLCY"				
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
