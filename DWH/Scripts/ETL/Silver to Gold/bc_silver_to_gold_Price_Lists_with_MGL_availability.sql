@@ -1,12 +1,12 @@
-CREATE OR REPLACE VIEW v_bc_price_lists AS
+CREATE OR REPLACE VIEW gold.v_bc_price_lists AS
 WITH Price_Lists_Aircon AS (
 	select
 		pl."PriceListCode"
 		,pl."AssetNo"
+		,i."mkGLQuantity"
 		,pl."UnitPrice"
 		,pl."StartingDate"
 		,pl."EndingDate"
-		,i."mkGLQuantity"
 		,pl."load_ts" AS "LoadDate"
 		,'Aircon' AS "Company"		
 	FROM	
@@ -24,10 +24,10 @@ Price_Lists_Technab as (
 	SELECT
 		pl."PriceListCode"
 		,pl."AssetNo"
+		,i."mkGLQuantity"
 		,pl."UnitPrice"
 		,pl."StartingDate"
 		,pl."EndingDate"
-		,i."mkGLQuantity"
 		,pl."load_ts" AS "LoadDate"
 		,'Technab' AS "Company"		
 	FROM	
@@ -45,10 +45,10 @@ Price_Lists_Zymetric as (
 	SELECT
 		pl."PriceListCode"
 		,pl."AssetNo"
+		,i."mkGLQuantity"
 		,pl."UnitPrice"
 		,pl."StartingDate"
 		,pl."EndingDate"
-		,i."mkGLQuantity"
 		,pl."load_ts" AS "LoadDate"
 		,'Zymetric' AS "Company"		
 	FROM	
