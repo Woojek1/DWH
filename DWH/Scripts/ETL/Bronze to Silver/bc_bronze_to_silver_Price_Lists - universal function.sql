@@ -54,6 +54,7 @@ BEGIN
 			,"CustomerBestDiscount" numeric(18, 2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
+			,CONSTRAINT bc_price_lists_zymetric_pkey PRIMARY KEY ("SystemId")
 		);
 	$ddl$, _tabela, _litera_firmy);
 

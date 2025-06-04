@@ -42,7 +42,7 @@ BEGIN
 			,"no" text NULL
 			,"postingDate" date NULL
 			,"postingGroup" text NULL
-			,quantity numeric(14,2) NULL
+			,"quantity" numeric(14,2) NULL
 			,"sellToCustomerNo" text NULL
 			,"shortcutDimension1Code" text NULL
 			,"shortcutDimension2Code" text NULL

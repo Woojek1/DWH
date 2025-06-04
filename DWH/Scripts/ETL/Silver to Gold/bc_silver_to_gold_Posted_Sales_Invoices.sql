@@ -40,6 +40,11 @@ WITH Invoices_Aircon AS (
 		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
 		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
+		,sil."unitPrice" as "UnitPrice"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
+			else sil."unitPrice" * (sil."quantity")
+		end as "LinePriceLCY"	
 		,sil."amount" AS "Amount"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
@@ -64,7 +69,7 @@ WITH Invoices_Aircon AS (
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
-		end as "RemainingAmountLCY"				
+		end as "RemainingAmountLCY"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -127,6 +132,11 @@ Invoices_Technab AS (
 		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
 		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
+		,sil."unitPrice" as "UnitPrice"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
+			else sil."unitPrice" * (sil."quantity")
+		end as "LinePriceLCY"	
 		,sil."amount" AS "Amount"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
@@ -151,7 +161,7 @@ Invoices_Technab AS (
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
-		end as "RemainingAmountLCY"				
+		end as "RemainingAmountLCY"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -214,6 +224,11 @@ Invoices_Zymetric AS (
 		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
 		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
+		,sil."unitPrice" as "UnitPrice"
+		,case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
+			else sil."unitPrice" * (sil."quantity")
+		end as "LinePriceLCY"	
 		,sil."amount" AS "Amount"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
@@ -238,7 +253,7 @@ Invoices_Zymetric AS (
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
-		end as "RemainingAmountLCY"				
+		end as "RemainingAmountLCY"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
