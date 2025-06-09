@@ -22,7 +22,7 @@ BEGIN
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"SystemId" uuid NOT NULL
+			"SystemId" uuid PRIMARY KEY
 			,"PriceListCode" text NULL
 			,"LineNo" int8 NULL
 			,"SourceType" text NULL
@@ -54,7 +54,7 @@ BEGIN
 			,"CustomerBestDiscount" numeric(18, 2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,CONSTRAINT bc_price_lists_zymetric_pkey PRIMARY KEY ("SystemId")
+
 		);
 	$ddl$, _tabela, _litera_firmy);
 
