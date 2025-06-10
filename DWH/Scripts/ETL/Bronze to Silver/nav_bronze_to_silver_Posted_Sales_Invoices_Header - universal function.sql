@@ -6,7 +6,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY['zymetric'];
+_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -18,7 +18,7 @@ BEGIN
 	_litera_firmy := UPPER(SUBSTR(_firma,1,1));
 	_tabela := format('nav_posted_sales_invoices_header_%s', _firma);  --- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ ---
 
- 
+  
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
@@ -39,7 +39,7 @@ BEGIN
 			,"Pre_Assigned_No" text NULL
 			,"External_Document_No" text NULL
 			,"Salesperson_Code" text NULL	
---			,"EDN_Factoring_Invoice" bool NULL
+			,"EDN_Factoring_Invoice" bool NULL
 --			,"EDN_KUKE_Symbol" text NULL
 --			,"Remaining_Amount" numeric(14,2) null
 			,"Currency_Code" text NULL
@@ -78,7 +78,7 @@ BEGIN
 			,"Pre_Assigned_No"
 			,"External_Document_No"
 			,"Salesperson_Code"
---			,"Factoring_Invoice"
+			,"EDN_Factoring_Invoice"
 --			,"EDN_KUKE_Symbol"
 --			,"Remaining_Amount"
 			,"Currency_Code"
@@ -96,7 +96,7 @@ BEGIN
 			,"load_ts"
 		) 
 		SELECT
-			ih."no_"
+			ih."No_"
 			,ih."Sell-to Customer No_"
 			,ih."Sell-to Customer Name"
 			,REGEXP_REPLACE(ih."VAT Registration No_", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
@@ -113,10 +113,10 @@ BEGIN
 			,ih."Pre-Assigned No_"
 			,ih."External Document No_"
 			,ih."Salesperson Code"
---			,ih."Factoring Invoice"
+			,ih."Factoring Invoice"
 --			,ih."EDN_KUKE_Symbol"
 --			,ih."Remaining_Amount"
-			,CASE
+			,CASE 
 				WHEN ih."Currency Code" = '' THEN 'PLN'
 				ELSE ih."Currency Code"
 			END
@@ -132,7 +132,7 @@ BEGIN
 			,ih."Shipping Agent Code"
 			,%L
         	,CURRENT_TIMESTAMP
-		FROM bronze.nav_posted_sales_invoices_header_zymetric ih
+		FROM bronze.%I ih
 
 
     $insert$, _tabela, _litera_firmy, _tabela);
