@@ -113,7 +113,7 @@ BEGIN
 			,ih."Pre-Assigned No_"
 			,ih."External Document No_"
 			,ih."Salesperson Code"
-			,ih."Factoring Invoice"
+			,ih."Factoring Invoice"::boolean
 --			,ih."EDN_KUKE_Symbol"
 --			,ih."Remaining_Amount"
 			,CASE 
