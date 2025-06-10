@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------
--- CREATING POSTED SALES INVOICES LINES TABLES IN SILVER LAYER AND FIRST LOAD
+-- CREATING POSTED SALES INVOICES HEADER TABLES IN SILVER LAYER AND FIRST LOAD
 -----------------------------------------------------------------------------
 
  
@@ -23,36 +23,36 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text PRIMARY KEY
-			,"Sell_to_Customer_No" text NULL
-			,"Sell_to_Customer_Name" text NULL
-			,"VAT_Registration_No" text NULL
-			,"Sell_to_Address" text NULL
-			,"Sell_to_Address_2" text NULL
-			,"Sell_to_City" text NULL
-			,"Sell_to_County" text NULL
-			,"Sell_to_Post_Code" text NULL
-			,"Document_Date" date NULL
-			,"Posting_Date" date NULL
-			,"Due_Date" date NULL
-			,"Quote_No" text NULL
-			,"Order_No" text NULL
-			,"Pre_Assigned_No" text NULL
-			,"External_Document_No" text NULL
-			,"Salesperson_Code" text NULL	
-			,"EDN_Factoring_Invoice" bool NULL
+			,"SellToCustomerNo" text NULL
+			,"SellToCustomerName" text NULL
+			,"VATRegistrationNo" text NULL
+			,"SellToAddress" text NULL
+			,"SellToAddress2" text NULL
+			,"SellToCity" text NULL
+			,"SellToCounty" text NULL
+			,"SellToPostCode" text NULL
+			,"DocumentDate" date NULL
+			,"PostingDate" date NULL
+			,"DueDate" date NULL
+			,"QuoteNo" text NULL
+			,"OrderNo" text NULL
+			,"PreAssignedNo" text NULL
+			,"ExternalDocumentNo" text NULL
+			,"SalespersonCode" text NULL	
+			,"EDNFactoringInvoice" bool NULL
 --			,"EDN_KUKE_Symbol" text NULL
 --			,"Remaining_Amount" numeric(14,2) null
-			,"Currency_Code" text NULL
-			,"Currency_Factor" numeric(14,4) NULL
-			,"Shipment_Date" date NULL
-			,"Payment_Terms_Code" text NULL
-			,"Payment_Method_Code" text NULL
-			,"Shortcut_Dimension_1_Code" text NULL
-			,"Shortcut_Dimension_2_Code" text NULL
-			,"Customer_Posting_Group" text NULL
-			,"Location_Code" text NULL
-			,"Shipment_Method_Code" text NULL
-			,"Shipping_Agent_Code" text NULL
+			,"CurrencyCode" text NULL
+			,"CurrencyFactor" numeric(14,4) NULL
+			,"ShipmentDate" date NULL
+			,"PaymentTermsCode" text NULL
+			,"PaymentMethodCode" text NULL
+			,"ShortcutDimension1Code" text NULL
+			,"ShortcutDimension2Code" text NULL
+			,"CustomerPostingGroup" text NULL
+			,"LocationCode" text NULL
+			,"ShipmentMethodCode" text NULL
+			,"ShippingAgentCode" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
@@ -62,36 +62,36 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
-			,"Sell_to_Customer_No"
-			,"Sell_to_Customer_Name"
-			,"VAT_Registration_No"
-			,"Sell_to_Address"
-			,"Sell_to_Address_2"
-			,"Sell_to_City"
-			,"Sell_to_County"
-			,"Sell_to_Post_Code"
-			,"Document_Date"
-			,"Posting_Date"
-			,"Due_Date"
-			,"Quote_No"
-			,"Order_No"
-			,"Pre_Assigned_No"
-			,"External_Document_No"
-			,"Salesperson_Code"
-			,"EDN_Factoring_Invoice"
+			,"SellToCustomerNo"
+			,"SellToCustomerName"
+			,"VATRegistrationNo"
+			,"SellToAddress"
+			,"SellToAddress2"
+			,"SellToCity"
+			,"SellToCounty"
+			,"SellToPostCode"
+			,"DocumentDate"
+			,"PostingDate"
+			,"DueDate"
+			,"QuoteNo"
+			,"OrderNo"
+			,"PreAssignedNo"
+			,"ExternalDocumentNo"
+			,"SalespersonCode"
+			,"EDNFactoringInvoice"
 --			,"EDN_KUKE_Symbol"
 --			,"Remaining_Amount"
-			,"Currency_Code"
-			,"Currency_Factor"
-			,"Shipment_Date"
-			,"Payment_Terms_Code"
-			,"Payment_Method_Code"
-			,"Shortcut_Dimension_1_Code"
-			,"Shortcut_Dimension_2_Code"
-			,"Customer_Posting_Group"
-			,"Location_Code"
-			,"Shipment_Method_Code"
-			,"Shipping_Agent_Code"
+			,"CurrencyCode"
+			,"CurrencyFactor"
+			,"ShipmentDate"
+			,"PaymentTermsCode"
+			,"PaymentMethodCode"
+			,"ShortcutDimension1Code"
+			,"ShortcutDimension2Code"
+			,"CustomerPostingGroup"
+			,"LocationCode"
+			,"ShipmentMethodCode"
+			,"ShippingAgentCode"
 			,"Firma"
 			,"load_ts"
 		) 

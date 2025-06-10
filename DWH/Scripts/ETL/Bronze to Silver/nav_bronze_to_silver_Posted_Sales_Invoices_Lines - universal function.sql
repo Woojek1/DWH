@@ -36,7 +36,7 @@ BEGIN
 			,"GenBusPostingGroup" text NULL
 			,"GenProdPostingGroup" text NULL
 			,"LineAmount" numeric(14,2) NULL
-			,"LineDiscount" numeric(6,2) NULL
+			,"LineDiscount" numeric(8,2) NULL
 			,"LineDiscountAmount" numeric(14,2) NULL
 			,"LocationCode" text NULL
 			,"No" text NULL
@@ -105,7 +105,7 @@ BEGIN
 			,s."Gen_ Bus_ Posting Group"
 			,s."Gen_ Prod_ Posting Group"
 			,round(s."Line Amount", 2)
-			,round(s."Line Discount %%", 2)::numeric(6,2)
+			,round(s."Line Discount %%", 2)::numeric(8,2)
 			,round(s."Line Discount Amount", 2)
 			,s."Location Code"
 			,s."No_"
