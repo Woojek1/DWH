@@ -53,6 +53,8 @@ BEGIN
 			,"Post_Code" text NULL
 			,"EDN_Province_Code" text NULL
 			,"VAT_Registration_No" text NULL
+			,"E_Mail" text NULL
+			,"Phone_No" text NULL
 			,"Gen_Bus_Posting_Group" text NULL
 			,"Payment_Terms_Code" text NULL
 			,"Payment_Method_Code" text NULL
@@ -95,6 +97,8 @@ BEGIN
 			,"Post_Code"
 			,"EDN_Province_Code"
 			,"VAT_Registration_No"
+			,"E_Mail"
+			,"Phone_No"
 			,"Gen_Bus_Posting_Group"
 			,"Payment_Terms_Code"
 			,"Payment_Method_Code"
@@ -133,6 +137,8 @@ BEGIN
 			,c."Post_Code"
 			,c."EDN_Province_Code"
 			,REGEXP_REPLACE(c."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
+			,LOWER(c."E_Mail")
+			,REGEXP_REPLACE(c."Phone_No", '[^0-9;]', '', 'g') AS "Phone_No"
 			,c."Gen_Bus_Posting_Group"
 			,c."Payment_Terms_Code"
 			,c."Payment_Method_Code"
@@ -242,6 +248,8 @@ EXECUTE format($etl$
 		,"Post_Code"
 		,"EDN_Province_Code"
 		,"VAT_Registration_No"
+		,"E_Mail"
+		,"Phone_No"
 		,"Gen_Bus_Posting_Group"
 		,"Payment_Terms_Code"
 		,"Payment_Method_Code"
@@ -249,7 +257,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -283,6 +291,8 @@ EXECUTE format($etl$
 		,"Post_Code" = EXCLUDED."Post_Code"
 		,"EDN_Province_Code" = EXCLUDED."EDN_Province_Code"
 		,"VAT_Registration_No" = EXCLUDED."VAT_Registration_No"
+		,"E_Mail" = EXCLUDED."E_Mail"
+		,"Phone_No" = EXCLUDED."Phone_No"
 		,"Gen_Bus_Posting_Group" = EXCLUDED."Gen_Bus_Posting_Group"
 		,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
 		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
@@ -321,6 +331,8 @@ EXECUTE format($etl$
 		,NEW."Post_Code"
 		,NEW."EDN_Province_Code"
 		,REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g')
+		,LOWER(NEW."E_Mail")
+		,REGEXP_REPLACE(NEW."Phone_No", '[^0-9;]', '', 'g')
 		,NEW."Gen_Bus_Posting_Group"
 		,NEW."Payment_Terms_Code"
 		,NEW."Payment_Method_Code"
