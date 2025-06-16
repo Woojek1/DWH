@@ -29,6 +29,8 @@ WITH BC_Invoices_Aircon AS (
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
+		,case
+			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -60,6 +62,24 @@ WITH BC_Invoices_Aircon AS (
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
+		,(
+		  (
+		    CASE
+		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		      ELSE sil."amount"
+		    END
+		  ) - (sil."unitCostLCY" * sil."quantity")
+		) 
+		/
+		NULLIF(
+		  (
+		    CASE
+		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		      ELSE sil."amount"
+		    END
+		  ),
+		  0
+		) AS "Profitability"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
@@ -121,6 +141,8 @@ BC_Invoices_Technab AS (
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
+		,case
+			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -152,6 +174,24 @@ BC_Invoices_Technab AS (
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
+		,(
+		  (
+		    CASE
+		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		      ELSE sil."amount"
+		    END
+		  ) - (sil."unitCostLCY" * sil."quantity")
+		) 
+		/
+		NULLIF(
+		  (
+		    CASE
+		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		      ELSE sil."amount"
+		    END
+		  ),
+		  0
+		) AS "Profitability"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
@@ -213,6 +253,8 @@ BC_Invoices_Zymetric AS (
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
+		,case
+			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -244,6 +286,24 @@ BC_Invoices_Zymetric AS (
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
+		,(
+		  (
+		    CASE
+		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		      ELSE sil."amount"
+		    END
+		  ) - (sil."unitCostLCY" * sil."quantity")
+		) 
+		/
+		NULLIF(
+		  (
+		    CASE
+		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		      ELSE sil."amount"
+		    END
+		  ),
+		  0
+		) AS "Profitability"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
