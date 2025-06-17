@@ -94,6 +94,7 @@ WITH BC_Invoices_Aircon AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
+		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -210,6 +211,7 @@ BC_Invoices_Technab AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
+		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -326,6 +328,7 @@ BC_Invoices_Zymetric AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
+		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
 		,MAX(sih."Salesperson_Code") as "Salesperson"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -628,5 +631,3 @@ SELECT *
 --SELECT *
 --	FROM NAV_Invoices_Zymetric
 
-	
-;
