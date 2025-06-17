@@ -62,24 +62,28 @@ WITH BC_Invoices_Aircon AS (
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
-		,(
-		  (
-		    CASE
-		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		      ELSE sil."amount"
-		    END
-		  ) - (sil."unitCostLCY" * sil."quantity")
-		) 
-		/
-		NULLIF(
-		  (
-		    CASE
-		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		      ELSE sil."amount"
-		    END
-		  ),
-		  0
-		) AS "Profitability"
+		,CASE 
+		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+		  ELSE 
+		    (
+		      (
+		        CASE
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."amount"
+		        END
+		      ) - (sil."unitCostLCY" * sil."quantity")
+		    ) 
+		    /
+		    NULLIF(
+		      (
+		        CASE
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."amount"
+		        END
+		      ),
+		      0
+		    )
+		END AS "Profitability"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
@@ -174,24 +178,28 @@ BC_Invoices_Technab AS (
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
-		,(
-		  (
-		    CASE
-		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		      ELSE sil."amount"
-		    END
-		  ) - (sil."unitCostLCY" * sil."quantity")
-		) 
-		/
-		NULLIF(
-		  (
-		    CASE
-		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		      ELSE sil."amount"
-		    END
-		  ),
-		  0
-		) AS "Profitability"
+		,CASE 
+		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+		  ELSE 
+		    (
+		      (
+		        CASE
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."amount"
+		        END
+		      ) - (sil."unitCostLCY" * sil."quantity")
+		    ) 
+		    /
+		    NULLIF(
+		      (
+		        CASE
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."amount"
+		        END
+		      ),
+		      0
+		    )
+		END AS "Profitability"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
@@ -286,24 +294,28 @@ BC_Invoices_Zymetric AS (
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
-		,(
-		  (
-		    CASE
-		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		      ELSE sil."amount"
-		    END
-		  ) - (sil."unitCostLCY" * sil."quantity")
-		) 
-		/
-		NULLIF(
-		  (
-		    CASE
-		      WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		      ELSE sil."amount"
-		    END
-		  ),
-		  0
-		) AS "Profitability"
+		,CASE 
+		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+		  ELSE 
+		    (
+		      (
+		        CASE
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."amount"
+		        END
+		      ) - (sil."unitCostLCY" * sil."quantity")
+		    ) 
+		    /
+		    NULLIF(
+		      (
+		        CASE
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."amount"
+		        END
+		      ),
+		      0
+		    )
+		END AS "Profitability"
 		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
