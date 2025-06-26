@@ -1,140 +1,55 @@
-CREATE OR REPLACE VIEW gold.v_hr_enova_RLS as
-with Struktura_Aircon as (
-	SELECT 
-	    hr."PracownikID",
-	    hr."Pracownik" AS "Pracownik",
-	    hr."EmailHR" AS "EmailPracownika",
-	
-	    -- 1. Bezpośredni przełożony
-	    hr1."Pracownik" AS "Przelozony (N-3)",
-	    hr1."EmailHR" AS "EmailPrzelozonego (N-3)",
-	
-	    -- 2. Przełożony przełożonego
-	    hr2."Pracownik" AS "Przelozony (N-2)",
-	    hr2."EmailHR" AS "EmailPrzelozonego (N-2)",
-	    
-	    -- 3. Prezes    
-	    hr3."Pracownik" AS "Przelozony (N-1)",
-	    hr3."EmailHR" AS "EmailPrzelozonego (N-1)", 
-	   
-	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)"  
-	    	    	
-	FROM 
-		silver.hr_enova_struktura_organizacyjna_aircon hr
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr1 
-	on
-		hr."PrzelozonyID" = hr1."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr2
-	ON 
-		hr1."PrzelozonyID" = hr2."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr3
-	on
-		hr2."PrzelozonyID" = hr3."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr4
-	on
-		hr3."PrzelozonyID" = hr4."PracownikID"	
-	ORDER by
-		hr."Pracownik"
+CREATE OR REPLACE VIEW gold.hr_enova_struktura_organizacyjna AS
+WITH Salespersons_Aircon AS (
+	SELECT 	
+		sp."Code" as "Code"
+		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
+		,sp."Name" as "Name"
+		,sp."E_Mail" as "Email"
+		,sp."Job_Title" as "JobTitle"
+		,sp."EDN_Supervisor_Code" as "SupervisorCode"
+		,sp."load_ts" AS "LoadDate"
+		,'Aircon' AS "Company"
+	from
+		silver.bc_salesperson_aircon sp
 ),
 
-Struktura_Technab as (
-	SELECT 
-	    hr."PracownikID",
-	    hr."Pracownik" AS "Pracownik",
-	    hr."EmailHR" AS "EmailPracownika",
-	
-	    -- 1. Bezpośredni przełożony
-	    hr1."Pracownik" AS "Przelozony (N-2)",
-	    hr1."EmailHR" AS "EmailPrzelozonego (N-2)",
-	
-	    -- 2. Przełożony przełożonego
-	    hr2."Pracownik" AS "Przelozony (N-1)",
-	    hr2."EmailHR" AS "EmailPrzelozonego (N-1)",
-	    
-	    -- 3. Prezes    
-	    hr3."Pracownik" AS "Przelozony (N)",
-	    hr3."EmailHR" AS "EmailPrzelozonego (N)",
-	    
-	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)"  
-	    	    	
-	FROM 
-		silver.hr_enova_struktura_organizacyjna_technab hr
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_technab hr1 
-	on
-		hr."PrzelozonyID" = hr1."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_technab hr2
-	ON 
-		hr1."PrzelozonyID" = hr2."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_technab hr3
-	on
-		hr2."PrzelozonyID" = hr3."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr4
-	on
-		hr3."PrzelozonyID" = hr4."PracownikID"	
-	ORDER by
-		hr."Pracownik"
+Salespersons_Technab as (
+	SELECT 	
+		sp."Code" as "Code"
+		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
+		,sp."Name" as "Name"
+		,sp."E_Mail" as "Email"
+		,sp."Job_Title" as "JobTitle"
+		,sp."EDN_Supervisor_Code" as "SupervisorCode"
+		,sp."load_ts" AS "LoadDate"
+		,'Technab' AS "Company"
+	from
+		silver.bc_salesperson_technab sp
 ),
-Struktura_Zymetric as (
-	SELECT 
-	    hr."PracownikID",
-	    hr."Pracownik" AS "Pracownik",
-	    hr."EmailHR" AS "EmailPracownika",
-	
-	    -- 1. Bezpośredni przełożony
-	    hr1."Pracownik" AS "Przelozony (N-2)",
-	    hr1."EmailHR" AS "EmailPrzelozonego (N-2)",
-	
-	    -- 2. Przełożony przełożonego
-	    hr2."Pracownik" AS "Przelozony (N-1)",
-	    hr2."EmailHR" AS "EmailPrzelozonego (N-1)",
-	    
-	    -- 3. Prezes    
-	    hr3."Pracownik" AS "Przelozony (N)",
-	    hr3."EmailHR" AS "EmailPrzelozonego (N)",  
-	    	    	   
-	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)"  
-	    		
-	FROM 
-		silver.hr_enova_struktura_organizacyjna_zymetric hr
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_zymetric hr1 
-	on
-		hr."PrzelozonyID" = hr1."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_zymetric hr2
-	ON 
-		hr1."PrzelozonyID" = hr2."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_zymetric hr3
-	on
-		hr2."PrzelozonyID" = hr3."PracownikID"
-	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr4
-	on
-		hr3."PrzelozonyID" = hr4."PracownikID"	
-	ORDER by
-		hr."Pracownik"
+
+Salespersons_Zymetric as (
+	SELECT 	
+		sp."Code" as "Code"
+		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
+		,sp."Name" as "Name"
+		,sp."E_Mail" as "Email"
+		,sp."Job_Title" as "JobTitle"
+		,sp."EDN_Supervisor_Code" as "SupervisorCode"
+		,sp."load_ts" AS "LoadDate"
+		,'Zymetric' AS "Company"
+	from
+		silver.bc_salesperson_zymetric sp
 )
 
-select *
-from
-	Struktura_Aircon
-union all
-select *
-from
-	Struktura_Technab
-union all
-select *
-from
-	Struktura_Zymetric
+SELECT *
+FROM
+	Salespersons_Aircon
+UNION ALL
+SELECT *
+FROM
+	Salespersons_Technab
+UNION ALL
+SELECT *
+FROM
+	Salespersons_Zymetric
+;

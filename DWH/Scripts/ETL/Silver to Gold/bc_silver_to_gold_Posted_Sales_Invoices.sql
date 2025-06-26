@@ -15,7 +15,7 @@ on sil."dimensionSetID" = ds."dimensionSetID"
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices AS
+CREATE OR REPLACE VIEW  gold.v_invoices AS
 WITH BC_Invoices_Aircon AS (
 	select
 		sil."documentNo" AS "NoInvoice"

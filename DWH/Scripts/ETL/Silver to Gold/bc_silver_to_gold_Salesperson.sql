@@ -28,7 +28,7 @@ Salespersons_Technab as (
 ),
 
 Salespersons_Zymetric as (
-	SELECT 	
+	SELECT
 		sp."Code" as "Code"
 		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
 		,sp."Name" as "Name"
