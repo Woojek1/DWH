@@ -1,55 +1,90 @@
-CREATE OR REPLACE VIEW gold.hr_enova_struktura_organizacyjna AS
-WITH Salespersons_Aircon AS (
+CREATE OR REPLACE VIEW gold.v_hr_enova_struktura_organizacyjna AS
+WITH hr_Aircon AS (
 	SELECT 	
-		sp."Code" as "Code"
-		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
-		,sp."Name" as "Name"
-		,sp."E_Mail" as "Email"
-		,sp."Job_Title" as "JobTitle"
-		,sp."EDN_Supervisor_Code" as "SupervisorCode"
-		,sp."load_ts" AS "LoadDate"
+		hr."PracownikID"
+		,hr."PracownikKod"
+		,hr."Pracownik"
+		,hr."StanowiskoKod"
+		,hr."StanowiskoNazwa"
+		,hr."EtatStanowiskoHist"
+		,hr."EtatMiejscePracyHist"
+		,hr."PrzelozonyID"
+		,hr."PrzelozonyKod"
+		,hr."Przelozony"
+		,hr."StanowiskoPrzelozKod"
+		,hr."StanowiskoPrzelozNazwa"
+		,hr."CzyManager"
+		,hr."LiczbaPodwladnych"
+		,hr."StanowiskoUmZew"
+		,hr."UmZewnetrzna"
+		,hr."EmailHR"
+		,hr."Active"
+		,hr."load_ts" AS "LoadDate"
 		,'Aircon' AS "Company"
 	from
-		silver.bc_salesperson_aircon sp
+		silver.hr_enova_struktura_organizacyjna_aircon hr
 ),
 
-Salespersons_Technab as (
+hr_Technab as (
 	SELECT 	
-		sp."Code" as "Code"
-		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
-		,sp."Name" as "Name"
-		,sp."E_Mail" as "Email"
-		,sp."Job_Title" as "JobTitle"
-		,sp."EDN_Supervisor_Code" as "SupervisorCode"
-		,sp."load_ts" AS "LoadDate"
+		hr."PracownikID"
+		,hr."PracownikKod"
+		,hr."Pracownik"
+		,hr."StanowiskoKod"
+		,hr."StanowiskoNazwa"
+		,hr."EtatStanowiskoHist"
+		,hr."EtatMiejscePracyHist"
+		,hr."PrzelozonyID"
+		,hr."PrzelozonyKod"
+		,hr."Przelozony"
+		,hr."StanowiskoPrzelozKod"
+		,hr."StanowiskoPrzelozNazwa"
+		,hr."CzyManager"
+		,hr."LiczbaPodwladnych"
+		,hr."StanowiskoUmZew"
+		,hr."UmZewnetrzna"
+		,hr."EmailHR"
+		,hr."Active"
+		,hr."load_ts" AS "LoadDate"
 		,'Technab' AS "Company"
 	from
-		silver.bc_salesperson_technab sp
+		silver.hr_enova_struktura_organizacyjna_technab hr
 ),
 
-Salespersons_Zymetric as (
+hr_Zymetric as (
 	SELECT 	
-		sp."Code" as "Code"
-		,concat(sp."Firma", '_', sp."Code") as "KeyNoCode"
-		,sp."Name" as "Name"
-		,sp."E_Mail" as "Email"
-		,sp."Job_Title" as "JobTitle"
-		,sp."EDN_Supervisor_Code" as "SupervisorCode"
-		,sp."load_ts" AS "LoadDate"
+		hr."PracownikID"
+		,hr."PracownikKod"
+		,hr."Pracownik"
+		,hr."StanowiskoKod"
+		,hr."StanowiskoNazwa"
+		,hr."EtatStanowiskoHist"
+		,hr."EtatMiejscePracyHist"
+		,hr."PrzelozonyID"
+		,hr."PrzelozonyKod"
+		,hr."Przelozony"
+		,hr."StanowiskoPrzelozKod"
+		,hr."StanowiskoPrzelozNazwa"
+		,hr."CzyManager"
+		,hr."LiczbaPodwladnych"
+		,hr."StanowiskoUmZew"
+		,hr."UmZewnetrzna"
+		,hr."EmailHR"
+		,hr."Active"
+		,hr."load_ts" AS "LoadDate"
 		,'Zymetric' AS "Company"
 	from
-		silver.bc_salesperson_zymetric sp
+		silver.hr_enova_struktura_organizacyjna_zymetric hr
 )
 
 SELECT *
 FROM
-	Salespersons_Aircon
+	hr_Aircon
 UNION ALL
 SELECT *
 FROM
-	Salespersons_Technab
+	hr_Technab
 UNION ALL
 SELECT *
 FROM
-	Salespersons_Zymetric
-;
+	hr_Zymetric

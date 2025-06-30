@@ -167,7 +167,7 @@ EXECUTE format($etl$
 		,"Przelozony" = EXCLUDED."Przelozony"
 		,"StanowiskoPrzelozKod" = EXCLUDED."StanowiskoPrzelozKod"
 		,"StanowiskoPrzelozNazwa" = EXCLUDED."StanowiskoPrzelozNazwa"
-		,"CzyManager" = EXCLUDED."StanowiskoPrzelozNazwa"
+		,"CzyManager" = EXCLUDED."CzyManager"
 		,"LiczbaPodwladnych" = EXCLUDED."LiczbaPodwladnych"
 		,"StanowiskoUmZew" = EXCLUDED."StanowiskoUmZew"
 		,"UmZewnetrzna" = EXCLUDED."UmZewnetrzna"
