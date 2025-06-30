@@ -18,7 +18,9 @@ with Struktura_Aircon as (
 	    hr3."EmailHR" AS "EmailPrzelozonego (N-1)", 
 	   
 	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)"
+	    hr4."EmailHR" AS "EmailPrzelozonego (N)",
+	    
+	    hr1."load_ts"
 	    	    	
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_aircon hr
@@ -61,7 +63,9 @@ Struktura_Technab as (
 	    hr3."EmailHR" AS "EmailPrzelozonego (N)",
 	    
 	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)"  
+	    hr4."EmailHR" AS "EmailPrzelozonego (N)",
+	    
+	    hr1."load_ts"
 	    	    	
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_technab hr
@@ -103,7 +107,9 @@ Struktura_Zymetric as (
 	    hr3."EmailHR" AS "EmailPrzelozonego (N)",  
 	    	    	   
 	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)"  
+	    hr4."EmailHR" AS "EmailPrzelozonego (N)",
+	    
+	    hr1."load_ts"
 	    		
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_zymetric hr
