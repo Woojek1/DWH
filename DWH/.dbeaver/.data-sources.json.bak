@@ -12,7 +12,7 @@
 				"database": "dwh",
 				"url": "jdbc:postgresql://10.0.13.24:5432/dwh",
 				"configurationType": "MANUAL",
-				"home": "postgresql_client",
+				"home": "postgresql-x64-17",
 				"type": "dev",
 				"closeIdleConnection": true,
 				"provider-properties": {

@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW gold.v_quotes AS
+CREATE OR REPLACE VIEW gold.v_bc_quotes AS
 WITH Quotes_Aircon AS (
 	SELECT
 		sl."documentNo" AS "NoQuote"
@@ -12,16 +12,17 @@ WITH Quotes_Aircon AS (
 		,sl."quantity" AS "Quantity"
 		,sl."lineAmount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+--		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+		,cer."Relational_Exch_Rate_Amount" as "RelationalExchRateAmount"
 		,CASE
 			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+			ELSE (sl."lineAmount" * cer."Relational_Exch_Rate_Amount")
 		END AS "LineAmountPLN"
 		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
 		,(
 			CASE
 				WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+				ELSE (sl."lineAmount" * cer."EDN_Sales_Exch_Rate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
@@ -40,6 +41,12 @@ WITH Quotes_Aircon AS (
 		silver.bc_sales_quotes_header_aircon qh
 	ON 
 		sl."documentNo" = qh."No"
+	inner join 
+		silver.bc_currency_exchange_rates cer
+	on
+		qh."Currency_Code" = cer."Currency_Code"
+	and
+		qh."Document_Date" = date(cer."Starting_Date")
 ),
 
 Quotes_Technab AS (
@@ -55,16 +62,17 @@ Quotes_Technab AS (
 		,sl."quantity" AS "Quantity"
 		,sl."lineAmount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+--		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+		,cer."Relational_Exch_Rate_Amount" as "RelationalExchRateAmount"
 		,CASE
 			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+			ELSE (sl."lineAmount" * cer."Relational_Exch_Rate_Amount")
 		END AS "LineAmountPLN"
 		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
 		,(
 			CASE
 				WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+				ELSE (sl."lineAmount" * cer."EDN_Sales_Exch_Rate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
@@ -83,6 +91,12 @@ Quotes_Technab AS (
 		silver.bc_sales_quotes_header_technab qh
 	ON 
 		sl."documentNo" = qh."No"
+	inner join 
+		silver.bc_currency_exchange_rates cer
+	on
+		qh."Currency_Code" = cer."Currency_Code"
+	and
+		qh."Document_Date" = date(cer."Starting_Date")
 ),
 
 Quotes_Zymetric AS (
@@ -98,16 +112,17 @@ Quotes_Zymetric AS (
 		,sl."quantity" AS "Quantity"
 		,sl."lineAmount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+--		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+		,cer."Relational_Exch_Rate_Amount" as "RelationalExchRateAmount"
 		,CASE
 			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+			ELSE (sl."lineAmount" * cer."Relational_Exch_Rate_Amount")
 		END AS "LineAmountPLN"
 		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
 		,(
 			CASE
 				WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+				ELSE (sl."lineAmount" * cer."EDN_Sales_Exch_Rate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
@@ -126,6 +141,12 @@ Quotes_Zymetric AS (
 		silver.bc_sales_quotes_header_zymetric qh
 	ON 
 		sl."documentNo" = qh."No"
+	inner join 
+		silver.bc_currency_exchange_rates cer
+	on
+		qh."Currency_Code" = cer."Currency_Code"
+	and
+		qh."Document_Date" = date(cer."Starting_Date")
 )
 
 SELECT *
