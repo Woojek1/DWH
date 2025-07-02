@@ -39,6 +39,7 @@ BEGIN
 			,"Amount_Including_VAT" numeric(14, 2) NULL
 			,"Line_Discount_Percent" numeric(6, 2) NULL
 			,"Line_Discount_Amount" numeric(14, 2) NULL
+			,"Dimensionset_ID" int4 NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("Document_No", "Line_No")
@@ -65,6 +66,7 @@ BEGIN
 			,"Amount_Including_VAT"
 			,"Line_Discount_Percent"
 			,"Line_Discount_Amount"
+			,"Dimensionset_ID"
 			,"Firma"
 			,"load_ts"
 		)
@@ -86,6 +88,7 @@ BEGIN
 			,cm."Amount_Including_VAT"
 			,cm."Line_Discount_Percent"
 			,cm."Line_Discount_Amount"
+			,cm."dimensionsetID"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I cm
@@ -160,11 +163,12 @@ EXECUTE format($etl$
 		,"Amount_Including_VAT"
 		,"Line_Discount_Percent"
 		,"Line_Discount_Amount"
+		,"Dimensionset_ID" 
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Document_No", "Line_No") DO UPDATE
 	SET
@@ -183,6 +187,7 @@ EXECUTE format($etl$
 		,"Amount_Including_VAT" = EXCLUDED."Amount_Including_VAT"
 		,"Line_Discount_Percent" = EXCLUDED."Line_Discount_Percent"
 		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
+		,"Dimensionset_ID" = EXCLUDED."Dimensionset_ID"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -204,6 +209,7 @@ EXECUTE format($etl$
 	    ,NEW."Amount_Including_VAT"
 	    ,NEW."Line_Discount_Percent"
 	    ,NEW."Line_Discount_Amount"
+		,NEW."Dimensionset_ID"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 
