@@ -1,26 +1,31 @@
 CREATE OR REPLACE VIEW gold.v_hr_enova_RLS as
 with Struktura_Aircon as (
 	SELECT
-	    hr."PracownikID",
-	    hr."Pracownik" AS "Pracownik",
-	    hr."EmailHR" AS "EmailPracownika",
+	    hr."PracownikID"
+	    ,hr."Pracownik" AS "Pracownik"
+	    ,hr."EmailHR" AS "EmailPracownika"
+	    ,hr."EmailAD" as "EmailAD"
 	
 	    -- 1. Bezpośredni przełożony
-	    hr1."Pracownik" AS "Przelozony (N-3)",
-	    hr1."EmailHR" AS "EmailPrzelozonego (N-3)",
-	
+	   	,hr1."Pracownik" AS "Przelozony (N-3)"
+	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
+	    ,hr."EmailAD" as "EmailAD (N-3)"
+	    
 	    -- 2. Przełożony przełożonego
-	    hr2."Pracownik" AS "Przelozony (N-2)",
-	    hr2."EmailHR" AS "EmailPrzelozonego (N-2)",
+	    ,hr2."Pracownik" AS "Przelozony (N-2)"
+	    ,hr2."EmailHR" AS "EmailPrzelozonego (N-2)"
+	    ,hr2."EmailAD" as "EmailAD (N-2)"
 	    
 	    -- 3. Prezes    
-	    hr3."Pracownik" AS "Przelozony (N-1)",
-	    hr3."EmailHR" AS "EmailPrzelozonego (N-1)", 
-	   
-	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)",
+	    ,hr3."Pracownik" AS "Przelozony (N-1)"
+	    ,hr3."EmailHR" AS "EmailPrzelozonego (N-1)"
+	   	,hr3."EmailAD" as "EmailAD (N-1)"
 	    
-	    hr1."load_ts"
+	    ,hr4."Pracownik" AS "Przelozony (N)"
+	    ,hr4."EmailHR" AS "EmailPrzelozonego (N)"
+	    ,hr4."EmailAD" as "EmailAD (N)"
+	    
+	    ,hr1."load_ts"
 	    	    	
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_aircon hr
@@ -46,26 +51,31 @@ with Struktura_Aircon as (
 
 Struktura_Technab as (
 	SELECT 
-	    hr."PracownikID",
-	    hr."Pracownik" AS "Pracownik",
-	    hr."EmailHR" AS "EmailPracownika",
+	    hr."PracownikID"
+	    ,hr."Pracownik" AS "Pracownik"
+	    ,hr."EmailHR" AS "EmailPracownika"
+	    ,hr."EmailAD" as "EmailAD"
 	
 	    -- 1. Bezpośredni przełożony
-	    hr1."Pracownik" AS "Przelozony (N-2)",
-	    hr1."EmailHR" AS "EmailPrzelozonego (N-2)",
-	
+	   	,hr1."Pracownik" AS "Przelozony (N-3)"
+	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
+	    ,hr."EmailAD" as "EmailAD (N-3)"
+	    
 	    -- 2. Przełożony przełożonego
-	    hr2."Pracownik" AS "Przelozony (N-1)",
-	    hr2."EmailHR" AS "EmailPrzelozonego (N-1)",
+	    ,hr2."Pracownik" AS "Przelozony (N-2)"
+	    ,hr2."EmailHR" AS "EmailPrzelozonego (N-2)"
+	    ,hr2."EmailAD" as "EmailAD (N-2)"
 	    
 	    -- 3. Prezes    
-	    hr3."Pracownik" AS "Przelozony (N)",
-	    hr3."EmailHR" AS "EmailPrzelozonego (N)",
+	    ,hr3."Pracownik" AS "Przelozony (N-1)"
+	    ,hr3."EmailHR" AS "EmailPrzelozonego (N-1)"
+	   	,hr3."EmailAD" as "EmailAD (N-1)"
 	    
-	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)",
+	    ,hr4."Pracownik" AS "Przelozony (N)"
+	    ,hr4."EmailHR" AS "EmailPrzelozonego (N)"
+	    ,hr4."EmailAD" as "EmailAD (N)"
 	    
-	    hr1."load_ts"
+	    ,hr1."load_ts"
 	    	    	
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_technab hr
@@ -82,7 +92,7 @@ Struktura_Technab as (
 	on
 		hr2."PrzelozonyID" = hr3."PracownikID"
 	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr4
+		silver.hr_enova_struktura_organizacyjna_technab hr4
 	on
 		hr3."PrzelozonyID" = hr4."PracownikID"	
 	ORDER by
@@ -90,26 +100,31 @@ Struktura_Technab as (
 ),
 Struktura_Zymetric as (
 	SELECT 
-	    hr."PracownikID",
-	    hr."Pracownik" AS "Pracownik",
-	    hr."EmailHR" AS "EmailPracownika",
+	    hr."PracownikID"
+	    ,hr."Pracownik" AS "Pracownik"
+	    ,hr."EmailHR" AS "EmailPracownika"
+	    ,hr."EmailAD" as "EmailAD"
 	
 	    -- 1. Bezpośredni przełożony
-	    hr1."Pracownik" AS "Przelozony (N-2)",
-	    hr1."EmailHR" AS "EmailPrzelozonego (N-2)",
-	
+	   	,hr1."Pracownik" AS "Przelozony (N-3)"
+	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
+	    ,hr."EmailAD" as "EmailAD (N-3)"
+	    
 	    -- 2. Przełożony przełożonego
-	    hr2."Pracownik" AS "Przelozony (N-1)",
-	    hr2."EmailHR" AS "EmailPrzelozonego (N-1)",
+	    ,hr2."Pracownik" AS "Przelozony (N-2)"
+	    ,hr2."EmailHR" AS "EmailPrzelozonego (N-2)"
+	    ,hr2."EmailAD" as "EmailAD (N-2)"
 	    
 	    -- 3. Prezes    
-	    hr3."Pracownik" AS "Przelozony (N)",
-	    hr3."EmailHR" AS "EmailPrzelozonego (N)",  
-	    	    	   
-	    hr4."Pracownik" AS "Przelozony (N)",
-	    hr4."EmailHR" AS "EmailPrzelozonego (N)",
+	    ,hr3."Pracownik" AS "Przelozony (N-1)"
+	    ,hr3."EmailHR" AS "EmailPrzelozonego (N-1)"
+	   	,hr3."EmailAD" as "EmailAD (N-1)"
 	    
-	    hr1."load_ts"
+	    ,hr4."Pracownik" AS "Przelozony (N)"
+	    ,hr4."EmailHR" AS "EmailPrzelozonego (N)"
+	    ,hr4."EmailAD" as "EmailAD (N)"
+	    
+	    ,hr1."load_ts"
 	    		
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_zymetric hr
@@ -126,7 +141,7 @@ Struktura_Zymetric as (
 	on
 		hr2."PrzelozonyID" = hr3."PracownikID"
 	LEFT join
-		silver.hr_enova_struktura_organizacyjna_aircon hr4
+		silver.hr_enova_struktura_organizacyjna_zymetric hr4
 	on
 		hr3."PrzelozonyID" = hr4."PracownikID"	
 	ORDER by

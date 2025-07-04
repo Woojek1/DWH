@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- CREATING ENOVA STRUKTURA ORGANIZACYJNA TABLES IN SILVER LAYER AND FIRST LOAD
 -------------------------------------------------------------------------------
-
+ 
 
 DO $$
 DECLARE
@@ -39,6 +39,7 @@ BEGIN
 			,"StanowiskoUmZew" varchar NULL
 			,"UmZewnetrzna" bool NULL
 			,"EmailHR" varchar NULL
+			,"EmailAD" varchar NULL
 			,"Active" bool NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
@@ -68,6 +69,7 @@ BEGIN
 			,"StanowiskoUmZew"
 			,"UmZewnetrzna"
 			,"EmailHR"
+			,"EmailAD"
 			,"Active"
 			,"Firma"
 			,"load_ts"
@@ -90,6 +92,7 @@ BEGIN
 			,hr."StanowiskoUmZew"
 			,hr."UmZewnetrzna"
 			,hr."EmailHR"
+			,hr."EmailAD"
 			,hr."Active"
 			,%L
         	,CURRENT_TIMESTAMP
@@ -145,6 +148,7 @@ EXECUTE format($etl$
 		,"StanowiskoUmZew"
 		,"UmZewnetrzna"
 		,"EmailHR"
+		,"EmailAD"
 		,"Active"
 		,"Firma"
 		,"load_ts"
@@ -172,6 +176,7 @@ EXECUTE format($etl$
 		,"StanowiskoUmZew" = EXCLUDED."StanowiskoUmZew"
 		,"UmZewnetrzna" = EXCLUDED."UmZewnetrzna"
 		,"EmailHR" = EXCLUDED."EmailHR"
+		,"EmailAD" = EXCLUDED."EmailAD"
 		,"Active" = EXCLUDED."Active"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
@@ -194,6 +199,7 @@ EXECUTE format($etl$
 		,NEW."StanowiskoUmZew"
 		,NEW."UmZewnetrzna"
 		,NEW."EmailHR"
+		,NEW."EmailAD"
 		,NEW."Active"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
