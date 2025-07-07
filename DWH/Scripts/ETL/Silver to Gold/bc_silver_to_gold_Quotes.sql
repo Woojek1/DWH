@@ -41,7 +41,7 @@ WITH Quotes_Aircon AS (
 		silver.bc_sales_quotes_header_aircon qh
 	ON 
 		sl."documentNo" = qh."No"
-	inner join 
+	left join 
 		silver.bc_currency_exchange_rates cer
 	on
 		qh."Currency_Code" = cer."Currency_Code"
@@ -91,7 +91,7 @@ Quotes_Technab AS (
 		silver.bc_sales_quotes_header_technab qh
 	ON 
 		sl."documentNo" = qh."No"
-	inner join 
+	left join 
 		silver.bc_currency_exchange_rates cer
 	on
 		qh."Currency_Code" = cer."Currency_Code"
@@ -141,7 +141,7 @@ Quotes_Zymetric AS (
 		silver.bc_sales_quotes_header_zymetric qh
 	ON 
 		sl."documentNo" = qh."No"
-	inner join 
+	left join 
 		silver.bc_currency_exchange_rates cer
 	on
 		qh."Currency_Code" = cer."Currency_Code"

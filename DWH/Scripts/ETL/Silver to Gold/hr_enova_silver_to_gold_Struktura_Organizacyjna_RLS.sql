@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW gold.v_hr_enova_RLS as
+CREATE OR REPLACE VIEW gold.v_hr_enova_struktura_organizacyjna_RLS as
 with Struktura_Aircon as (
 	SELECT
 	    hr."PracownikID"
@@ -9,7 +9,7 @@ with Struktura_Aircon as (
 	    -- 1. Bezpośredni przełożony
 	   	,hr1."Pracownik" AS "Przelozony (N-3)"
 	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
-	    ,hr."EmailAD" as "EmailAD (N-3)"
+	    ,hr1."EmailAD" as "EmailAD (N-3)"
 	    
 	    -- 2. Przełożony przełożonego
 	    ,hr2."Pracownik" AS "Przelozony (N-2)"
@@ -26,6 +26,7 @@ with Struktura_Aircon as (
 	    ,hr4."EmailAD" as "EmailAD (N)"
 	    
 	    ,hr1."load_ts"
+	    ,'Aircon' as "Company"
 	    	    	
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_aircon hr
@@ -59,7 +60,7 @@ Struktura_Technab as (
 	    -- 1. Bezpośredni przełożony
 	   	,hr1."Pracownik" AS "Przelozony (N-3)"
 	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
-	    ,hr."EmailAD" as "EmailAD (N-3)"
+	    ,hr1."EmailAD" as "EmailAD (N-3)"
 	    
 	    -- 2. Przełożony przełożonego
 	    ,hr2."Pracownik" AS "Przelozony (N-2)"
@@ -76,7 +77,8 @@ Struktura_Technab as (
 	    ,hr4."EmailAD" as "EmailAD (N)"
 	    
 	    ,hr1."load_ts"
-	    	    	
+	    ,'Technab' as "Company"
+	   	    	
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_technab hr
 	LEFT join
@@ -108,7 +110,7 @@ Struktura_Zymetric as (
 	    -- 1. Bezpośredni przełożony
 	   	,hr1."Pracownik" AS "Przelozony (N-3)"
 	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
-	    ,hr."EmailAD" as "EmailAD (N-3)"
+	    ,hr1."EmailAD" as "EmailAD (N-3)"
 	    
 	    -- 2. Przełożony przełożonego
 	    ,hr2."Pracownik" AS "Przelozony (N-2)"
@@ -125,6 +127,7 @@ Struktura_Zymetric as (
 	    ,hr4."EmailAD" as "EmailAD (N)"
 	    
 	    ,hr1."load_ts"
+	    ,'Zymetric' as "Company"
 	    		
 	FROM 
 		silver.hr_enova_struktura_organizacyjna_zymetric hr
