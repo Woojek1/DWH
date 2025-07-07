@@ -82,7 +82,7 @@ $$;
 
 DROP TRIGGER IF EXISTS trg_upsert_magento_prod_customer_log ON bronze.magento_prod_customer_log;
 CREATE TRIGGER trg_upsert_magento_prod_customer_log
-AFTER INSERT OR UPDATE ON bronze.magento_prod_customer_entity
+AFTER INSERT OR UPDATE ON bronze.magento_prod_customer_log
 FOR EACH ROW
 EXECUTE FUNCTION bronze.fn_upsert_magento_prod_customer_log();
 
