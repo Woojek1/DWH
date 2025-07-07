@@ -37,7 +37,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,sil."No" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
 		,sil."Description_2" AS "ItemDescription"
-		,sil."Quantity" AS "Quantity"
+		,(sil."Quantity") * (-1) AS "Quantity"
 		,sil."Unit_Price" as "UnitPrice"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price"*(Max(cer."Relational_Exch_Rate_Amount"))) * (sil."Quantity")
@@ -48,44 +48,44 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
 			else (sil."Amount") * (-1)
 		end as "AmountLCY"		
---		,sil."unitCostLCY" AS "Koszt urzadzenia"
---		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
+	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
+	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
 		,0 AS "LineCostsLCY"
---		,((case 
---			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
---			else (sil."Amount" * (-1))
---		end) - 
---		((sil."Unit_Cost_LCY") * (sil."Quantity"))) as
+	--		,((case 
+	--			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+	--			else (sil."Amount" * (-1))
+	--		end) - 
+	--		((sil."Unit_Cost_LCY") * (sil."Quantity"))) as
 		,0 as"ProfitLCY"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
---		,CASE 
---		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
---		  ELSE 
---		    (
---		      (
---		        CASE
---		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
---		          ELSE sil."amount"
---		        END
---		      ) - (sil."unitCostLCY" * sil."quantity")
---		    ) 
---		    /
---		    NULLIF(
---		      (
---		        CASE
---		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
---		          ELSE sil."amount"
---		        END
---		      ),
---		      0
---		    )
---		END AS 
+	--		,CASE 
+	--		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+	--		  ELSE 
+	--		    (
+	--		      (
+	--		        CASE
+	--		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+	--		          ELSE sil."amount"
+	--		        END
+	--		      ) - (sil."unitCostLCY" * sil."quantity")
+	--		    ) 
+	--		    /
+	--		    NULLIF(
+	--		      (
+	--		        CASE
+	--		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
+	--		          ELSE sil."amount"
+	--		        END
+	--		      ),
+	--		      0
+	--		    )
+	--		END AS 
 		,0 as "Profitability"
 		,(sil."Amount_Including_VAT") * (-1) AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT"/(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" * (Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
 			else (sil."Amount_Including_VAT") * (-1)
 		end as "AmountIncludingVatLCY"		
 		,0 as "RemainingAmount"
@@ -113,7 +113,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		sih."Document_Date" = date(cer."Starting_Date")
 	INNER JOIN
 		silver.bc_dimension_set_aircon ds
-	ON sil."Dimensionset_ID" = ds."dimensionSetID"
+	ON sil."dimensionSetID" = ds."dimensionSetID"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
@@ -161,7 +161,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,sil."No" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
 		,sil."Description_2" AS "ItemDescription"
-		,sil."Quantity" AS "Quantity"
+		,(sil."Quantity") * (-1) AS "Quantity"
 		,sil."Unit_Price" as "UnitPrice"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price"*(Max(cer."Relational_Exch_Rate_Amount"))) * (sil."Quantity")
@@ -209,7 +209,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,0 as "Profitability"
 		,(sil."Amount_Including_VAT") * (-1) AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT"/(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" * (Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
 			else (sil."Amount_Including_VAT") * (-1)
 		end as "AmountIncludingVatLCY"		
 		,0 as "RemainingAmount"
@@ -237,7 +237,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		sih."Document_Date" = date(cer."Starting_Date")
 	INNER JOIN
 		silver.bc_dimension_set_technab ds
-	ON sil."Dimensionset_ID" = ds."dimensionSetID"
+	ON sil."dimensionSetID" = ds."dimensionSetID"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
@@ -285,7 +285,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,sil."No" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
 		,sil."Description_2" AS "ItemDescription"
-		,sil."Quantity" AS "Quantity"
+		,(sil."Quantity") * (-1) AS "Quantity"
 		,sil."Unit_Price" as "UnitPrice"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price"*(Max(cer."Relational_Exch_Rate_Amount"))) * (sil."Quantity")
@@ -333,7 +333,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,0 as "Profitability"
 		,(sil."Amount_Including_VAT") * (-1) AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT"/(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" * (Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
 			else (sil."Amount_Including_VAT") * (-1)
 		end as "AmountIncludingVatLCY"		
 		,0 as "RemainingAmount"
@@ -361,7 +361,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		sih."Document_Date" = date(cer."Starting_Date")
 	INNER JOIN
 		silver.bc_dimension_set_zymetric ds
-	ON sil."Dimensionset_ID" = ds."dimensionSetID"
+	ON sil."dimensionSetID" = ds."dimensionSetID"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",

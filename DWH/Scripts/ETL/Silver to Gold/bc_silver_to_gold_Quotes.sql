@@ -39,7 +39,7 @@ WITH Quotes_Aircon AS (
 		silver.bc_sales_lines_aircon sl
 	INNER JOIN
 		silver.bc_sales_quotes_header_aircon qh
-	ON 
+	ON
 		sl."documentNo" = qh."No"
 	left join 
 		silver.bc_currency_exchange_rates cer

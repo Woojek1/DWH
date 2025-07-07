@@ -23,6 +23,7 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text PRIMARY KEY
+			,"KeyNoInvoice" text NULL
 			,"Sell_to_Customer_No" text NULL
 			,"Sell_to_Customer_Name" text NULL
 			,"VAT_Registration_No" text NULL
@@ -62,6 +63,7 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
+			,"KeyNoInvoice"
 			,"Sell_to_Customer_No"
 			,"Sell_to_Customer_Name"
 			,"VAT_Registration_No"
@@ -97,6 +99,7 @@ BEGIN
 		)
 		SELECT
 			ih."No"
+			,CONCAT  CONCAT(sil."Firma", '_', sil."Document_No"
 			,ih."Sell_to_Customer_No"
 			,ih."Sell_to_Customer_Name"
 			,REGEXP_REPLACE(ih."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"

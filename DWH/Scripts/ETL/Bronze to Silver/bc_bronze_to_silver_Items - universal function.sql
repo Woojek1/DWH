@@ -72,6 +72,7 @@ BEGIN
 			,"systemId" text NULL
 			,"systemModifiedAt" timestamptz NULL
 			,"unitCost" numeric(14,2) NULL
+			,"netWeight" numeric (14,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("No")
@@ -133,6 +134,7 @@ BEGIN
 			,"systemId"
 			,"systemModifiedAt"
 			,"unitCost"
+			,"netWeight"
 			,"Firma"
 			,"load_ts"
 		)
@@ -187,6 +189,7 @@ BEGIN
 			,i."systemId"
 			,i."systemModifiedAt"
 			,i."unitCost"
+			,i."netWeight"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I as i
@@ -328,12 +331,13 @@ EXECUTE format($etl$
 		,"systemId"
 		,"systemModifiedAt"
 		,"unitCost"
+		,"netWeight"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
-		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52
+		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
@@ -388,6 +392,7 @@ EXECUTE format($etl$
 		,"systemId" = EXCLUDED."systemId"
 		,"systemModifiedAt" = EXCLUDED."systemModifiedAt"
 		,"unitCost" = EXCLUDED."unitCost"
+		,"netWeight" = EXCLUDED."netWeight"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -442,6 +447,7 @@ EXECUTE format($etl$
 		,NEW."systemId"
 		,NEW."systemModifiedAt"
 		,NEW."unitCost"
+		,NEW."netWeight"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 
