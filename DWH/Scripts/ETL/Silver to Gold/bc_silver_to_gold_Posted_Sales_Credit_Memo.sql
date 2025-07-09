@@ -98,9 +98,9 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Aircon' AS "Company"
 	FROM
-		silver.bc_posted_sales_credit_memo_lines_zymetric sil
+		silver.bc_posted_sales_credit_memo_lines_aircon sil
 	INNER JOIN
-		silver.bc_posted_sales_credit_memo_header_zymetric sih
+		silver.bc_posted_sales_credit_memo_header_aircon sih
 	ON sil."Document_No" = sih."No"
 	left JOIN 
 		silver.bc_salesperson_aircon sp
@@ -220,7 +220,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
-		,'Aircon' AS "Company"
+		,'Technab' AS "Company"
 	FROM
 		silver.bc_posted_sales_credit_memo_lines_technab sil
 	INNER JOIN
@@ -344,7 +344,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
-		,'Aircon' AS "Company"
+		,'Zymetric' AS "Company"
 	FROM
 		silver.bc_posted_sales_credit_memo_lines_zymetric sil
 	INNER JOIN

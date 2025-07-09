@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS silver.magento_prod_customer_entity (
 );
 
 
-
 -- Pierwsze ładowanie danych z bronze do silver
 
 INSERT INTO silver.magento_prod_customer_entity (

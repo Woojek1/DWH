@@ -73,6 +73,10 @@ BEGIN
 			,"systemModifiedAt" timestamptz NULL
 			,"unitCost" numeric(14,2) NULL
 			,"netWeight" numeric (14,2) NULL
+			,"ednBatteryCode" text NULL
+			,"ednBatteryItem" bool NULL
+			,"ednBatteryQuantity" numeric(14, 2) NULL
+			,"vendorNo" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("No")
@@ -135,6 +139,10 @@ BEGIN
 			,"systemModifiedAt"
 			,"unitCost"
 			,"netWeight"
+			,"ednBatteryCode"
+			,"ednBatteryItem"
+			,"ednBatteryQuantity"
+			,"vendorNo"
 			,"Firma"
 			,"load_ts"
 		)
@@ -190,65 +198,14 @@ BEGIN
 			,i."systemModifiedAt"
 			,i."unitCost"
 			,i."netWeight"
+			,i."ednBatteryCode"
+			,i."ednBatteryItem"
+			,i."ednBatteryQuantity"
+			,i."vendorNo"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I as i
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("No") DO UPDATE
---		SET
---			"No" = EXCLUDED."No"
---			,"baseUnitOfMeasure" = EXCLUDED."baseUnitOfMeasure"
---			,"baseGroup" = EXCLUDED."baseGroup"
---			,"blocked" = EXCLUDED."blocked"
---			,"costingMethod" = EXCLUDED."costingMethod"
---			,"description" = EXCLUDED."description"
---			,"description2" = EXCLUDED."description2"
---			,"ednCoolingCapacityKW" = EXCLUDED."ednCoolingCapacityKW"
---			,"ednEfficiencyIndex" = EXCLUDED."ednEfficiencyIndex"
---			,"ednFactorType" = EXCLUDED."ednFactorType"
---			,"ednHeatingCapacityKW" = EXCLUDED."ednHeatingCapacityKW"
---			,"ednNAVKey" = EXCLUDED."ednNAVKey"
---			,"ednRefrigerant" = EXCLUDED."ednRefrigerant"
---			,"ednRefrigerantQuantityUoM" = EXCLUDED."ednRefrigerantQuantityUoM"
---			,"ednTypeA" = EXCLUDED."ednTypeA"
---			,"ednTypeB" = EXCLUDED."ednTypeB"
---			,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
---			,"inventory" = EXCLUDED."inventory"
---			,"inventoryPostingGroup" = EXCLUDED."inventoryPostingGroup"
---			,"manufacturerCode" = EXCLUDED."manufacturerCode"
---			,"maximumInventory" = EXCLUDED."maximumInventory"
---			,"maximumOrderQuantity" = EXCLUDED."maximumOrderQuantity"
---			,"minimumOrderQuantity" = EXCLUDED."minimumOrderQuantity"
---			,"negativeAdjmtLCY" = EXCLUDED."negativeAdjmtLCY"
---			,"negativeAdjmtQty" = EXCLUDED."negativeAdjmtQty"
---			,"netChange" = EXCLUDED."netChange"
---			,"netInvoicedQty" = EXCLUDED."netInvoicedQty"
---			,"no2" = EXCLUDED."no2"
---			,"qtyAssignedToShip" = EXCLUDED."qtyAssignedToShip"
---			,"qtyPicked" = EXCLUDED."qtyPicked"
---			,"qtyInTransit" = EXCLUDED."qtyInTransit"
---			,"qtyOnAsmComponent" = EXCLUDED."qtyOnAsmComponent"
---			,"qtyOnAssemblyOrder" = EXCLUDED."qtyOnAssemblyOrder"
---			,"qtyOnComponentLines" = EXCLUDED."qtyOnComponentLines"
---			,"qtyOnJobOrder" = EXCLUDED."qtyOnJobOrder"
---			,"qtyOnProdOrder" = EXCLUDED."qtyOnProdOrder"
---			,"qtyOnPurchOrder" = EXCLUDED."qtyOnPurchOrder"
---			,"qtyOnPurchReturn" = EXCLUDED."qtyOnPurchReturn"
---			,"qtyOnSalesOrder" = EXCLUDED."qtyOnSalesOrder"
---			,"qtyOnSalesReturn" = EXCLUDED."qtyOnSalesReturn"
---			,"qtyOnServiceOrder" = EXCLUDED."qtyOnServiceOrder"
---			,"relOrderReceiptQty" = EXCLUDED."relOrderReceiptQty"
---			,"reservedQtyOnInventory" = EXCLUDED."reservedQtyOnInventory"
---			,"reservedQtyOnProdOrder" = EXCLUDED."reservedQtyOnProdOrder"
---			,"reservedQtyOnPurchOrders" = EXCLUDED."reservedQtyOnPurchOrders"
---			,"reservedQtyOnSalesOrders" = EXCLUDED."reservedQtyOnSalesOrders"
---			,"systemId" = EXCLUDED."systemId"
---			,"systemModifiedAt" = EXCLUDED."systemModifiedAt"
---			,"unitCost" = EXCLUDED."unitCost"
---			,"Firma" = EXCLUDED."Firma"
---			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -332,6 +289,10 @@ EXECUTE format($etl$
 		,"systemModifiedAt"
 		,"unitCost"
 		,"netWeight"
+		,"ednBatteryCode"
+		,"ednBatteryItem"
+		,"ednBatteryQuantity"
+		,"vendorNo"
 		,"Firma"
 		,"load_ts"
 	)
@@ -393,6 +354,10 @@ EXECUTE format($etl$
 		,"systemModifiedAt" = EXCLUDED."systemModifiedAt"
 		,"unitCost" = EXCLUDED."unitCost"
 		,"netWeight" = EXCLUDED."netWeight"
+		,"ednBatteryCode" = EXCLUDED."ednBatteryCode"
+		,"ednBatteryItem" = EXCLUDED."ednBatteryItem"
+		,"ednBatteryQuantity" = EXCLUDED."ednBatteryQuantity"
+		,"vendorNo" = EXCLUDED."vendorNo"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -448,6 +413,10 @@ EXECUTE format($etl$
 		,NEW."systemModifiedAt"
 		,NEW."unitCost"
 		,NEW."netWeight"
+		,NEW."ednBatteryCode"
+		,NEW."ednBatteryItem"
+		,NEW."ednBatteryQuantity"
+		,NEW."vendorNo"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 

@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW v_magento_prod_sales_order AS
+CREATE OR REPLACE VIEW gold.v_magento_prod_sales_order AS
 SELECT
 	entity_id
 	,state
