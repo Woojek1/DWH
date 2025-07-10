@@ -1,16 +1,4 @@
-CREATE OR REPLACE VIEW  gold.v_invoices as
-WITH BC_Correction_Invoices_Aircon AS (
-	select
-		sil."DocumentNo" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."DocumentNo") AS "KeyNoInvoice"
-		,sil."lineNo" AS "InvoiceLine"	
-from 
-	silver.bc_posted_sales_credit_memo_lines_aircon sil
-	
-	
--------------------------------------------------------------------------------------------------------------------------------	
--------------------------------------------------------------------------------------------------------------------------------	
-	
+
 CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_credit_memo_invoices AS
 WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	select
@@ -23,6 +11,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,CONCAT(sil."Firma", '_', sil."Shortcut_Dimension_2_Code") AS "KeyNoProject"
 		,null /*sih."Order_No"*/ AS "NoOrder"		-- nie ma na fakturach korygujących
 		,null /*CONCAT(sil."Firma", '_', sih."Order_No")*/ AS "KeyNoOrder"		-- nie ma na fakturach korygujących
+		,false as "ECOM"
 		,MAX(sih."Posting_Date") AS "PostingDate"
 		,null /*MAX(sih."Due_Date")*/ as "DueDate"		-- nie ma na fakturach korygujących
 		,null /*case
@@ -50,13 +39,12 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		end as "AmountLCY"		
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
-		,0 AS "LineCostsLCY"
-	--		,((case 
-	--			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
-	--			else (sil."Amount" * (-1))
-	--		end) - 
-	--		((sil."Unit_Cost_LCY") * (sil."Quantity"))) as
-		,0 as"ProfitLCY"
+		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
+			,((case 
+				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+				else (sil."Amount" * (-1))
+			end) - 
+			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
@@ -136,8 +124,8 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		cer."Relational_Exch_Rate_Amount"
 ),
 	
-	BC_Posted_Sales_Credit_Memo_Technab AS (
-		select
+BC_Posted_Sales_Credit_Memo_Technab AS (
+	select
 		sil."Document_No" AS "NoInvoice"
 		,CONCAT(sil."Firma", '_', sil."Document_No") AS "KeyNoInvoice"
 		,sil."Line_No" AS "InvoiceLine"
@@ -147,6 +135,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,CONCAT(sil."Firma", '_', sil."Shortcut_Dimension_2_Code") AS "KeyNoProject"
 		,null /*sih."Order_No"*/ AS "NoOrder"		-- nie ma na fakturach korygujących
 		,null /*CONCAT(sil."Firma", '_', sih."Order_No")*/ AS "KeyNoOrder"		-- nie ma na fakturach korygujących
+		,false as "ECOM"
 		,MAX(sih."Posting_Date") AS "PostingDate"
 		,null /*MAX(sih."Due_Date")*/ as "DueDate"		-- nie ma na fakturach korygujących
 		,null /*case
@@ -174,13 +163,12 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		end as "AmountLCY"		
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
-		,0 AS "LineCostsLCY"
-	--		,((case 
-	--			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
-	--			else (sil."Amount" * (-1))
-	--		end) - 
-	--		((sil."Unit_Cost_LCY") * (sil."Quantity"))) as
-		,0 as"ProfitLCY"
+		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
+			,((case 
+				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+				else (sil."Amount" * (-1))
+			end) - 
+			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
@@ -260,8 +248,8 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		cer."Relational_Exch_Rate_Amount"
 	),
 	
-	BC_Posted_Sales_Credit_Memo_Zymetric AS (
-		select
+BC_Posted_Sales_Credit_Memo_Zymetric AS (
+	select
 		sil."Document_No" AS "NoInvoice"
 		,CONCAT(sil."Firma", '_', sil."Document_No") AS "KeyNoInvoice"
 		,sil."Line_No" AS "InvoiceLine"
@@ -271,6 +259,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,CONCAT(sil."Firma", '_', sil."Shortcut_Dimension_2_Code") AS "KeyNoProject"
 		,null /*sih."Order_No"*/ AS "NoOrder"		-- nie ma na fakturach korygujących
 		,null /*CONCAT(sil."Firma", '_', sih."Order_No")*/ AS "KeyNoOrder"		-- nie ma na fakturach korygujących
+		,false as "ECOM"
 		,MAX(sih."Posting_Date") AS "PostingDate"
 		,null /*MAX(sih."Due_Date")*/ as "DueDate"		-- nie ma na fakturach korygujących
 		,null /*case
@@ -298,13 +287,12 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		end as "AmountLCY"		
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
-		,0 AS "LineCostsLCY"
-	--		,((case 
-	--			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
-	--			else (sil."Amount" * (-1))
-	--		end) - 
-	--		((sil."Unit_Cost_LCY") * (sil."Quantity"))) as
-		,0 as"ProfitLCY"
+		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
+			,((case 
+				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+				else (sil."Amount" * (-1))
+			end) - 
+			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących

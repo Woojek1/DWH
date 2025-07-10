@@ -9,7 +9,11 @@ WITH BC_Invoices_Aircon AS (
 		,sil."shortcutDimension2Code" AS "NoProject"
 		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
 		,sih."Order_No" AS "NoOrder"
-		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
+		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"
+		,case
+			when sih."Order_No" like '%ECM%' then true
+			else false
+		end as "ECOM"		
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case
@@ -127,7 +131,11 @@ BC_Invoices_Technab AS (
 		,sil."shortcutDimension2Code" AS "NoProject"
 		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
 		,sih."Order_No" AS "NoOrder"
-		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
+		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"
+		,case
+			when sih."Order_No" like '%ECM%' then true
+			else false
+		end as "ECOM"		
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case
@@ -245,7 +253,11 @@ BC_Invoices_Zymetric AS (
 		,sil."shortcutDimension2Code" AS "NoProject"
 		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
 		,sih."Order_No" AS "NoOrder"
-		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"	
+		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"
+		,case
+			when sih."Order_No" like '%ECM%' then true
+			else false
+		end as "Ecom"		
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case

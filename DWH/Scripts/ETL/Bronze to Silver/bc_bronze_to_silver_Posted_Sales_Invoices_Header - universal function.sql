@@ -23,7 +23,6 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text PRIMARY KEY
-			,"KeyNoInvoice" text NULL
 			,"Sell_to_Customer_No" text NULL
 			,"Sell_to_Customer_Name" text NULL
 			,"VAT_Registration_No" text NULL
@@ -54,6 +53,7 @@ BEGIN
 			,"Location_Code" text NULL
 			,"Shipment_Method_Code" text NULL
 			,"Shipping_Agent_Code" text NULL
+			,"Invoice_Type" text NULL	
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
@@ -63,7 +63,6 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
-			,"KeyNoInvoice"
 			,"Sell_to_Customer_No"
 			,"Sell_to_Customer_Name"
 			,"VAT_Registration_No"
@@ -94,12 +93,12 @@ BEGIN
 			,"Location_Code"
 			,"Shipment_Method_Code"
 			,"Shipping_Agent_Code"
+			,"Invoice_Type"
 			,"Firma"
 			,"load_ts"
 		)
 		SELECT
 			ih."No"
-			,CONCAT  CONCAT(sil."Firma", '_', sil."Document_No"
 			,ih."Sell_to_Customer_No"
 			,ih."Sell_to_Customer_Name"
 			,REGEXP_REPLACE(ih."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
@@ -133,6 +132,7 @@ BEGIN
 			,ih."Location_Code"
 			,ih."Shipment_Method_Code"
 			,ih."Shipping_Agent_Code"
+			,'Faktura'
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I ih
@@ -201,11 +201,12 @@ EXECUTE format($etl$
 		,"Location_Code"
 		,"Shipment_Method_Code"
 		,"Shipping_Agent_Code"
+		,"Invoice_Type"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -239,6 +240,7 @@ EXECUTE format($etl$
 		,"Location_Code" = EXCLUDED."Location_Code"
 		,"Shipment_Method_Code" = EXCLUDED."Shipment_Method_Code"
 		,"Shipping_Agent_Code" = EXCLUDED."Shipping_Agent_Code"
+		,"Invoice_Type" = EXCLUDED."Invoice_Type"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -277,6 +279,7 @@ EXECUTE format($etl$
 		,NEW."Location_Code"
 		,NEW."Shipment_Method_Code"
 		,NEW."Shipping_Agent_Code"
+		,'Faktura'
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 
