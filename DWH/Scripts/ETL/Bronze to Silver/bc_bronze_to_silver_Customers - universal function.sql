@@ -58,6 +58,7 @@ BEGIN
 			,"Gen_Bus_Posting_Group" text NULL
 			,"Payment_Terms_Code" text NULL
 			,"Payment_Method_Code" text NULL
+			,"Related_company" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
@@ -102,6 +103,7 @@ BEGIN
 			,"Gen_Bus_Posting_Group"
 			,"Payment_Terms_Code"
 			,"Payment_Method_Code"
+			,"Related_company"
 			,"Firma"
 			,"load_ts"
 		)
@@ -142,6 +144,13 @@ BEGIN
 			,c."Gen_Bus_Posting_Group"
 			,c."Payment_Terms_Code"
 			,c."Payment_Method_Code"
+			,case
+				when REGEXP_REPLACE(c."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5262419501' then 'Aircon'
+				when REGEXP_REPLACE(c."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242712474' then 'Technab'
+				when REGEXP_REPLACE(c."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242599836' then 'Zymetric'
+				when REGEXP_REPLACE(c."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242770589' then 'Artcomfort'
+				else 'Niepowiązane'
+			end
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I c
@@ -253,11 +262,12 @@ EXECUTE format($etl$
 		,"Gen_Bus_Posting_Group"
 		,"Payment_Terms_Code"
 		,"Payment_Method_Code"
+		,"Related_company"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -296,6 +306,7 @@ EXECUTE format($etl$
 		,"Gen_Bus_Posting_Group" = EXCLUDED."Gen_Bus_Posting_Group"
 		,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
 		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
+		,"Related_company" = EXCLUDED."Related_company"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -336,6 +347,13 @@ EXECUTE format($etl$
 		,NEW."Gen_Bus_Posting_Group"
 		,NEW."Payment_Terms_Code"
 		,NEW."Payment_Method_Code"
+		,case
+			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5262419501' then 'Aircon'
+			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242712474' then 'Technab'
+			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242599836' then 'Zymetric'
+			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242770589' then 'Artcomfort'
+			else 'Niepowiązane'
+		end
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 

@@ -86,6 +86,7 @@ WITH BC_Invoices_Aircon AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
+		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Aircon' AS "Company"
 	FROM
@@ -208,6 +209,7 @@ BC_Invoices_Technab AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
+		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Technab' AS "Firma"
 	FROM
@@ -330,6 +332,7 @@ BC_Invoices_Zymetric AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
+		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Zymetric' AS "Firma"
 	FROM

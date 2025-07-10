@@ -49,6 +49,7 @@ BEGIN
 			,"Correction" bool NULL
 			,"Shipment_Method_Code" text NULL
 			,"Shipping_Agent_Code" text NULL
+			,"Invoice_Type" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("No")
@@ -85,6 +86,7 @@ BEGIN
 			,"Correction"
 			,"Shipment_Method_Code"
 			,"Shipping_Agent_Code"
+			,"Invoice_Type"
 			,"Firma"
 			,"load_ts"
 		)
@@ -116,6 +118,7 @@ BEGIN
 			,mh."Correction"
 			,mh."Shipment_Method_Code"
 			,mh."Shipping_Agent_Code"
+			,'Faktura korygująca'
 			,%L
 			,CURRENT_TIMESTAMP
 		FROM bronze.%I mh
@@ -211,6 +214,7 @@ EXECUTE format($etl$
 		,"Correction"
 		,"Shipment_Method_Code"
 		,"Shipping_Agent_Code"
+		,"Invoice_Type"
 		,"Firma"
 		,"load_ts"
 	)
@@ -245,6 +249,7 @@ EXECUTE format($etl$
 		,"Correction" = EXCLUDED."Correction"
 		,"Shipment_Method_Code" = EXCLUDED."Shipment_Method_Code"
 		,"Shipping_Agent_Code" = EXCLUDED."Shipping_Agent_Code"
+		,"Invoice_Type" = EXCLUDED."Invoice_Type"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP
 	$etl$, target_table)
@@ -276,6 +281,7 @@ EXECUTE format($etl$
 		,NEW."Correction"
 		,NEW."Shipment_Method_Code"
 		,NEW."Shipping_Agent_Code"
+		,'Faktura korygująca'
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 RETURN NEW;

@@ -22,6 +22,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
 		,cer."Relational_Exch_Rate_Amount" as "CurrencyFactor"
+		,max(sih."ITI_Correction_Reason") as "CorrectionReason"
 		,sil."Type" as "Type"
 		,sil."No" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
@@ -83,6 +84,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
+		,max(sih."Invoice_Type") as "Invoice_Type"		
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Aircon' AS "Company"
 	FROM
@@ -146,6 +148,7 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
 		,cer."Relational_Exch_Rate_Amount" as "CurrencyFactor"
+		,max(sih."ITI_Correction_Reason") as "CorrectionReason"
 		,sil."Type" as "Type"
 		,sil."No" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
@@ -207,6 +210,7 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
+		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Technab' AS "Company"
 	FROM
@@ -270,6 +274,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
 		,cer."Relational_Exch_Rate_Amount" as "CurrencyFactor"
+		,max(sih."ITI_Correction_Reason") as "CorrectionReason"
 		,sil."Type" as "Type"
 		,sil."No" AS "NoItem"
 		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
@@ -331,6 +336,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
+		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Zymetric' AS "Company"
 	FROM
