@@ -40,6 +40,7 @@ BEGIN
 			,"Corrective" bool NULL
 			,"EDN_Factoring_Invoice" bool NULL
 			,"Currency_Code" text NULL
+			,"Currency_Factor" varchar NULL
 			,"ITI_Correction_Reason" text NULL
 			,"Shortcut_Dimension_1_Code" text NULL
 			,"Shortcut_Dimension_2_Code" text NULL
@@ -77,6 +78,7 @@ BEGIN
 			,"Corrective"
 			,"EDN_Factoring_Invoice"
 			,"Currency_Code"
+			,"Currency_Factor"
 			,"ITI_Correction_Reason"
 			,"Shortcut_Dimension_1_Code"
 			,"Shortcut_Dimension_2_Code"
@@ -109,6 +111,7 @@ BEGIN
 			,mh."Corrective"
 			,mh."EDN_Factoring_Invoice"
 			,mh."Currency_Code"
+			,mh."Currency_Factor"
 			,mh."ITI_Correction_Reason"
 			,mh."Shortcut_Dimension_1_Code"
 			,mh."Shortcut_Dimension_2_Code"
@@ -205,6 +208,7 @@ EXECUTE format($etl$
 		,"Corrective"
 		,"EDN_Factoring_Invoice"
 		,"Currency_Code"
+		,"Currency_Factor"
 		,"ITI_Correction_Reason"
 		,"Shortcut_Dimension_1_Code"
 		,"Shortcut_Dimension_2_Code"
@@ -219,7 +223,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -240,6 +244,7 @@ EXECUTE format($etl$
 		,"Corrective" = EXCLUDED."Corrective"
 		,"EDN_Factoring_Invoice" = EXCLUDED."EDN_Factoring_Invoice"
 		,"Currency_Code" = EXCLUDED."Currency_Code"
+		,"Currency_Factor" = EXCLUDED."Currency_Factor"
 		,"ITI_Correction_Reason" = EXCLUDED."ITI_Correction_Reason"
 		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
 		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
@@ -257,7 +262,7 @@ EXECUTE format($etl$
 		NEW."No"
 		,NEW."Sell_to_Customer_No"
 		,NEW."Sell_to_Customer_Name"
-		,NEW."VAT_Registration_No"
+		,REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g')
 		,NEW."Sell_to_Address"
 		,NEW."Sell_to_Address_2"
 		,INITCAP(TRIM(NEW."Sell_to_City"))
@@ -272,6 +277,7 @@ EXECUTE format($etl$
 		,NEW."Corrective"
 		,NEW."EDN_Factoring_Invoice"
 		,NEW."Currency_Code"
+		,NEW."Currency_Factor"
 		,NEW."ITI_Correction_Reason"
 		,NEW."Shortcut_Dimension_1_Code"
 		,NEW."Shortcut_Dimension_2_Code"
