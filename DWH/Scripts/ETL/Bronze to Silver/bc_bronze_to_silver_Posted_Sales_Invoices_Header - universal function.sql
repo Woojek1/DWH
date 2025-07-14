@@ -43,7 +43,7 @@ BEGIN
 			,"EDN_KUKE_Symbol" text NULL
 			,"Remaining_Amount" numeric(14,2) null
 			,"Currency_Code" text NULL
-			,"Currency_Factor" numeric(14,4) NULL
+			,"Currency_Factor" numeric(38,20) NULL
 			,"Shipment_Date" date NULL
 			,"Payment_Terms_Code" text NULL
 			,"Payment_Method_Code" text NULL

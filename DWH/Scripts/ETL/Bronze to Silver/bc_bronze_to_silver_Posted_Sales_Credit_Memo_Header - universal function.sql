@@ -6,7 +6,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY[ 'aircon', 'zymetric', 'technab'];
+_firmy text[] := ARRAY['aircon', 'technab', 'zymetric'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -40,7 +40,7 @@ BEGIN
 			,"Corrective" bool NULL
 			,"EDN_Factoring_Invoice" bool NULL
 			,"Currency_Code" text NULL
-			,"Currency_Factor" varchar NULL
+			,"Currency_Factor" numeric(38,20) NULL
 			,"ITI_Correction_Reason" text NULL
 			,"Shortcut_Dimension_1_Code" text NULL
 			,"Shortcut_Dimension_2_Code" text NULL
@@ -111,7 +111,7 @@ BEGIN
 			,mh."Corrective"
 			,mh."EDN_Factoring_Invoice"
 			,mh."Currency_Code"
-			,mh."Currency_Factor"
+			,NULLIF(mh."Currency_Factor", '')::numeric
 			,mh."ITI_Correction_Reason"
 			,mh."Shortcut_Dimension_1_Code"
 			,mh."Shortcut_Dimension_2_Code"
@@ -277,7 +277,7 @@ EXECUTE format($etl$
 		,NEW."Corrective"
 		,NEW."EDN_Factoring_Invoice"
 		,NEW."Currency_Code"
-		,NEW."Currency_Factor"
+		,NULLIF(NEW."Currency_Factor", '')::numeric
 		,NEW."ITI_Correction_Reason"
 		,NEW."Shortcut_Dimension_1_Code"
 		,NEW."Shortcut_Dimension_2_Code"
