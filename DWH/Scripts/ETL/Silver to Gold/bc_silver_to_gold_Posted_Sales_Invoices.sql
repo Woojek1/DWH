@@ -30,6 +30,7 @@ WITH BC_Invoices_Aircon AS (
 		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
 		,sil."unitPrice" as "UnitPrice"
+		,max(ac."skorygowany koszt na sztuke") as "Koszt SKORYGOWANY"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
 			else sil."unitPrice" * (sil."quantity")
@@ -41,6 +42,7 @@ WITH BC_Invoices_Aircon AS (
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+--		,max(ac."Cost per Unit")  AS "Koszt skorygowany PLN per unit"
 		,((case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
@@ -100,6 +102,11 @@ WITH BC_Invoices_Aircon AS (
 	INNER JOIN
 		silver.bc_dimension_set_aircon ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
+	left JOIN
+		gold."adjustedcosts" ac
+	ON sil."documentNo" = ac."Document No_"
+	and
+		sil."no" = ac."Item No_"
 	GROUP BY
 		sil."documentNo"
 		,sil."lineNo"
@@ -123,7 +130,7 @@ WITH BC_Invoices_Aircon AS (
 	),
 	
 BC_Invoices_Technab AS (
-		select
+	select
 		sil."documentNo" AS "NoInvoice"
 		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
 		,sil."lineNo" AS "InvoiceLine"
@@ -164,6 +171,7 @@ BC_Invoices_Technab AS (
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+		,0 AS "Koszt skorygowany PLN"
 		,((case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
@@ -287,6 +295,7 @@ BC_Invoices_Zymetric AS (
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+		,0 AS "Koszt skorygowany PLN"
 		,((case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
@@ -334,7 +343,7 @@ BC_Invoices_Zymetric AS (
 		,sil."shortcutDimension1Code" AS "MPK"
 		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
-		,'Zymetric' AS "Firma"
+		,'Zymetric' AS "Company"
 	FROM
 		silver.bc_posted_sales_invoices_lines_zymetric sil
 	INNER JOIN
@@ -377,4 +386,3 @@ SELECT *
 UNION ALL
 SELECT *
 	FROM BC_Invoices_Zymetric
-
