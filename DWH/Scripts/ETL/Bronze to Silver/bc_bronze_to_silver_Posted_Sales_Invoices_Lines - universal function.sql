@@ -23,6 +23,7 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"DocumentNo" text NOT NULL
+			,"KeyNoInvoice" text NULL
 			,"LineNo" int4 NOT NULL
 			,"Amount" numeric(14,2) NULL
 			,"AmountIncludingVAT" numeric(14,2) NULL
@@ -35,9 +36,9 @@ BEGIN
 			,"EdnSalesMargin" numeric(14,4) NULL
 			,"GenBusPostingGroup" text NULL
 			,"GenProdPostingGroup" text NULL
-			,"LineAmount" numeric(14,2) NULL
-			,"LineDiscount" numeric(6,2) NULL
-			,"LineDiscountAmount" numeric(14,2) NULL
+			,"LineAmount" numeric(18,2) NULL
+			,"LineDiscount" numeric(20,2) NULL
+			,"LineDiscountAmount" numeric(20,2) NULL
 			,"LocationCode" text NULL
 			,"No" text NULL
 			,"PostingDate" date NULL
@@ -47,9 +48,9 @@ BEGIN
 			,"ShortcutDimension1Code" text NULL
 			,"ShortcutDimension2Code" text NULL
 			,"Type" text NULL
-			,"UnitCost" numeric(14,5) NULL
+			,"UnitCost" numeric(18,5) NULL
 			,"UnitCostLCY" numeric(14,5) NULL
-			,"UnitPrice" numeric(14,2) NULL
+			,"UnitPrice" numeric(18,2) NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 			,PRIMARY KEY ("DocumentNo", "LineNo")
@@ -60,6 +61,7 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"DocumentNo"
+			,"KeyNoInvoice"
 			,"LineNo"
 			,"Amount"
 			,"AmountIncludingVAT"
@@ -92,6 +94,7 @@ BEGIN
 		)
 		SELECT
 			s."documentNo"
+			,concat(%L, '_', s."documentNo")
 			,s."lineNo"
 			,s."amount"
 			,s."amountIncludingVAT"
@@ -158,7 +161,7 @@ BEGIN
 --			,"Firma" = EXCLUDED."Firma"
 --			,"load_ts" = EXCLUDED."load_ts";
 
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -191,6 +194,7 @@ BEGIN
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"DocumentNo"
+		,"KeyNoInvoice"
 		,"LineNo"
 		,"Amount"
 		,"AmountIncludingVAT"
@@ -222,12 +226,13 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("DocumentNo", "LineNo") DO UPDATE
 	SET
 		"DocumentNo" = EXCLUDED."DocumentNo"
+		,"KeyNoInvoice" = EXCLUDED."KeyNoInvoice"
 		,"LineNo" = EXCLUDED."LineNo"
 		,"Amount" = EXCLUDED."Amount"
 		,"AmountIncludingVAT" = EXCLUDED."AmountIncludingVAT"
@@ -260,6 +265,7 @@ EXECUTE format($etl$
 	$etl$, target_table)
 	USING
 		NEW."DocumentNo"
+		,concat(litera_firmy, '_', new."DocumentNo")
 		,NEW."LineNo"
 		,NEW."Amount"
 		,NEW."AmountIncludingVAT"

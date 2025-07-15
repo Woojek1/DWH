@@ -106,7 +106,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		silver.bc_dimension_set_aircon ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN
-		gold."adjustedcosts" ac
+		gold."v_bc_adjusted_costs" ac
 	ON sil."Document_No" = ac."Document No_"
 	and
 		sil."Line_No" = ac."Document Line No_"

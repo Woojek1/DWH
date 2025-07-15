@@ -7,6 +7,7 @@ WITH Items_Aircon AS (
 		,i."inventory" AS "StockQuantity"
 		,i."mkGLQuantity" AS "MKGLStockQuantity"
 		,i."unitCost" AS "UnitCost"
+		,pl."UnitPricePLN" AS "UnitPricePLN"
 		,i."baseUnitOfMeasure"  AS "UnitOfMeasure"
 		,i."baseGroup" AS "InventoryGroup"
 		,i."ednTypeA" AS "ItemTypeA"
@@ -40,8 +41,20 @@ WITH Items_Aircon AS (
 		,'Aircon' AS "Company"
 	FROM
 		silver.bc_items_aircon i
+	left join
+		SILVER.bc_price_lists_aircon pl
+	on
+		i."No" = pl."AssetNo"
 	WHERE 
 		i."inventoryPostingGroup" <> 'USŁUGI'
+	and
+		pl."StartingDate" < CURRENT_DATE
+	and
+		(pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE)
+	and
+		pl."PriceListCode" = 'S00001'
+	
+	
 ),
 	
 Items_Technab AS (
@@ -52,6 +65,7 @@ Items_Technab AS (
 		,i."inventory" AS "StockQuantity"
 		,i."mkGLQuantity" AS "MKGLStockQuantity"
 		,i."unitCost" AS "UnitCost"
+		,pl."UnitPricePLN" AS "UnitPricePLN"
 		,i."baseUnitOfMeasure"  AS "UnitOfMeasure"
 		,i."baseGroup" AS "InventoryGroup"
 		,i."ednTypeA" AS "ItemTypeA"
@@ -85,8 +99,18 @@ Items_Technab AS (
 		,'Technab' AS "Firma"
 	FROM
 		silver.bc_items_technab i
+	left join
+		silver.bc_price_lists_technab pl
+	on
+		i."No" = pl."AssetNo"
 	WHERE 
 		i."inventoryPostingGroup" <> 'USŁUGI'
+	and
+		pl."StartingDate" < CURRENT_DATE
+	and
+		(pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE)
+	and
+		pl."PriceListCode" = 'S00001'
 ),
 	
 Items_Zymetric AS (
@@ -97,6 +121,7 @@ Items_Zymetric AS (
 		,i."inventory" AS "StockQuantity"
 		,i."mkGLQuantity" AS "MKGLStockQuantity"
 		,i."unitCost" AS "UnitCost"
+		,pl."UnitPricePLN" AS "UnitPricePLN"		
 		,i."baseUnitOfMeasure"  AS "UnitOfMeasure"
 		,i."baseGroup" AS "InventoryGroup"
 		,i."ednTypeA" AS "ItemTypeA"
@@ -130,8 +155,18 @@ Items_Zymetric AS (
 		,'Zymetric' AS "Firma"
 	FROM
 		silver.bc_items_zymetric i
+	left join
+		silver.bc_price_lists_zymetric pl
+	on
+		i."No" = pl."AssetNo"
 	WHERE 
 		i."inventoryPostingGroup" <> 'USŁUGI'
+	and
+		pl."StartingDate" < CURRENT_DATE
+	and
+		(pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE)
+	and
+		pl."PriceListCode" = 'S00001'
 )
 	
 SELECT *

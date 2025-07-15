@@ -1,20 +1,20 @@
 CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices AS
 WITH BC_Invoices_Aircon AS (
 	select
-		sil."documentNo" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
-		,sil."lineNo" AS "InvoiceLine"
+		sil."DocumentNo" AS "NoInvoice"
+		,sil."KeyNoInvoice" AS "KeyNoInvoice"
+		,sil."LineNo" AS "InvoiceLine"
 		,sih."Quote_No" AS "NoQuote"
 		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "KeyNoQuote"
-		,sil."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
+		,sil."ShortcutDimension2Code" AS "NoProject"
+		,CONCAT(sil."Firma", '_', sil."ShortcutDimension2Code") AS "KeyNoProject"
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"
 		,case
 			when sih."Order_No" like '%ECM%' then true
 			else false
 		end as "ECOM"		
-		,sil."postingDate" AS "PostingDate"
+		,sil."PostingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
@@ -24,58 +24,58 @@ WITH BC_Invoices_Aircon AS (
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
 		,MAX(sih."Currency_Factor") as "CurrencyFactor"
-		,sil."type" as "Type"
-		,sil."no" AS "NoItem"
-		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
-		,sil."description2" AS "ItemDescription"
-		,sil."quantity" AS "Quantity"
-		,sil."unitPrice" as "UnitPrice"
+		,sil."Type" as "Type"
+		,sil."No" AS "NoItem"
+		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
+		,sil."Description2" AS "ItemDescription"
+		,sil."Quantity" AS "Quantity"
+		,sil."UnitPrice" as "UnitPrice"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
-			else sil."unitPrice" * (sil."quantity")
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."UnitPrice"/(Max(sih."Currency_Factor"))) * (sil."Quantity")
+			else sil."UnitPrice" * (sil."Quantity")
 		end as "LinePriceLCY"	
-		,sil."amount" AS "Amount"
+		,sil."Amount" AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
-			else sil."amount"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor"))) 
+			else sil."Amount"
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
+		,(sil."EdnOryUnitCostLCY") * (sil."Quantity") AS "LineCostsLCY"
 		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 		,((case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
-			else sil."amount"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor")))
+			else sil."Amount"
 		end) - 
-		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY (based on direct cost)"
-		,(sil."lineDiscount"/100) as "LineDiscount"
-		,sil."lineDiscountAmount" as "LineDiscountAmount"
-		,(sil."ednSalesMargin"/100) AS "MarginBC"
+		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
+		,(sil."LineDiscount"/100) as "LineDiscount"
+		,sil."LineDiscountAmount" as "LineDiscountAmount"
+		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
-		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
 		  ELSE 
 		    (
 		      (
 		        CASE
-		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		          ELSE sil."amount"
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."Amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."Amount"
 		        END
-		      ) - (sil."unitCostLCY" * sil."quantity")
+		      ) - (sil."UnitCostLCY" * sil."Quantity")
 		    ) 
 		    /
 		    NULLIF(
 		      (
 		        CASE
-		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		          ELSE sil."amount"
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."Amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."Amount"
 		        END
 		      ),
 		      0
 		    )
 		END AS "Profitability"
-		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,sil."AmountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
-			else sil."amountIncludingVAT"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."AmountIncludingVAT"/(Max(sih."Currency_Factor"))) 
+			else sil."AmountIncludingVAT"
 		end as "AmountIncludingVatLCY"		
 		,max(sih."Remaining_Amount") as "RemainingAmount"
 		,case 
@@ -86,7 +86,7 @@ WITH BC_Invoices_Aircon AS (
 		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
-		,sil."shortcutDimension1Code" AS "MPK"
+		,sil."ShortcutDimension1Code" AS "MPK"
 		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Aircon' AS "Company"
@@ -94,56 +94,56 @@ WITH BC_Invoices_Aircon AS (
 		silver.bc_posted_sales_invoices_lines_aircon sil
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_aircon sih
-	ON sil."documentNo" = sih."No"
+	ON sil."DocumentNo" = sih."No"
 	INNER JOIN 
 		silver.bc_salesperson_aircon sp
 	ON sih."Salesperson_Code" = sp."Code"
 	INNER JOIN
 		silver.bc_dimension_set_aircon ds
-	ON sil."dimensionSetID" = ds."dimensionSetID"
+	ON sil."DimensionSetID" = ds."dimensionSetID"
 	left JOIN
-		gold."adjustedcosts" ac
-	ON sil."documentNo" = ac."Document No_"
+		gold."v_bc_adjusted_costs" ac
+	ON  sil."KeyNoInvoice" = ac."KeyNoInvoice"
 	and
-		sil."lineNo" = ac."Document Line No_"
+		sil."LineNo" = ac."Document_Line_No"
 	GROUP BY
-		sil."documentNo"
-		,sil."lineNo"
+		sil."DocumentNo"
+		,sil."LineNo"
 		,sih."Quote_No"
 		,sih."Order_No"
-		,sil."postingDate"
+		,sil."PostingDate"
 		,sih."VAT_Registration_No"
-		,sil."amount"
-		,sil."unitCostLCY"
-		,sil."ednSalesMargin"
-		,sil."amountIncludingVAT"
-		,sil."no"
-		,sil."description2"
-		,sil."shortcutDimension1Code"
-		,sil."shortcutDimension2Code"
+		,sil."Amount"
+		,sil."UnitCostLCY"
+		,sil."EdnSalesMargin"
+		,sil."AmountIncludingVAT"
+		,sil."No"
+		,sil."Description2"
+		,sil."ShortcutDimension1Code"
+		,sil."ShortcutDimension2Code"
 		,sil."Firma"
 	ORDER BY
-		sil."postingDate" DESC
-		,sil."documentNo" ASC
-		,sil."no" ASC
+		sil."PostingDate" DESC
+		,sil."DocumentNo" ASC
+		,sil."No" ASC
 	),
 	
 BC_Invoices_Technab AS (
 	select
-		sil."documentNo" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
-		,sil."lineNo" AS "InvoiceLine"
+		sil."DocumentNo" AS "NoInvoice"
+		,sil."KeyNoInvoice" AS "KeyNoInvoice"
+		,sil."LineNo" AS "InvoiceLine"
 		,sih."Quote_No" AS "NoQuote"
 		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "KeyNoQuote"
-		,sil."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
+		,sil."ShortcutDimension2Code" AS "NoProject"
+		,CONCAT(sil."Firma", '_', sil."ShortcutDimension2Code") AS "KeyNoProject"
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"
 		,case
 			when sih."Order_No" like '%ECM%' then true
 			else false
 		end as "ECOM"		
-		,sil."postingDate" AS "PostingDate"
+		,sil."PostingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
@@ -153,58 +153,58 @@ BC_Invoices_Technab AS (
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
 		,MAX(sih."Currency_Factor") as "CurrencyFactor"
-		,sil."type" as "Type"
-		,sil."no" AS "NoItem"
-		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
-		,sil."description2" AS "ItemDescription"
-		,sil."quantity" AS "Quantity"
-		,sil."unitPrice" as "UnitPrice"
+		,sil."Type" as "Type"
+		,sil."No" AS "NoItem"
+		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
+		,sil."Description2" AS "ItemDescription"
+		,sil."Quantity" AS "Quantity"
+		,sil."UnitPrice" as "UnitPrice"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
-			else sil."unitPrice" * (sil."quantity")
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."UnitPrice"/(Max(sih."Currency_Factor"))) * (sil."Quantity")
+			else sil."UnitPrice" * (sil."Quantity")
 		end as "LinePriceLCY"	
-		,sil."amount" AS "Amount"
+		,sil."Amount" AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
-			else sil."amount"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor"))) 
+			else sil."Amount"
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt skorygowany"
+		,(sil."EdnOryUnitCostLCY") * (sil."Quantity") AS "LineCostsLCY"
+		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 		,((case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
-			else sil."amount"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor")))
+			else sil."Amount"
 		end) - 
-		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY (based on direct cost)"
-		,(sil."lineDiscount"/100) as "LineDiscount"
-		,sil."lineDiscountAmount" as "LineDiscountAmount"
-		,(sil."ednSalesMargin"/100) AS "MarginBC"
+		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
+		,(sil."LineDiscount"/100) as "LineDiscount"
+		,sil."LineDiscountAmount" as "LineDiscountAmount"
+		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
-		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
 		  ELSE 
 		    (
 		      (
 		        CASE
-		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		          ELSE sil."amount"
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."Amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."Amount"
 		        END
-		      ) - (sil."unitCostLCY" * sil."quantity")
+		      ) - (sil."UnitCostLCY" * sil."Quantity")
 		    ) 
 		    /
 		    NULLIF(
 		      (
 		        CASE
-		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		          ELSE sil."amount"
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."Amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."Amount"
 		        END
 		      ),
 		      0
 		    )
 		END AS "Profitability"
-		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,sil."AmountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
-			else sil."amountIncludingVAT"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."AmountIncludingVAT"/(Max(sih."Currency_Factor"))) 
+			else sil."AmountIncludingVAT"
 		end as "AmountIncludingVatLCY"		
 		,max(sih."Remaining_Amount") as "RemainingAmount"
 		,case 
@@ -215,59 +215,64 @@ BC_Invoices_Technab AS (
 		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
-		,sil."shortcutDimension1Code" AS "MPK"
+		,sil."ShortcutDimension1Code" AS "MPK"
 		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
-		,'Technab' AS "Firma"
+		,'Technab' AS "Company"
 	FROM
 		silver.bc_posted_sales_invoices_lines_technab sil
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_technab sih
-	ON sil."documentNo" = sih."No"
+	ON sil."DocumentNo" = sih."No"
 	INNER JOIN 
 		silver.bc_salesperson_technab sp
 	ON sih."Salesperson_Code" = sp."Code"
 	INNER JOIN
 		silver.bc_dimension_set_technab ds
-	ON sil."dimensionSetID" = ds."dimensionSetID"
+	ON sil."DimensionSetID" = ds."dimensionSetID"
+	left JOIN
+		gold."v_bc_adjusted_costs" ac
+	ON  sil."KeyNoInvoice" = ac."KeyNoInvoice"
+	and
+		sil."LineNo" = ac."Document_Line_No"
 	GROUP BY
-		sil."documentNo"
-		,sil."lineNo"
+		sil."DocumentNo"
+		,sil."LineNo"
 		,sih."Quote_No"
 		,sih."Order_No"
-		,sil."postingDate"
+		,sil."PostingDate"
 		,sih."VAT_Registration_No"
-		,sil."amount"
-		,sil."unitCostLCY"
-		,sil."ednSalesMargin"
-		,sil."amountIncludingVAT"
-		,sil."no"
-		,sil."description2"
-		,sil."shortcutDimension1Code"
-		,sil."shortcutDimension2Code"
+		,sil."Amount"
+		,sil."UnitCostLCY"
+		,sil."EdnSalesMargin"
+		,sil."AmountIncludingVAT"
+		,sil."No"
+		,sil."Description2"
+		,sil."ShortcutDimension1Code"
+		,sil."ShortcutDimension2Code"
 		,sil."Firma"
 	ORDER BY
-		sil."postingDate" DESC
-		,sil."documentNo" ASC
-		,sil."no" ASC
+		sil."PostingDate" DESC
+		,sil."DocumentNo" ASC
+		,sil."No" ASC
 ),
 
 BC_Invoices_Zymetric AS (
 	select
-		sil."documentNo" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."documentNo") AS "KeyNoInvoice"
-		,sil."lineNo" AS "InvoiceLine"
+		sil."DocumentNo" AS "NoInvoice"
+		,sil."KeyNoInvoice" AS "KeyNoInvoice"
+		,sil."LineNo" AS "InvoiceLine"
 		,sih."Quote_No" AS "NoQuote"
 		,CONCAT(sil."Firma", '_', sih."Quote_No") AS "KeyNoQuote"
-		,sil."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sil."Firma", '_', sil."shortcutDimension2Code") AS "KeyNoProject"
+		,sil."ShortcutDimension2Code" AS "NoProject"
+		,CONCAT(sil."Firma", '_', sil."ShortcutDimension2Code") AS "KeyNoProject"
 		,sih."Order_No" AS "NoOrder"
 		,CONCAT(sil."Firma", '_', sih."Order_No") AS "KeyNoOrder"
 		,case
 			when sih."Order_No" like '%ECM%' then true
 			else false
 		end as "ECOM"		
-		,sil."postingDate" AS "PostingDate"
+		,sil."PostingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
@@ -277,58 +282,58 @@ BC_Invoices_Zymetric AS (
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
 		,MAX(sih."Currency_Factor") as "CurrencyFactor"
-		,sil."type" as "Type"
-		,sil."no" AS "NoItem"
-		,CONCAT(sil."Firma", '_', sil."no") AS "KeyNoItem"		
-		,sil."description2" AS "ItemDescription"
-		,sil."quantity" AS "Quantity"
-		,sil."unitPrice" as "UnitPrice"
+		,sil."Type" as "Type"
+		,sil."No" AS "NoItem"
+		,CONCAT(sil."Firma", '_', sil."No") AS "KeyNoItem"		
+		,sil."Description2" AS "ItemDescription"
+		,sil."Quantity" AS "Quantity"
+		,sil."UnitPrice" as "UnitPrice"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
-			else sil."unitPrice" * (sil."quantity")
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."UnitPrice"/(Max(sih."Currency_Factor"))) * (sil."Quantity")
+			else sil."UnitPrice" * (sil."Quantity")
 		end as "LinePriceLCY"	
-		,sil."amount" AS "Amount"
+		,sil."Amount" AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor"))) 
-			else sil."amount"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor"))) 
+			else sil."Amount"
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
-		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt skorygowany"
+		,(sil."EdnOryUnitCostLCY") * (sil."Quantity") AS "LineCostsLCY"
+		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 		,((case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
-			else sil."amount"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor")))
+			else sil."Amount"
 		end) - 
-		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY (based on direct cost)"
-		,(sil."lineDiscount"/100) as "LineDiscount"
-		,sil."lineDiscountAmount" as "LineDiscountAmount"
-		,(sil."ednSalesMargin"/100) AS "MarginBC"
+		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
+		,(sil."LineDiscount"/100) as "LineDiscount"
+		,sil."LineDiscountAmount" as "LineDiscountAmount"
+		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
-		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
+		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
 		  ELSE 
 		    (
 		      (
 		        CASE
-		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		          ELSE sil."amount"
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."Amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."Amount"
 		        END
-		      ) - (sil."unitCostLCY" * sil."quantity")
+		      ) - (sil."UnitCostLCY" * sil."Quantity")
 		    ) 
 		    /
 		    NULLIF(
 		      (
 		        CASE
-		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."amount" / MAX(sih."Currency_Factor")
-		          ELSE sil."amount"
+		          WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') THEN sil."Amount" / MAX(sih."Currency_Factor")
+		          ELSE sil."Amount"
 		        END
 		      ),
 		      0
 		    )
 		END AS "Profitability"
-		,sil."amountIncludingVAT" AS "AmountIncludingVAT"
+		,sil."AmountIncludingVAT" AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amountIncludingVAT"/(Max(sih."Currency_Factor"))) 
-			else sil."amountIncludingVAT"
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."AmountIncludingVAT"/(Max(sih."Currency_Factor"))) 
+			else sil."AmountIncludingVAT"
 		end as "AmountIncludingVatLCY"		
 		,max(sih."Remaining_Amount") as "RemainingAmount"
 		,case 
@@ -339,7 +344,7 @@ BC_Invoices_Zymetric AS (
 		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
-		,sil."shortcutDimension1Code" AS "MPK"
+		,sil."ShortcutDimension1Code" AS "MPK"
 		,max(sih."Invoice_Type") as "Invoice_Type"
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Zymetric' AS "Company"
@@ -347,33 +352,38 @@ BC_Invoices_Zymetric AS (
 		silver.bc_posted_sales_invoices_lines_zymetric sil
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_zymetric sih
-	ON sil."documentNo" = sih."No"
+	ON sil."DocumentNo" = sih."No"
 	INNER JOIN 
 		silver.bc_salesperson_zymetric sp
 	ON sih."Salesperson_Code" = sp."Code"
 	INNER JOIN
 		silver.bc_dimension_set_zymetric ds
-	ON sil."dimensionSetID" = ds."dimensionSetID"
+	ON sil."DimensionSetID" = ds."dimensionSetID"
+	left JOIN
+		gold."v_bc_adjusted_costs" ac
+	ON  sil."KeyNoInvoice" = ac."KeyNoInvoice"
+	and
+		sil."LineNo" = ac."Document_Line_No"
 	GROUP BY
-		sil."documentNo"
-		,sil."lineNo"
+		sil."DocumentNo"
+		,sil."LineNo"
 		,sih."Quote_No"
 		,sih."Order_No"
-		,sil."postingDate"
+		,sil."PostingDate"
 		,sih."VAT_Registration_No"
-		,sil."amount"
-		,sil."unitCostLCY"
-		,sil."ednSalesMargin"
-		,sil."amountIncludingVAT"
-		,sil."no"
-		,sil."description2"
-		,sil."shortcutDimension1Code"
-		,sil."shortcutDimension2Code"
+		,sil."Amount"
+		,sil."UnitCostLCY"
+		,sil."EdnSalesMargin"
+		,sil."AmountIncludingVAT"
+		,sil."No"
+		,sil."Description2"
+		,sil."ShortcutDimension1Code"
+		,sil."ShortcutDimension2Code"
 		,sil."Firma"
 	ORDER BY
-		sil."postingDate" DESC
-		,sil."documentNo" ASC
-		,sil."no" ASC
+		sil."PostingDate" DESC
+		,sil."DocumentNo" ASC
+		,sil."No" ASC
 )
 
 

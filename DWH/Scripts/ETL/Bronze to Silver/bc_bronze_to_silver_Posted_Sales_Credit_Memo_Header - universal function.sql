@@ -23,6 +23,7 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			 "No" text NOT NULL
+			,"Key_No_Invoice" text NULL
 			,"Sell_to_Customer_No" text NULL
 			,"Sell_to_Customer_Name" text NULL
 			,"VAT_Registration_No" text NULL
@@ -61,6 +62,7 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			 "No"
+			,"Key_No_Invoice"
 			,"Sell_to_Customer_No"
 			,"Sell_to_Customer_Name"
 			,"VAT_Registration_No"
@@ -94,6 +96,7 @@ BEGIN
 		)
 		SELECT
 			mh."No"
+			,concat(%L, '_', mh."No")
 			,mh."Sell_to_Customer_No"
 			,mh."Sell_to_Customer_Name"
 			,REGEXP_REPLACE(mh."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') AS "VAT_Registration_No"
@@ -158,7 +161,7 @@ BEGIN
 --			,"Firma" = EXCLUDED."Firma"
 --			,"Shipping_Agent_Code" = EXCLUDED."Shipping_Agent_Code"
 --			,"load_ts" = CURRENT_TIMESTAMP
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -191,6 +194,7 @@ BEGIN
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"No"
+		,"Key_No_Invoice"
 		,"Sell_to_Customer_No"
 		,"Sell_to_Customer_Name"
 		,"VAT_Registration_No"
@@ -223,11 +227,12 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
-		"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
+		"Key_No_Invoice" = EXCLUDED."Key_No_Invoice"
+		,"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
 		,"Sell_to_Customer_Name" = EXCLUDED."Sell_to_Customer_Name"
 		,"VAT_Registration_No" = EXCLUDED."VAT_Registration_No"
 		,"Sell_to_Address" = EXCLUDED."Sell_to_Address"
@@ -260,6 +265,7 @@ EXECUTE format($etl$
 	$etl$, target_table)
 	USING
 		NEW."No"
+		,concat(litera_firmy, '_', new."No")
 		,NEW."Sell_to_Customer_No"
 		,NEW."Sell_to_Customer_Name"
 		,REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g')

@@ -5,6 +5,7 @@ WITH Price_Lists_Aircon AS (
 		,pl."AssetNo"
 		,i."mkGLQuantity"
 		,pl."UnitPrice"
+		,pl."UnitPricePLN"
 		,pl."StartingDate"
 		,pl."EndingDate"
 		,pl."load_ts" AS "LoadDate"
@@ -26,6 +27,7 @@ Price_Lists_Technab as (
 		,pl."AssetNo"
 		,i."mkGLQuantity"
 		,pl."UnitPrice"
+		,pl."UnitPricePLN"
 		,pl."StartingDate"
 		,pl."EndingDate"
 		,pl."load_ts" AS "LoadDate"
@@ -47,6 +49,7 @@ Price_Lists_Zymetric as (
 		,pl."AssetNo"
 		,i."mkGLQuantity"
 		,pl."UnitPrice"
+		,pl."UnitPricePLN"
 		,pl."StartingDate"
 		,pl."EndingDate"
 		,pl."load_ts" AS "LoadDate"
@@ -74,7 +77,7 @@ union all
 
 select *
 from
-	Price_Lists_Aircon
+	Price_Lists_Zymetric
 
 
 -------------------

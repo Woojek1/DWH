@@ -23,6 +23,7 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"Document_No" text NOT NULL
+			,"Key_No_Invoice" text NULL
 			,"Line_No" int4 NOT NULL
 			,"Sell_to_Customer_No" text NULL
 			,"Type" text NULL
@@ -50,6 +51,7 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"Document_No"
+			,"Key_No_Invoice"
 			,"Line_No"
 			,"Sell_to_Customer_No"
 			,"Type"
@@ -71,7 +73,8 @@ BEGIN
 			,"load_ts"
 		)
 		SELECT
-			"Document_No"
+			cm."Document_No"
+			,concat(%L, '_', cm."Document_No")
 			,cm."Line_No"
 			,cm."Sell_to_Customer_No"
 			,cm."Type"
@@ -114,7 +117,7 @@ BEGIN
 --		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
 --		,"Firma" = EXCLUDED."Firma"
 --		,"load_ts" = CURRENT_TIMESTAMP
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -147,6 +150,7 @@ BEGIN
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"Document_No"
+		,"Key_No_Invoice"
 		,"Line_No"
 		,"Sell_to_Customer_No"
 		,"Type"
@@ -168,11 +172,12 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Document_No", "Line_No") DO UPDATE
 	SET
-		"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
+		"Key_No_Invoice" = EXCLUDED."Key_No_Invoice"
+		,"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
 		,"Type" = EXCLUDED."Type"
 		,"No" = EXCLUDED."No"
 		,"Description" = EXCLUDED."Description"
@@ -193,6 +198,7 @@ EXECUTE format($etl$
 	$etl$, target_table)
 	USING
 		NEW."Document_No"
+		,concat(litera_firmy, '_', new."Document_No")
         ,NEW."Line_No"
 		,NEW."Sell_to_Customer_No"
     	,NEW."Type"
