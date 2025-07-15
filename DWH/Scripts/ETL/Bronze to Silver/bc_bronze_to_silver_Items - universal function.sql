@@ -6,7 +6,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
+_firmy text[] := ARRAY['aircon', 'technab', 'zymetric'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -147,7 +147,7 @@ BEGIN
 			,"load_ts"
 		)
 		SELECT
-			"No"
+			i."No"
 			,i."baseUnitOfMeasure"
 			,i."baseGroup"
 			,i."blocked"
@@ -205,7 +205,7 @@ BEGIN
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I as i
-
+		
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -228,6 +228,7 @@ DECLARE
 	litera_firmy CHAR(1);
 --	tgt_schema TEXT := 'silver';
 	target_table TEXT;
+	v_unit_price_pln numeric(18, 2);
 
 BEGIN
 -- pobiera argumenty przekazane w CREATE TRIGGER 
@@ -235,6 +236,9 @@ BEGIN
 	litera_firmy := UPPER(SUBSTR(firma, 1, 1));
 -- litera := TG_ARGV[1];
 	target_table := format('bc_items_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
+
+
+
 
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
@@ -298,7 +302,7 @@ EXECUTE format($etl$
 	)
 	SELECT 
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
-		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53
+		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
@@ -434,7 +438,7 @@ $function$;
 DO $$
 DECLARE
 	grupa_tabel text := 'items'; 		-- ZMIENIĆ NAZWĘ GRUPY TABEL
-	firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
+	firmy text[] := ARRAY['aircon'];
 	firma text;
 BEGIN
 	FOREACH firma IN ARRAY firmy LOOP

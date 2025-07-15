@@ -30,7 +30,6 @@ WITH BC_Invoices_Aircon AS (
 		,sil."description2" AS "ItemDescription"
 		,sil."quantity" AS "Quantity"
 		,sil."unitPrice" as "UnitPrice"
-		,max(ac."skorygowany koszt na sztuke") as "Koszt SKORYGOWANY"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."unitPrice"/(Max(sih."Currency_Factor"))) * (sil."quantity")
 			else sil."unitPrice" * (sil."quantity")
@@ -42,12 +41,12 @@ WITH BC_Invoices_Aircon AS (
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
---		,max(ac."Cost per Unit")  AS "Koszt skorygowany PLN per unit"
+		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 		,((case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
 		end) - 
-		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
+		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
@@ -106,7 +105,7 @@ WITH BC_Invoices_Aircon AS (
 		gold."adjustedcosts" ac
 	ON sil."documentNo" = ac."Document No_"
 	and
-		sil."no" = ac."Item No_"
+		sil."lineNo" = ac."Document Line No_"
 	GROUP BY
 		sil."documentNo"
 		,sil."lineNo"
@@ -171,12 +170,12 @@ BC_Invoices_Technab AS (
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
-		,0 AS "Koszt skorygowany PLN"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt skorygowany"
 		,((case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
 		end) - 
-		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
+		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
@@ -213,7 +212,7 @@ BC_Invoices_Technab AS (
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
 		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
-		,MAX(sih."Salesperson_Code") as "Salesperson"
+		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"
@@ -267,7 +266,7 @@ BC_Invoices_Zymetric AS (
 		,case
 			when sih."Order_No" like '%ECM%' then true
 			else false
-		end as "Ecom"		
+		end as "ECOM"		
 		,sil."postingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
 		,case
@@ -295,12 +294,12 @@ BC_Invoices_Zymetric AS (
 		end as "AmountLCY"		
 --		,sil."unitCostLCY" AS "Koszt urzadzenia"
 		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "LineCostsLCY"
-		,0 AS "Koszt skorygowany PLN"
+		,(sil."ednOryUnitCostLCY") * (sil."quantity") AS "Koszt skorygowany"
 		,((case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."amount"/(Max(sih."Currency_Factor")))
 			else sil."amount"
 		end) - 
-		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY"
+		((sil."unitCostLCY") * (sil."quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."lineDiscount"/100) as "LineDiscount"
 		,sil."lineDiscountAmount" as "LineDiscountAmount"
 		,(sil."ednSalesMargin"/100) AS "MarginBC"
@@ -337,7 +336,7 @@ BC_Invoices_Zymetric AS (
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
 		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
-		,MAX(sih."Salesperson_Code") as "Salesperson"
+		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."shortcutDimension1Code" AS "MPK"

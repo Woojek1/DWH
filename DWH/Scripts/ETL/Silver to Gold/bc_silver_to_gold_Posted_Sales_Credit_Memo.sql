@@ -21,7 +21,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
-		,cer."Relational_Exch_Rate_Amount" as "CurrencyFactor"
+		,MAX(sih."Currency_Factor") as "CurrencyFactor"
 		,max(sih."ITI_Correction_Reason") as "CorrectionReason"
 		,sil."Type" as "Type"
 		,sil."No" AS "NoItem"
@@ -41,11 +41,12 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
 		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
+		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 			,((case 
 				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
 				else (sil."Amount" * (-1))
 			end) - 
-			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY"
+			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY (based on direct cost)"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
@@ -104,6 +105,11 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	INNER JOIN
 		silver.bc_dimension_set_aircon ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
+	left JOIN
+		gold."adjustedcosts" ac
+	ON sil."Document_No" = ac."Document No_"
+	and
+		sil."Line_No" = ac."Document Line No_"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
@@ -147,7 +153,7 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
-		,cer."Relational_Exch_Rate_Amount" as "CurrencyFactor"
+		,MAX(sih."Currency_Factor") as "CurrencyFactor"
 		,max(sih."ITI_Correction_Reason") as "CorrectionReason"
 		,sil."Type" as "Type"
 		,sil."No" AS "NoItem"
@@ -167,11 +173,12 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
 		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
+		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "Koszt skorygowany"
 			,((case 
 				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
 				else (sil."Amount" * (-1))
 			end) - 
-			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY"
+			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY (based on direct cost)"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
@@ -230,6 +237,11 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 	INNER JOIN
 		silver.bc_dimension_set_technab ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
+	left JOIN
+		gold."adjustedcosts" ac
+	ON sil."Document_No" = ac."Document No_"
+	and
+		sil."Line_No" = ac."Document Line No_"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
@@ -273,7 +285,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
 		,sih."VAT_Registration_No" AS "NIP"
 		,MAX(sih."Currency_Code") as "CurrencyCode"
-		,cer."Relational_Exch_Rate_Amount" as "CurrencyFactor"
+		,MAX(sih."Currency_Factor") as "CurrencyFactor"
 		,max(sih."ITI_Correction_Reason") as "CorrectionReason"
 		,sil."Type" as "Type"
 		,sil."No" AS "NoItem"
@@ -293,11 +305,12 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
 		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
+		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "Koszt skorygowany"
 			,((case 
 				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
 				else (sil."Amount" * (-1))
 			end) - 
-			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY"
+			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY (based on direct cost)"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
 		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
@@ -356,6 +369,11 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 	INNER JOIN
 		silver.bc_dimension_set_zymetric ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
+	left JOIN
+		gold."adjustedcosts" ac
+	ON sil."Document_No" = ac."Document No_"
+	and
+		sil."Line_No" = ac."Document Line No_"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",

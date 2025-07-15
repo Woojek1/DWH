@@ -36,6 +36,7 @@ BEGIN
 			,"AmountType" text NULL
 			,"Description" text NULL
 			,"UnitPrice" numeric(18, 2) NULL
+			,"UnitPricePLN" numeric(18, 2) NULL
 			,"UnitOfMeasureCode" text NULL
 			,"MinimumQuantity" numeric(18, 2) NULL
 			,"LineDiscount" numeric(18, 2) NULL
@@ -75,6 +76,7 @@ BEGIN
 			,"AmountType"
 			,"Description"
 			,"UnitPrice"
+			,"UnitPricePLN"
 			,"UnitOfMeasureCode"
 			,"MinimumQuantity"
 			,"LineDiscount"
@@ -109,6 +111,7 @@ BEGIN
 			,pl."amountType"
 			,pl."description"
 			,pl."unitPrice"
+			,pl."UnitPricePLN"
 			,pl."unitOfMeasureCode"
 			,pl."minimumQuantity"
 			,pl."lineDiscount"
@@ -175,6 +178,7 @@ EXECUTE format($etl$
 		,"AmountType"
 		,"Description"
 		,"UnitPrice"
+		,"UnitPricePLN"
 		,"UnitOfMeasureCode"
 		,"MinimumQuantity"
 		,"LineDiscount"
@@ -195,7 +199,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("SystemId") DO UPDATE
 	SET
@@ -213,6 +217,7 @@ EXECUTE format($etl$
 		,"AmountType" = EXCLUDED."AmountType"
 		,"Description" = EXCLUDED."Description"
 		,"UnitPrice" = EXCLUDED."UnitPrice"
+		,"UnitPricePLN" = EXCLUDED."UnitPricePLN"
 		,"UnitOfMeasureCode" = EXCLUDED."UnitOfMeasureCode"
 		,"MinimumQuantity" = EXCLUDED."MinimumQuantity"
 		,"LineDiscount" = EXCLUDED."LineDiscount"
@@ -247,6 +252,7 @@ EXECUTE format($etl$
 		,NEW."amountType"
 		,NEW."description"
 		,NEW."unitPrice"
+		,NEW."UnitPricePLN"
 		,NEW."unitOfMeasureCode"
 		,NEW."minimumQuantity"
 		,NEW."lineDiscount"
