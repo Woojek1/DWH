@@ -1,9 +1,8 @@
-
 CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_credit_memo_invoices AS
 WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	select
 		sil."Document_No" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."Document_No") AS "KeyNoInvoice"
+		,sil."Key_No_Invoice" AS "KeyNoInvoice"
 		,sil."Line_No" AS "InvoiceLine"
 		,null /*sih."Quote_No"*/ AS "NoQuote"		-- nie ma na fakturach korygujących
 		,null /*CONCAT(sil."Firma", '_', sih."Quote_No")*/ AS "KeyNoQuote"		-- nie ma na fakturach korygujących
@@ -30,12 +29,12 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,(sil."Quantity") * (-1) AS "Quantity"
 		,sil."Unit_Price" as "UnitPrice"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price"*(Max(cer."Relational_Exch_Rate_Amount"))) * (sil."Quantity")
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price" / MAX(sih."Currency_Factor")) * (sil."Quantity")
 			else sil."Unit_Price" * (sil."Quantity")
 		end as "LinePriceLCY"
 		,(sil."Amount") * (-1) AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount" / (MAX(sih."Currency_Factor")) * (-1))
 			else (sil."Amount") * (-1)
 		end as "AmountLCY"		
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
@@ -43,13 +42,13 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
 		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 			,((case 
-				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount" / (MAX(sih."Currency_Factor")) * (-1))
 				else (sil."Amount" * (-1))
 			end) - 
 			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY (based on direct cost)"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
-		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
+		,0 AS "MarginBC"		-- nie ma na fakturach korygujących
 	--		,CASE 
 	--		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
 	--		  ELSE 
@@ -75,7 +74,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,0 as "Profitability"
 		,(sil."Amount_Including_VAT") * (-1) AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" * (Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" / (MAX(sih."Currency_Factor")) * (-1)) 
 			else (sil."Amount_Including_VAT") * (-1)
 		end as "AmountIncludingVatLCY"		
 		,0 as "RemainingAmount"
@@ -96,20 +95,14 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	left JOIN 
 		silver.bc_salesperson_aircon sp
 	ON sih."Salesperson_Code" = sp."Code"
-	left join
-		silver.bc_currency_exchange_rates cer
-	on
-		sih."Currency_Code" = cer."Currency_Code"
-	and
-		sih."Document_Date" = date(cer."Starting_Date")
 	INNER JOIN
 		silver.bc_dimension_set_aircon ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN
 		gold."v_bc_adjusted_costs" ac
-	ON sil."Document_No" = ac."Document No_"
+	ON sil."Key_No_Invoice" = ac."KeyNoInvoice"
 	and
-		sil."Line_No" = ac."Document Line No_"
+		sil."Line_No" = ac."Document_Line_No"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
@@ -128,14 +121,14 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		sil."Line_Discount_Amount",
 		sil."Amount_Including_VAT",
 		sil."Shortcut_Dimension_1_Code",
-		sih."VAT_Registration_No",
-		cer."Relational_Exch_Rate_Amount"
+		sih."VAT_Registration_No"
+
 ),
 	
 BC_Posted_Sales_Credit_Memo_Technab AS (
 	select
 		sil."Document_No" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."Document_No") AS "KeyNoInvoice"
+		,sil."Key_No_Invoice" AS "KeyNoInvoice"
 		,sil."Line_No" AS "InvoiceLine"
 		,null /*sih."Quote_No"*/ AS "NoQuote"		-- nie ma na fakturach korygujących
 		,null /*CONCAT(sil."Firma", '_', sih."Quote_No")*/ AS "KeyNoQuote"		-- nie ma na fakturach korygujących
@@ -162,26 +155,26 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,(sil."Quantity") * (-1) AS "Quantity"
 		,sil."Unit_Price" as "UnitPrice"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price"*(Max(cer."Relational_Exch_Rate_Amount"))) * (sil."Quantity")
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price" / MAX(sih."Currency_Factor")) * (sil."Quantity")
 			else sil."Unit_Price" * (sil."Quantity")
 		end as "LinePriceLCY"
 		,(sil."Amount") * (-1) AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount" / (MAX(sih."Currency_Factor")) * (-1))
 			else (sil."Amount") * (-1)
 		end as "AmountLCY"		
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
 		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
-		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "Koszt skorygowany"
+		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 			,((case 
-				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount" / (MAX(sih."Currency_Factor")) * (-1))
 				else (sil."Amount" * (-1))
 			end) - 
 			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY (based on direct cost)"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
-		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
+		,0 AS "MarginBC"		-- nie ma na fakturach korygujących
 	--		,CASE 
 	--		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
 	--		  ELSE 
@@ -207,7 +200,7 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,0 as "Profitability"
 		,(sil."Amount_Including_VAT") * (-1) AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" * (Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" / (MAX(sih."Currency_Factor")) * (-1)) 
 			else (sil."Amount_Including_VAT") * (-1)
 		end as "AmountIncludingVatLCY"		
 		,0 as "RemainingAmount"
@@ -217,7 +210,7 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
-		,max(sih."Invoice_Type") as "Invoice_Type"
+		,max(sih."Invoice_Type") as "Invoice_Type"		
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Technab' AS "Company"
 	FROM
@@ -228,26 +221,20 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 	left JOIN 
 		silver.bc_salesperson_technab sp
 	ON sih."Salesperson_Code" = sp."Code"
-	left join
-		silver.bc_currency_exchange_rates cer
-	on
-		sih."Currency_Code" = cer."Currency_Code"
-	and
-		sih."Document_Date" = date(cer."Starting_Date")
 	INNER JOIN
 		silver.bc_dimension_set_technab ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN
-		gold."adjustedcosts" ac
-	ON sil."Document_No" = ac."Document No_"
+		gold."v_bc_adjusted_costs" ac
+	ON sil."Key_No_Invoice" = ac."KeyNoInvoice"
 	and
-		sil."Line_No" = ac."Document Line No_"
+		sil."Line_No" = ac."Document_Line_No"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
 		sil."Line_No",
-	--		sih."Quote_No",
-	--		sih."Order_No",
+--		sih."Quote_No",
+--		sih."Order_No",
 		sil."Shortcut_Dimension_2_Code",
 		sil."Type",
 		sil."No",
@@ -260,14 +247,13 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		sil."Line_Discount_Amount",
 		sil."Amount_Including_VAT",
 		sil."Shortcut_Dimension_1_Code",
-		sih."VAT_Registration_No",
-		cer."Relational_Exch_Rate_Amount"
-	),
+		sih."VAT_Registration_No"
+),
 	
 BC_Posted_Sales_Credit_Memo_Zymetric AS (
 	select
 		sil."Document_No" AS "NoInvoice"
-		,CONCAT(sil."Firma", '_', sil."Document_No") AS "KeyNoInvoice"
+		,sil."Key_No_Invoice" AS "KeyNoInvoice"
 		,sil."Line_No" AS "InvoiceLine"
 		,null /*sih."Quote_No"*/ AS "NoQuote"		-- nie ma na fakturach korygujących
 		,null /*CONCAT(sil."Firma", '_', sih."Quote_No")*/ AS "KeyNoQuote"		-- nie ma na fakturach korygujących
@@ -294,26 +280,26 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,(sil."Quantity") * (-1) AS "Quantity"
 		,sil."Unit_Price" as "UnitPrice"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price"*(Max(cer."Relational_Exch_Rate_Amount"))) * (sil."Quantity")
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Unit_Price" / MAX(sih."Currency_Factor")) * (sil."Quantity")
 			else sil."Unit_Price" * (sil."Quantity")
 		end as "LinePriceLCY"
 		,(sil."Amount") * (-1) AS "Amount"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount" / (MAX(sih."Currency_Factor")) * (-1))
 			else (sil."Amount") * (-1)
 		end as "AmountLCY"		
 	--		,sil."unitCostLCY" AS "Koszt urzadzenia"
 	--		,(sil."Unit_Cost_LCY") * (sil."Quantity") 
 		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "LineCostsLCY"
-		,(sil."Unit_Cost_LCY") * (sil."Quantity") * (-1) AS "Koszt skorygowany"
+		,max(ac."kosztskorygowany")  AS "Koszt skorygowany"
 			,((case 
-				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"*(Max(cer."Relational_Exch_Rate_Amount")) * (-1))
+				when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount" / (MAX(sih."Currency_Factor")) * (-1))
 				else (sil."Amount" * (-1))
 			end) - 
 			((sil."Unit_Cost_LCY") * (sil."Quantity") * (-1))) as "ProfitLCY (based on direct cost)"
 		,(sil."Line_Discount_Percent"/100) as "LineDiscount"
 		,sil."Line_Discount_Amount" as "LineDiscountAmount"
-		,0 /*(sil."ednSalesMargin"/100)*/ AS "MarginBC"		-- nie ma na fakturach korygujących
+		,0 AS "MarginBC"		-- nie ma na fakturach korygujących
 	--		,CASE 
 	--		  WHEN (sil."unitCostLCY" * sil."quantity") = 0 THEN 0
 	--		  ELSE 
@@ -339,7 +325,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,0 as "Profitability"
 		,(sil."Amount_Including_VAT") * (-1) AS "AmountIncludingVAT"
 		,case 
-			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" * (Max(cer."Relational_Exch_Rate_Amount")) * (-1)) 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount_Including_VAT" / (MAX(sih."Currency_Factor")) * (-1)) 
 			else (sil."Amount_Including_VAT") * (-1)
 		end as "AmountIncludingVatLCY"		
 		,0 as "RemainingAmount"
@@ -349,7 +335,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,MAX(sp."Name") as "SalespersonName"
 		,MAX(CASE WHEN ds."dimensionCode" = 'REGION' THEN ds."dimensionValueCode" END) AS "Region"
 		,sil."Shortcut_Dimension_1_Code" AS "MPK"
-		,max(sih."Invoice_Type") as "Invoice_Type"
+		,max(sih."Invoice_Type") as "Invoice_Type"		
 		,MAX(GREATEST(sih."load_ts", sil."load_ts")) as "LoadDate"
 		,'Zymetric' AS "Company"
 	FROM
@@ -360,26 +346,20 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 	left JOIN 
 		silver.bc_salesperson_zymetric sp
 	ON sih."Salesperson_Code" = sp."Code"
-	left join
-		silver.bc_currency_exchange_rates cer
-	on
-		sih."Currency_Code" = cer."Currency_Code"
-	and
-		sih."Document_Date" = date(cer."Starting_Date")
 	INNER JOIN
 		silver.bc_dimension_set_zymetric ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN
-		gold."adjustedcosts" ac
-	ON sil."Document_No" = ac."Document No_"
+		gold."v_bc_adjusted_costs" ac
+	ON sil."Key_No_Invoice" = ac."KeyNoInvoice"
 	and
-		sil."Line_No" = ac."Document Line No_"
+		sil."Line_No" = ac."Document_Line_No"
 	GROUP BY
 		sil."Document_No",
 		sil."Firma",
 		sil."Line_No",
-	--		sih."Quote_No",
-	--		sih."Order_No",
+--		sih."Quote_No",
+--		sih."Order_No",
 		sil."Shortcut_Dimension_2_Code",
 		sil."Type",
 		sil."No",
@@ -392,8 +372,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		sil."Line_Discount_Amount",
 		sil."Amount_Including_VAT",
 		sil."Shortcut_Dimension_1_Code",
-		sih."VAT_Registration_No",
-		cer."Relational_Exch_Rate_Amount"
+		sih."VAT_Registration_No"
 	)
 	
 	

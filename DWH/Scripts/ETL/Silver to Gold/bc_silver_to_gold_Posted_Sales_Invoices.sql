@@ -103,7 +103,7 @@ WITH BC_Invoices_Aircon AS (
 	ON sil."DimensionSetID" = ds."dimensionSetID"
 	left JOIN
 		gold."v_bc_adjusted_costs" ac
-	ON  sil."KeyNoInvoice" = ac."KeyNoInvoice"
+	ON  sil."Key_No_Invoice" = ac."KeyNoInvoice"
 	and
 		sil."LineNo" = ac."Document_Line_No"
 	GROUP BY
