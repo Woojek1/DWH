@@ -270,5 +270,4 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-SELECT * FROM raport_stan_urzadzen('aircon')
-
+SELECT * FROM raport_stan_urzadzen('technab')
