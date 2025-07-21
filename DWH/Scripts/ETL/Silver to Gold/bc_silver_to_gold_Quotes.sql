@@ -25,7 +25,10 @@ WITH Quotes_Aircon AS (
 				ELSE (sl."lineAmount" * cer."EDN_Sales_Exch_Rate")
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
-			AS "ProfitPLN"
+			AS "ProfitPLN" 
+		,sl."ednPriceCatalogue" as "PriceCatalogue"
+		,sl."lineDiscount" as "LineDiscount"
+		,sl."lineDiscountAmount" as "LineDiscountAmount"
 		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
 		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,qh."Sell_to_Customer_Name" AS "CustomerName"
@@ -76,6 +79,9 @@ Quotes_Technab AS (
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
+		,sl."ednPriceCatalogue" as "PriceCatalogue"
+		,sl."lineDiscount" as "LineDiscount"
+		,sl."lineDiscountAmount" as "LineDiscountAmount"
 		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
 		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,qh."Sell_to_Customer_Name" AS "CustomerName"
@@ -126,6 +132,9 @@ Quotes_Zymetric AS (
 			END
 		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
 			AS "ProfitPLN"
+		,sl."ednPriceCatalogue" as "PriceCatalogue"
+		,sl."lineDiscount" as "LineDiscount"
+		,sl."lineDiscountAmount" as "LineDiscountAmount"
 		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
 		,CONCAT(qh."Firma", '_', qh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,qh."Sell_to_Customer_Name" AS "CustomerName"
