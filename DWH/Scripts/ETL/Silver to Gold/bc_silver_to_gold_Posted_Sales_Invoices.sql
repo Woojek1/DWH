@@ -49,6 +49,19 @@ WITH BC_Invoices_Aircon AS (
 		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."LineDiscount"/100) as "LineDiscount"
 		,sil."LineDiscountAmount" as "LineDiscountAmount"
+		,(
+		case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor"))) 
+			else sil."Amount"
+		)
+		/
+		(
+		case 
+			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."UnitPrice"/(Max(sih."Currency_Factor"))) * (sil."Quantity")
+			else sil."UnitPrice" * (sil."Quantity")
+		end)
+		 as "Rabat"
+		,sil."UnitPrice" * sil."Quantity" as "CenaKatalogowa"
 		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
 		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
@@ -103,7 +116,7 @@ WITH BC_Invoices_Aircon AS (
 	ON sil."DimensionSetID" = ds."dimensionSetID"
 	left JOIN
 		gold."v_bc_adjusted_costs" ac
-	ON  sil."Key_No_Invoice" = ac."KeyNoInvoice"
+	ON  sil."KeyNoInvoice" = ac."KeyNoInvoice"
 	and
 		sil."LineNo" = ac."Document_Line_No"
 	GROUP BY
