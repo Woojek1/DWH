@@ -95,7 +95,7 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	left JOIN 
 		silver.bc_salesperson_aircon sp
 	ON sih."Salesperson_Code" = sp."Code"
-	INNER JOIN
+	left JOIN
 		silver.bc_dimension_set_aircon ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN
@@ -221,7 +221,7 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 	left JOIN 
 		silver.bc_salesperson_technab sp
 	ON sih."Salesperson_Code" = sp."Code"
-	INNER JOIN
+	left JOIN
 		silver.bc_dimension_set_technab ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN
@@ -346,7 +346,7 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 	left JOIN 
 		silver.bc_salesperson_zymetric sp
 	ON sih."Salesperson_Code" = sp."Code"
-	INNER JOIN
+	left JOIN
 		silver.bc_dimension_set_zymetric ds
 	ON sil."dimensionSetID" = ds."dimensionSetID"
 	left JOIN

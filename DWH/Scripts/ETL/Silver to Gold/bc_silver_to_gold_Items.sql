@@ -37,7 +37,7 @@ WITH Items_Aircon AS (
 		,max(i."systemId") AS "SystemID"
 		,max(i."netWeight") as "NetWeight"
 		,max(i."ednBatteryCode") as "EdnBatteryCode"
-		,i."ednBatteryItem"
+		,i."ednBatteryItem" as "EdnBatteryItem"
 		,max(i."ednBatteryQuantity") as "EdnBatteryQuantity"
 		,max(i."vendorNo") as "VendorNo"
 		,max(i."systemModifiedAt") as "SystemModifiedAt"
@@ -49,14 +49,16 @@ WITH Items_Aircon AS (
 		silver.bc_price_lists_aircon pl
 	on
 		i."No" = pl."AssetNo"
-	WHERE 
-		i."inventoryPostingGroup" <> 'USŁUGI'
+	and
+		pl."PriceListCode" = 'S00001'
 	and
 		pl."StartingDate" < CURRENT_DATE
 	and
-		(pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE)
-	and
-		pl."PriceListCode" = 'S00001'
+		(
+		pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE
+		)
+	where
+		i."inventoryPostingGroup" <> 'USŁUGI'
 	group by
 		i."No"
 	
@@ -101,7 +103,7 @@ Items_Technab AS (
 		,max(i."systemId") AS "SystemID"
 		,max(i."netWeight") as "NetWeight"
 		,max(i."ednBatteryCode") as "EdnBatteryCode"
-		,i."ednBatteryItem"
+		,i."ednBatteryItem" as "EdnBatteryItem"
 		,max(i."ednBatteryQuantity") as "EdnBatteryQuantity"
 		,max(i."vendorNo") as "VendorNo"
 		,max(i."systemModifiedAt") as "SystemModifiedAt"
@@ -113,14 +115,16 @@ Items_Technab AS (
 		silver.bc_price_lists_technab pl
 	on
 		i."No" = pl."AssetNo"
-	WHERE 
-		i."inventoryPostingGroup" <> 'USŁUGI'
+	and
+		pl."PriceListCode" = 'S00001'
 	and
 		pl."StartingDate" < CURRENT_DATE
 	and
-		(pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE)
-	and
-		pl."PriceListCode" = 'S00001'
+		(
+		pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE
+		)
+	where
+		i."inventoryPostingGroup" <> 'USŁUGI'
 	group by
 		i."No"
 ),
@@ -163,7 +167,7 @@ Items_Zymetric AS (
 		,max(i."systemId") AS "SystemID"
 		,max(i."netWeight") as "NetWeight"
 		,max(i."ednBatteryCode") as "EdnBatteryCode"
-		,i."ednBatteryItem"
+		,i."ednBatteryItem" as "EdnBatteryItem"
 		,max(i."ednBatteryQuantity") as "EdnBatteryQuantity"
 		,max(i."vendorNo") as "VendorNo"
 		,max(i."systemModifiedAt") as "SystemModifiedAt"
@@ -175,14 +179,16 @@ Items_Zymetric AS (
 		silver.bc_price_lists_zymetric pl
 	on
 		i."No" = pl."AssetNo"
-	WHERE 
-		i."inventoryPostingGroup" <> 'USŁUGI'
+	and
+		pl."PriceListCode" = 'S00001'
 	and
 		pl."StartingDate" < CURRENT_DATE
 	and
-		(pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE)
-	and
-		pl."PriceListCode" = 'S00001'
+		(
+		pl."EndingDate" = '0001-01-01' or pl."EndingDate" > CURRENT_DATE
+		)
+	where
+		i."inventoryPostingGroup" <> 'USŁUGI'
 	group by
 		i."No"
 )

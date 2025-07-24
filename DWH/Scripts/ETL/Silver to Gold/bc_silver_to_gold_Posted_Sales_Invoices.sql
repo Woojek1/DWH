@@ -49,26 +49,26 @@ WITH BC_Invoices_Aircon AS (
 		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."LineDiscount"/100) as "LineDiscount"
 		,sil."LineDiscountAmount" as "LineDiscountAmount"
-		,round(1  - (
-		    CASE 
-		        WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
-		            THEN sil."Amount" / NULLIF(MAX(sih."Currency_Factor"), 0)
-		        ELSE sil."Amount"
-		    END
-		)
-		/
-		NULLIF(
-		    (
-		        CASE 
-		            WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
-		                THEN (sil."UnitPrice" / NULLIF(MAX(sih."Currency_Factor"), 0)) * sil."Quantity"
-		            ELSE sil."UnitPrice" * sil."Quantity"
-		        END
-		    ), 0
-		),
-		2
-		)
-		AS "Rabat"
+--		,round(1  - (
+--		    CASE 
+--		        WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
+--		            THEN sil."Amount" / NULLIF(MAX(sih."Currency_Factor"), 0)
+--		        ELSE sil."Amount"
+--		    END
+--		)
+--		/
+--		NULLIF(
+--		    (
+--		        CASE 
+--		            WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
+--		                THEN (sil."UnitPrice" / NULLIF(MAX(sih."Currency_Factor"), 0)) * sil."Quantity"
+--		            ELSE sil."UnitPrice" * sil."Quantity"
+--		        END
+--		    ), 0
+--		),
+--		2
+--		)
+--		AS "Rabat"
 		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
 		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
@@ -115,10 +115,10 @@ WITH BC_Invoices_Aircon AS (
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_aircon sih
 	ON sil."DocumentNo" = sih."No"
-	INNER JOIN 
+	left JOIN 
 		silver.bc_salesperson_aircon sp
 	ON sih."Salesperson_Code" = sp."Code"
-	INNER JOIN
+	left JOIN
 		silver.bc_dimension_set_aircon ds
 	ON sil."DimensionSetID" = ds."dimensionSetID"
 	left JOIN
@@ -198,26 +198,26 @@ BC_Invoices_Technab AS (
 		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."LineDiscount"/100) as "LineDiscount"
 		,sil."LineDiscountAmount" as "LineDiscountAmount"
-		,round(1  - (
-		    CASE 
-		        WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
-		            THEN sil."Amount" / NULLIF(MAX(sih."Currency_Factor"), 0)
-		        ELSE sil."Amount"
-		    END
-		)
-		/
-		NULLIF(  -- zabezpieczenie całego mianownika
-		    (
-		        CASE 
-		            WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
-		                THEN (sil."UnitPrice" / NULLIF(MAX(sih."Currency_Factor"), 0)) * sil."Quantity"
-		            ELSE sil."UnitPrice" * sil."Quantity"
-		        END
-		    ), 0
-		),
-		2
-		)
-		AS "Rabat"
+--		,round(1  - (
+--		    CASE 
+--		        WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
+--		            THEN sil."Amount" / NULLIF(MAX(sih."Currency_Factor"), 0)
+--		        ELSE sil."Amount"
+--		    END
+--		)
+--		/
+--		NULLIF(  -- zabezpieczenie całego mianownika
+--		    (
+--		        CASE 
+--		            WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
+--		                THEN (sil."UnitPrice" / NULLIF(MAX(sih."Currency_Factor"), 0)) * sil."Quantity"
+--		            ELSE sil."UnitPrice" * sil."Quantity"
+--		        END
+--		    ), 0
+--		),
+--		2
+--		)
+--		AS "Rabat"
 		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
 		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
@@ -264,10 +264,10 @@ BC_Invoices_Technab AS (
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_technab sih
 	ON sil."DocumentNo" = sih."No"
-	INNER JOIN 
+	left JOIN 
 		silver.bc_salesperson_technab sp
 	ON sih."Salesperson_Code" = sp."Code"
-	INNER JOIN
+	left JOIN
 		silver.bc_dimension_set_technab ds
 	ON sil."DimensionSetID" = ds."dimensionSetID"
 	left JOIN
@@ -347,26 +347,26 @@ BC_Invoices_Zymetric AS (
 		((sil."UnitCostLCY") * (sil."Quantity"))) AS "ProfitLCY (based on direct cost)"
 		,(sil."LineDiscount"/100) as "LineDiscount"
 		,sil."LineDiscountAmount" as "LineDiscountAmount"
-		,round(1  - (
-		    CASE 
-		        WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
-		            THEN sil."Amount" / NULLIF(MAX(sih."Currency_Factor"), 0)
-		        ELSE sil."Amount"
-		    END
-		)
-		/
-		NULLIF(  -- zabezpieczenie całego mianownika
-		    (
-		        CASE 
-		            WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
-		                THEN (sil."UnitPrice" / NULLIF(MAX(sih."Currency_Factor"), 0)) * sil."Quantity"
-		            ELSE sil."UnitPrice" * sil."Quantity"
-		        END
-		    ), 0
-		),
-		2
-		)
-		AS "Rabat"
+--		,round(1  - (
+--		    CASE 
+--		        WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
+--		            THEN sil."Amount" / NULLIF(MAX(sih."Currency_Factor"), 0)
+--		        ELSE sil."Amount"
+--		    END
+--		)
+--		/
+--		NULLIF(  -- zabezpieczenie całego mianownika
+--		    (
+--		        CASE 
+--		            WHEN MAX(sih."Currency_Code") IN ('EUR', 'USD') 
+--		                THEN (sil."UnitPrice" / NULLIF(MAX(sih."Currency_Factor"), 0)) * sil."Quantity"
+--		            ELSE sil."UnitPrice" * sil."Quantity"
+--		        END
+--		    ), 0
+--		),
+--		2
+--		)
+--		AS "Rabat"
 		,(sil."EdnSalesMargin"/100) AS "MarginBC"
 		,CASE 
 		  WHEN (sil."UnitCostLCY" * sil."Quantity") = 0 THEN 0
@@ -413,10 +413,10 @@ BC_Invoices_Zymetric AS (
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_zymetric sih
 	ON sil."DocumentNo" = sih."No"
-	INNER JOIN 
+	left JOIN 
 		silver.bc_salesperson_zymetric sp
 	ON sih."Salesperson_Code" = sp."Code"
-	INNER JOIN
+	left JOIN
 		silver.bc_dimension_set_zymetric ds
 	ON sil."DimensionSetID" = ds."dimensionSetID"
 	left JOIN
