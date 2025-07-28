@@ -31,6 +31,7 @@ BEGIN
 			,"Sell_to_Address_2" text NULL
 			,"Sell_to_City" text NULL
 			,"Sell_to_County" text NULL
+			,"Sell_to_Country_Region_Code" text NULL
 			,"Sell_to_Post_Code" text NULL
 			,"Document_Date" date NULL
 			,"Posting_Date" date NULL
@@ -72,6 +73,7 @@ BEGIN
 			,"Sell_to_Address_2"
 			,"Sell_to_City"
 			,"Sell_to_County"
+			,"Sell_to_Country_Region_Code"
 			,"Sell_to_Post_Code"
 			,"Document_Date"
 			,"Posting_Date"
@@ -109,6 +111,7 @@ BEGIN
 			,ih."Sell_to_Address_2"
 			,INITCAP(TRIM(ih."Sell_to_City"))
 			,LOWER(TRIM(ih."Sell_to_County"))
+			,ih."Sell_to_Country_Region_Code"
 			,ih."Sell_to_Post_Code"
 			,ih."Document_Date"
 			,ih."Posting_Date"
@@ -182,6 +185,7 @@ EXECUTE format($etl$
 		,"Sell_to_Address_2"
 		,"Sell_to_City"
 		,"Sell_to_County"
+		,"Sell_to_Country_Region_Code"
 		,"Sell_to_Post_Code"
 		,"Document_Date"
 		,"Posting_Date"
@@ -210,7 +214,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -223,6 +227,7 @@ EXECUTE format($etl$
 		,"Sell_to_City" = EXCLUDED."Sell_to_City"
 		,"Sell_to_County" = EXCLUDED."Sell_to_County"
 		,"Sell_to_Post_Code" = EXCLUDED."Sell_to_Post_Code"
+		,"Sell_to_Country_Region_Code" = EXCLUDED."Sell_to_Country_Region_Code"
 		,"Document_Date" = EXCLUDED."Document_Date"
 		,"Posting_Date" = EXCLUDED."Posting_Date"
 		,"Due_Date" = EXCLUDED."Due_Date"
@@ -259,6 +264,7 @@ EXECUTE format($etl$
 		,NEW."Sell_to_Address_2"
 		,INITCAP(TRIM(NEW."Sell_to_City"))
 		,LOWER(TRIM(NEW."Sell_to_County"))
+		,NEW."Sell_to_Country_Region_Code"
 		,NEW."Sell_to_Post_Code"
 		,NEW."Document_Date"
 		,NEW."Posting_Date"
