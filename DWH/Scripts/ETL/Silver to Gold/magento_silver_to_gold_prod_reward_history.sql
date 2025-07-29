@@ -1,0 +1,26 @@
+CREATE OR REPLACE VIEW gold.v_magento_prod_reward_history AS
+SELECT
+	history_id
+	,reward_id
+	,website_id
+	,store_id
+	,"action"
+	,entity
+	,points_balance
+	,points_delta
+	,points_used
+	,points_voided
+	,currency_amount
+	,currency_delta
+	,base_currency_code
+	,additional_data
+	,"comment"
+	,created_at
+	,expired_at_static
+	,expired_at_dynamic
+	,is_expired
+	,is_duplicate_of
+	,notification_sent
+	,load_ts
+FROM 
+	silver.magento_prod_reward_history
