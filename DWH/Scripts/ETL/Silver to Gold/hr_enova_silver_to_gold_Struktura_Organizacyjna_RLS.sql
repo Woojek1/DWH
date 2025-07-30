@@ -49,32 +49,31 @@ with Struktura_Aircon as (
 	ORDER by
 		hr."Pracownik"
 ),
-
 Struktura_Technab as (
 	SELECT 
 	    hr."PracownikID"
 	    ,hr."Pracownik" AS "Pracownik"
 	    ,hr."EmailHR" AS "EmailPracownika"
-	    ,hr."EmailAD" as "EmailAD"
+	    ,coalesce(hr."EmailAD", hr."EmailHR") as "EmailAD"
 	
 	    -- 1. Bezpośredni przełożony
 	   	,hr1."Pracownik" AS "Przelozony (N-3)"
 	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
-	    ,hr1."EmailAD" as "EmailAD (N-3)"
+	    ,coalesce(hr1."EmailAD", hr1."EmailHR") as "EmailAD (N-3)"
 	    
 	    -- 2. Przełożony przełożonego
 	    ,hr2."Pracownik" AS "Przelozony (N-2)"
 	    ,hr2."EmailHR" AS "EmailPrzelozonego (N-2)"
-	    ,hr2."EmailAD" as "EmailAD (N-2)"
+	    ,coalesce(hr2."EmailAD", hr2."EmailHR") as "EmailAD (N-2)"
 	    
 	    -- 3. Prezes    
 	    ,hr3."Pracownik" AS "Przelozony (N-1)"
 	    ,hr3."EmailHR" AS "EmailPrzelozonego (N-1)"
-	   	,hr3."EmailAD" as "EmailAD (N-1)"
+	   	,coalesce(hr3."EmailAD", hr3."EmailHR") as "EmailAD (N-1)"
 	    
 	    ,hr4."Pracownik" AS "Przelozony (N)"
 	    ,hr4."EmailHR" AS "EmailPrzelozonego (N)"
-	    ,hr4."EmailAD" as "EmailAD (N)"
+	    ,coalesce(hr4."EmailAD", hr4."EmailHR") as "EmailAD (N)"
 	    
 	    ,hr1."load_ts"
 	    ,'Technab' as "Company"
@@ -105,26 +104,26 @@ Struktura_Zymetric as (
 	    hr."PracownikID"
 	    ,hr."Pracownik" AS "Pracownik"
 	    ,hr."EmailHR" AS "EmailPracownika"
-	    ,hr."EmailAD" as "EmailAD"
+	    ,coalesce(hr."EmailAD", hr."EmailHR") as "EmailAD"
 	
 	    -- 1. Bezpośredni przełożony
 	   	,hr1."Pracownik" AS "Przelozony (N-3)"
 	    ,hr1."EmailHR" AS "EmailPrzelozonego (N-3)"
-	    ,hr1."EmailAD" as "EmailAD (N-3)"
+	    ,coalesce(hr1."EmailAD", hr1."EmailHR") as "EmailAD (N-3)"
 	    
 	    -- 2. Przełożony przełożonego
 	    ,hr2."Pracownik" AS "Przelozony (N-2)"
 	    ,hr2."EmailHR" AS "EmailPrzelozonego (N-2)"
-	    ,hr2."EmailAD" as "EmailAD (N-2)"
+	    ,coalesce(hr2."EmailAD", hr2."EmailHR") as "EmailAD (N-2)"
 	    
 	    -- 3. Prezes    
 	    ,hr3."Pracownik" AS "Przelozony (N-1)"
 	    ,hr3."EmailHR" AS "EmailPrzelozonego (N-1)"
-	   	,hr3."EmailAD" as "EmailAD (N-1)"
+	   	,coalesce(hr3."EmailAD", hr3."EmailHR") as "EmailAD (N-1)"
 	    
 	    ,hr4."Pracownik" AS "Przelozony (N)"
 	    ,hr4."EmailHR" AS "EmailPrzelozonego (N)"
-	    ,hr4."EmailAD" as "EmailAD (N)"
+	    ,coalesce(hr4."EmailAD", hr4."EmailHR") as "EmailAD (N)"
 	    
 	    ,hr1."load_ts"
 	    ,'Zymetric' as "Company"
