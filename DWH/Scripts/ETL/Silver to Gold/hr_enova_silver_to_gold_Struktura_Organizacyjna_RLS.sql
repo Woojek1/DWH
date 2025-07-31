@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW gold.v_hr_enova_struktura_organizacyjna_RLS as
+CREATE OR REPLACE VIEW gold.v_hr_enova_rls as
 with Struktura_Aircon as (
 	SELECT
 	    hr."PracownikID"

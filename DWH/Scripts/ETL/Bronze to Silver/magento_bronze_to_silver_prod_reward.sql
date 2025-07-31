@@ -4,7 +4,7 @@
 
 
 CREATE TABLE IF NOT EXISTS silver.magento_prod_reward (
-	reward_id int4 NOT NULL
+	reward_id int4 NOT null primary key
 	,customer_id int4 NOT NULL
 	,website_id int4 NOT NULL
 	,points_balance int4 NOT NULL
