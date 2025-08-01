@@ -162,7 +162,7 @@ BEGIN
 		,"comment" = EXCLUDED."comment"
 		,created_at = EXCLUDED.created_at
 		,expired_at_static = EXCLUDED.expired_at_static
-		,expired_at_dynamic = EXCLUDED.epired_at_dynamic
+		,expired_at_dynamic = EXCLUDED.expired_at_dynamic
 		,is_expired = EXCLUDED.is_expired
 		,is_duplicate_of = EXCLUDED.is_duplicate_of
 		,notification_sent = EXCLUDED.notification_sent
