@@ -317,49 +317,53 @@ EXECUTE format($etl$
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
-		NEW."No"
-		,NEW."Contact_Type"
-		,REGEXP_REPLACE(NEW."Name", '''', '', 'g')
-		,REGEXP_REPLACE(NEW."Name_2", '''', '', 'g')
-		,NEW."Search_Name"
-		,NEW."IC_Partner_Code"
-		,NEW."Balance_LCY"
-		,NEW."Balance_Due_LCY"
-		,NEW."Credit_Limit_LCY"
-		,NEW."EDN_Black_List"
-		,NEW."Salesperson_Code"
-		,NEW."TotalSales2"
-		,NEW."CustSalesLCY_CustProfit_AdjmtCostLCY"
-		,NEW."AdjCustProfit"
-		,NEW."EDN_NAV_Key"
-		,NEW."VIP"
-		,NEW."Company_Profile"
-		,NEW."Company_SegmentA"
-		,NEW."MagentoID"
-		,NEW."EDN_Reckoning_Limit__x005B_LCY_x005D_"
-		,NEW."EDN_Used_Limit__x005B_LCY_x005D_"
-		,NEW."EDN_Factoring_Reckoning"
-		,NEW."EDN_Insurance_Customer"
-		,NEW."EDN_Limit_Amount_Insur__x005B_LCY_x005D_"
-		,NEW."Address"
-		,NEW."Country_Region_Code"
-		,INITCAP(TRIM(NEW."City"))
-		,LOWER(TRIM(NEW."County"))
-		,NEW."Post_Code"
-		,NEW."EDN_Province_Code"
-		,REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g')
-		,LOWER(NEW."E_Mail")
-		,REGEXP_REPLACE(NEW."Phone_No", '[^0-9;]', '', 'g')
-		,NEW."Gen_Bus_Posting_Group"
-		,NEW."Payment_Terms_Code"
-		,NEW."Payment_Method_Code"
-		,case
-			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5262419501' then 'Aircon'
-			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242712474' then 'Technab'
-			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242599836' then 'Zymetric'
-			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242770589' then 'Artcomfort'
-			else 'Niepowiązane'
-		end
+		new."No"
+		,concat(litera_firmy, ' ' , new."No")
+		,new."Name"
+		,new."Name_2"
+		,new."Type"
+		,new."Company_No"
+		,new."Company_Name"
+		,new."Job_Title"
+		,new."Contact_Business_Relation"
+		,new."IntegrationCustomerNo"
+		,new."Search_Name"
+		,new."Salesperson_Code"
+		,new."Salutation_Code"
+		,new."Organizational_Level_Code"
+		,new."LastDateTimeModified"
+		,new."Date_of_Last_Interaction"
+		,new."Last_Date_Attempted"
+		,new."Next_Task_Date"
+		,new."Exclude_from_Segment"
+		,new."Privacy_Blocked"
+		,new."Minor"
+		,new."Parental_Consent_Received"
+		,new."Registration_Number"
+		,new."Marketing_agreement"
+		,new."MagentoID"
+		,new."Address"
+		,new."Address_2"
+		,new."Country_Region_Code"
+		,new."Post_Code"
+		,new."City"
+		,new."EDN_Region_Code"
+		,new."EDN_Province_Code"
+		,new."ShowMap"
+		,new."Phone_No"
+		,new."Mobile_Phone_No"
+		,new."E_Mail"
+		,new."Fax_No"
+		,new."Home_Page"
+		,new."Correspondence_Type"
+		,new."Language_Code"
+		,new."Format_Region"
+		,new."Currency_Code"
+		,new."Territory_Code"
+		,NEW."ITI_VATRegNoOrigCountryCode"
+		,new."VAT_Registration_No"
+		,new."EDN_NAV_Key"
+		,new."SystemModifiedAt"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 

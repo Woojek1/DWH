@@ -503,7 +503,7 @@ EXECUTE format($etl$
 $etl$, target_table, _litera_firmy)
 	USING
 		new."No"
-		,concat(_litera_firmy, '_', new."No")
+		,concat(litera_firmy, '_', new."No")
 		,new."Name"
 		,new."Name_2"
 		,new."Blocked"
