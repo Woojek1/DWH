@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------
--- CREATING MAGENTO PROD REWARD HISTORY TABLES IN SILVER LAYER AND FIRST LOAD
+-- CREATING MAGENTO PROD REQUISITION LIST TABLES IN SILVER LAYER AND FIRST LOAD
 -----------------------------------------------------------------------------
 
 
@@ -40,35 +40,35 @@ FROM bronze.magento_prod_requisition_list prl
 --------------------------------------------------------------
 
 
-CREATE OR REPLACE FUNCTION bronze.fn_upsert_magento_prod_reward()
+CREATE OR REPLACE FUNCTION bronze.fn_upsert_magento_prod_requisition_list()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO silver.magento_prod_reward (
-		reward_id
-		,customer_id
-		,website_id
-		,points_balance
-		,website_currency_code
+	INSERT INTO silver.magento_requisition_list (
+		"entity_id"
+		,"customer_id"
+		,"name"
+		,"description"
+		,"updated_at"
 		,"load_ts"
 	)
 
 	VALUES (
-		NEW.reward_id
-		,NEW.customer_id
-		,NEW.website_id
-		,NEW.points_balance
-		,NEW.website_currency_code
+		NEW."entity_id"
+		,NEW."customer_id"
+		,NEW."name"
+		,NEW."description"
+		,NEW."updated_at"
 		,CURRENT_TIMESTAMP
 	)
-	ON CONFLICT ("reward_id") DO UPDATE
+	ON CONFLICT ("entity_id") DO UPDATE
 	SET
-		reward_id = EXCLUDED.reward_id
-		,customer_id = EXCLUDED.customer_id
-		,website_id = EXCLUDED.website_id
-		,points_balance = EXCLUDED.points_balance
-		,website_currency_code = EXCLUDED.website_currency_code
+		"entity_id" = EXCLUDED."entity_id"
+		,"customer_id" = EXCLUDED."customer_id"
+		,"name" = EXCLUDED."name"
+		,"description" = EXCLUDED."description"
+		,"updated_at" = EXCLUDED."updated_at"
 		,"load_ts" = CURRENT_TIMESTAMP;
 
 	RETURN NEW;
@@ -79,13 +79,22 @@ $$;
 
 
 ------------------------------------------------------------------------
--- CREATING TRIGGER IN BRONZE LAYER ON MAGENTO PROD CSTOMER ENTITY TABLE
+-- CREATING TRIGGER IN BRONZE LAYER ON MAGENTO PROD REQUISITION LIST TABLE
 ------------------------------------------------------------------------
 
 
-DROP TRIGGER IF EXISTS trg_upsert_magento_prod_reward ON bronze.magento_prod_reward;
-CREATE TRIGGER trg_upsert_magento_prod_reward
-AFTER INSERT OR UPDATE ON bronze.magento_prod_reward
+DROP TRIGGER IF EXISTS trg_upsert_magento_prod_requisition_list ON bronze.magento_prod_requisition_list;
+CREATE TRIGGER trg_upsert_magento_prod_requisition_list
+AFTER INSERT OR UPDATE ON bronze.magento_prod_requisition_list
 FOR EACH ROW
-EXECUTE FUNCTION bronze.fn_upsert_magento_prod_reward();
+EXECUTE FUNCTION bronze.fn_upsert_magento_prod_requisition_list();
+
+
+
+DROP TRIGGER IF EXISTS trg_upsert_magento_prod_wishlist ON bronze.magento_prod_wishlist;
+CREATE TRIGGER trg_upsert_magento_prod_wishlist
+AFTER INSERT OR UPDATE ON bronze.magento_prod_wishlist
+FOR EACH ROW
+EXECUTE FUNCTION bronze.fn_upsert_magento_prod_wishlist();
+
 
