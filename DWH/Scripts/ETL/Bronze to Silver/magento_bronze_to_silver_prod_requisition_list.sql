@@ -64,8 +64,7 @@ BEGIN
 	)
 	ON CONFLICT ("entity_id") DO UPDATE
 	SET
-		"entity_id" = EXCLUDED."entity_id"
-		,"customer_id" = EXCLUDED."customer_id"
+		"customer_id" = EXCLUDED."customer_id"
 		,"name" = EXCLUDED."name"
 		,"description" = EXCLUDED."description"
 		,"updated_at" = EXCLUDED."updated_at"
@@ -88,13 +87,4 @@ CREATE TRIGGER trg_upsert_magento_prod_requisition_list
 AFTER INSERT OR UPDATE ON bronze.magento_prod_requisition_list
 FOR EACH ROW
 EXECUTE FUNCTION bronze.fn_upsert_magento_prod_requisition_list();
-
-
-
-DROP TRIGGER IF EXISTS trg_upsert_magento_prod_wishlist ON bronze.magento_prod_wishlist;
-CREATE TRIGGER trg_upsert_magento_prod_wishlist
-AFTER INSERT OR UPDATE ON bronze.magento_prod_wishlist
-FOR EACH ROW
-EXECUTE FUNCTION bronze.fn_upsert_magento_prod_wishlist();
-
 
