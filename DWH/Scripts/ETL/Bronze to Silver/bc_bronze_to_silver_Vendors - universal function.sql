@@ -500,7 +500,7 @@ EXECUTE format($etl$
 		,"SystemCreatedAt" = EXCLUDED."SystemCreatedAt"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
-$etl$, target_table, _litera_firmy)
+$etl$, target_table)
 	USING
 		new."No"
 		,concat(litera_firmy, '_', new."No")
