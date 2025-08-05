@@ -65,8 +65,7 @@ BEGIN
 	)
 	ON CONFLICT ("reward_id") DO UPDATE
 	SET
-		reward_id = EXCLUDED.reward_id
-		,customer_id = EXCLUDED.customer_id
+		customer_id = EXCLUDED.customer_id
 		,website_id = EXCLUDED.website_id
 		,points_balance = EXCLUDED.points_balance
 		,website_currency_code = EXCLUDED.website_currency_code
