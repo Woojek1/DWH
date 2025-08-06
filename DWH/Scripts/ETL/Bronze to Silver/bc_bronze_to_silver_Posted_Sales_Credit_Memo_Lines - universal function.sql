@@ -77,7 +77,13 @@ BEGIN
 			,concat(%L, '_', cm."Document_No")
 			,cm."Line_No"
 			,cm."Sell_to_Customer_No"
-			,cm."Type"
+			,case
+				when cm."Type" = 'Item' then 'Towar'
+				when cm."Type" = 'Charge (Item)' then 'Towar (Korekta)'
+				when cm."Type" = 'Resource' then 'Usługa'
+				when cm."Type" = 'G/L Account' then 'Zaliczka'
+				else ''
+			end as "Type"
 			,cm."No"
 			,cm."Description"
 			,cm."Description_2"
@@ -96,27 +102,6 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I cm
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT (""Document_No", "Line_No") DO UPDATE
---		SET
---		"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
---		,"Type" = EXCLUDED."Type"
---		,"No" = EXCLUDED."No"
---		,"Description" = EXCLUDED."Description"
---		,"Description_2" = EXCLUDED."Description_2"
---		,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
---		,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
---		,"Quantity" = EXCLUDED."Quantity"
---		,"Unit_of_Measure" = EXCLUDED."Unit_of_Measure"
---		,"Unit_Price" = EXCLUDED."Unit_Price"
---		,"Unit_Cost_LCY" = EXCLUDED."Unit_Cost_LCY"
---		,"Amount" = EXCLUDED."Amount"
---		,"Amount_Including_VAT" = EXCLUDED."Amount_Including_VAT"
---		,"Line_Discount_Percent" = EXCLUDED."Line_Discount_Percent"
---		,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
---		,"Firma" = EXCLUDED."Firma"
---		,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -201,7 +186,13 @@ EXECUTE format($etl$
 		,concat(litera_firmy, '_', new."Document_No")
         ,NEW."Line_No"
 		,NEW."Sell_to_Customer_No"
-    	,NEW."Type"
+		,case
+			when NEW."type" = 'Item' then 'Towar'
+			when NEW."type" = 'Charge (Item)' then 'Towar (Korekta)'
+			when NEW."type" = 'Resource' then 'Usługa'
+			when NEW."type" = 'G/L Account' then 'Zaliczka'
+			else ''
+		end
 	    ,NEW."No"
 	    ,NEW."Description"
 	    ,NEW."Description_2"

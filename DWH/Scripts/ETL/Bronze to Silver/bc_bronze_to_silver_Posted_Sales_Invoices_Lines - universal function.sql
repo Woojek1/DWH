@@ -118,48 +118,19 @@ BEGIN
 			,s."sellToCustomerNo"
 			,s."shortcutDimension1Code"
 			,s."shortcutDimension2Code"
-			,s."type"
+			,case
+				when s."type" = 'Item' then 'Towar'
+				when s."type" = 'Charge (Item)' then 'Towar (Korekta)'
+				when s."type" = 'Resource' then 'Usługa'
+				when s."type" = 'G/L Account' then 'Zaliczka'
+				else ''
+			end as "type"
 			,s."unitCost"
 			,s."unitCostLCY"
 			,s."unitPrice"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I s
-
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("documentNo", "lineNo") DO UPDATE
---		SET
---			"documentNo" = EXCLUDED."documentNo"
---			,"lineNo" = EXCLUDED."lineNo"
---			,amount = EXCLUDED.amount
---			,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
---			,description = EXCLUDED.description
---			,description2 = EXCLUDED.description2
---			,"dimensionSetID" = EXCLUDED."dimensionSetID"
---			,"ednCampaignNo" = EXCLUDED."ednCampaignNo"
---			,"ednOryUnitCost" = EXCLUDED."ednOryUnitCost"
---			,"ednOryUnitCostLCY" = EXCLUDED."ednOryUnitCostLCY"
---			,"ednSalesMargin" = EXCLUDED."ednSalesMargin"
---			,"genBusPostingGroup" = EXCLUDED."genBusPostingGroup"
---			,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
---			,"lineAmount" = EXCLUDED."lineAmount"
---			,"lineDiscount" = EXCLUDED."lineDiscount"
---			,"lineDiscountAmount" = EXCLUDED."lineDiscountAmount"
---			,"locationCode" = EXCLUDED."locationCode"
---			,"no" = EXCLUDED."no"
---			,"postingDate" = EXCLUDED."postingDate"
---			,"postingGroup" = EXCLUDED."postingGroup"
---			,quantity = EXCLUDED.quantity
---			,"sellToCustomerNo" = EXCLUDED."sellToCustomerNo"
---			,"shortcutDimension1Code" = EXCLUDED."shortcutDimension1Code"
---			,"shortcutDimension2Code" = EXCLUDED."shortcutDimension2Code"
---			,"type" = EXCLUDED."type"
---			,"unitCost" = EXCLUDED."unitCost"
---			,"unitCostLCY" = EXCLUDED."unitCostLCY"
---			,"unitPrice" = EXCLUDED."unitPrice"
---			,"Firma" = EXCLUDED."Firma"
---			,"load_ts" = EXCLUDED."load_ts";
 
     $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
@@ -287,7 +258,13 @@ EXECUTE format($etl$
 		,NEW."sellToCustomerNo"
 		,NEW."shortcutDimension1Code"
 		,NEW."shortcutDimension2Code"
-		,NEW."type"
+		,case
+			when NEW."type" = 'Item' then 'Towar'
+			when NEW."type" = 'Charge (Item)' then 'Towar (Korekta)'
+			when NEW."type" = 'Resource' then 'Usługa'
+			when NEW."type" = 'G/L Account' then 'Zaliczka'
+			else ''
+		end
 		,NEW."unitCost"
 		,NEW."unitCostLCY"
 		,NEW."unitPrice"
