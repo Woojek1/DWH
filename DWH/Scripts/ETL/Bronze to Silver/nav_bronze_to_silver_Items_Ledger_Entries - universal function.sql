@@ -125,7 +125,7 @@ $ddl$, _tabela, _litera_firmy);
 			,ile."Source No_"
 			,ile."Global Dimension 1 Code"
 			,ile."Global Dimension 2 Code"
-			,ile."No_ Series"
+			,ile."Serial No_"
 			,ile."Location Code"
 			,ile."Quantity"
 			,ile."Invoiced Quantity"
