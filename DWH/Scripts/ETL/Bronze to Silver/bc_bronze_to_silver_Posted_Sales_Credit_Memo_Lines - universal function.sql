@@ -187,10 +187,10 @@ EXECUTE format($etl$
         ,NEW."Line_No"
 		,NEW."Sell_to_Customer_No"
 		,case
-			when NEW."type" = 'Item' then 'Towar'
-			when NEW."type" = 'Charge (Item)' then 'Towar (Korekta)'
-			when NEW."type" = 'Resource' then 'Usługa'
-			when NEW."type" = 'G/L Account' then 'Zaliczka'
+			when NEW."Type" = 'Item' then 'Towar'
+			when NEW."Type" = 'Charge (Item)' then 'Towar (Korekta)'
+			when NEW."Type" = 'Resource' then 'Usługa'
+			when NEW."Type" = 'G/L Account' then 'Zaliczka'
 			else ''
 		end
 	    ,NEW."No"
