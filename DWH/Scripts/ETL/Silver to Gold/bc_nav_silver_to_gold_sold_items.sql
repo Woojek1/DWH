@@ -1,4 +1,4 @@
-create or replace view gold."Dim_Sold_Items" as
+create or replace view gold."Dim_BC_NAV_Sold_Items" as
 SELECT
 	"Entry_No"
 	,"Posting_Date"
