@@ -6,7 +6,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY[ 'aircon', 'zymetric', 'technab'];
+_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -16,51 +16,44 @@ BEGIN
 	FOREACH _firma IN ARRAY _firmy LOOP
 	
 	_litera_firmy := UPPER(SUBSTR(_firma,1,1));
-	_tabela := format('bc_items_ledger_entries_%s', _firma);  --- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ ---
-
+	_tabela := format('bc_service_ledger_entry_%s', _firma);  --- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ ---
 
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"Entry_No" int4 NOT NULL
+			"Entry_No" int4 NOT NULL PRIMARY KEY
 			,"Posting_Date" date NULL
 			,"Entry_Type" text NULL
-			,"Document_Type" text NULL
+			,"Service_Order_No" text NULL
+			,"Job_No" text NULL
 			,"Document_No" text NULL
-			,"Document_Line_No" int4 NULL
-			,"Item_No" text NULL
-			,"Base_Group" text NULL
-			,"EDN_Source_Type" text NULL
-			,"EDN_Source_No" text NULL
+			,"Bill_to_Customer_No" text NULL
+			,"Service_Item_No_Serviced" text NULL
+			,"Item_No_Serviced" text NULL
+			,"Base_Group_A_Serviced" text NULL
+			,"Base_Group_B_Serviced" text NULL
+			,"Serial_No_Serviced" text NULL
+			,"Contract_Invoice_Period" text NULL
 			,"Global_Dimension_1_Code" text NULL
 			,"Global_Dimension_2_Code" text NULL
-			,"Serial_No" text NULL
-			,"Location_Code" text NULL
-			,"Quantity" numeric(14,2) NULL
-			,"Invoiced_Quantity" numeric(14,2) NULL
-			,"Remaining_Quantity" numeric(14,2) NULL
-			,"Shipped_Qty_Not_Returned" numeric(14,2) NULL
-			,"Reserved_Quantity" numeric(14,2) NULL
-			,"Sales_Amount_Expected" numeric(14,2) NULL
-			,"Sales_Amount_Actual" numeric(14,2) NULL
-			,"Cost_Amount_Expected" numeric(14,2) NULL
-			,"Cost_Amount_Actual" numeric(14,2) NULL
-			,"Completely_Invoiced" bool NULL
-			,"Open" bool NULL
-			,"Order_Line_No" int4 NULL
-			,"Prod_Order_Comp_Line_No" int4 NULL
+			,"Contract_Group_Code" text NULL
+			,"Type" text NULL
+			,"No" text NULL
+			,"Base_GroupA" text NULL
+			,"Base_GroupB" text NULL
+			,"Cost_Amount" numeric(18, 5) NULL
+			,"Discount_Amount" numeric(18, 5) NULL
+			,"Unit_Cost" numeric(18, 5) NULL
+			,"Quantity" numeric(18, 5) NULL
+			,"Charged_Qty" numeric(18, 5) NULL
+			,"Unit_Price" numeric(18, 5) NULL
+			,"Description" text NULL
+			,"Gen_Bus_Posting_Group" text NULL
+			,"Gen_Prod_Posting_Group" text NULL
 			,"Dimension_Set_ID" int4 NULL
-			,"Shortcut_Dimension_3_Code" text NULL
-			,"Shortcut_Dimension_4_Code" text NULL
-			,"Shortcut_Dimension_5_Code" text NULL
-			,"Shortcut_Dimension_6_Code" text NULL
-			,"Shortcut_Dimension_7_Code" text NULL
 			,"Shortcut_Dimension_8_Code" text NULL
-			,"EDN_Campaign_No" text NULL
-			,"EDN_Campaign_Description" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,PRIMARY KEY ("Entry_No")
     );
 $ddl$, _tabela, _litera_firmy);	
 
@@ -70,124 +63,73 @@ $ddl$, _tabela, _litera_firmy);
 			"Entry_No"
 			,"Posting_Date"
 			,"Entry_Type"
-			,"Document_Type"
+			,"Service_Order_No"
+			,"Job_No"
 			,"Document_No"
-			,"Document_Line_No"
-			,"Item_No"
-			,"Base_Group"
-			,"EDN_Source_Type"
-			,"EDN_Source_No"
-			,"Global_Dimension_1_Code"
+			,"Bill_to_Customer_No"
+			,"Service_Item_No_Serviced"
+			,"Item_No_Serviced"
+			,"Base_Group_A_Serviced"
+			,"Base_Group_B_Serviced"
+			,"Serial_No_Serviced"
+			,"Contract_Invoice_Period"
+			,"Global_Dimension_1_Code" 
 			,"Global_Dimension_2_Code"
-			,"Serial_No"
-			,"Location_Code"
+			,"Contract_Group_Code"
+			,"Type"
+			,"No"
+			,"Base_GroupA"
+			,"Base_GroupB"
+			,"Cost_Amount"
+			,"Discount_Amount"
+			,"Unit_Cost"
 			,"Quantity"
-			,"Invoiced_Quantity"
-			,"Remaining_Quantity"
-			,"Shipped_Qty_Not_Returned"
-			,"Reserved_Quantity"
-			,"Sales_Amount_Expected"
-			,"Sales_Amount_Actual"
-			,"Cost_Amount_Expected"
-			,"Cost_Amount_Actual"
-			,"Completely_Invoiced"
-			,"Open"
-			,"Order_Line_No"
-			,"Prod_Order_Comp_Line_No"
+			,"Charged_Qty"
+			,"Unit_Price"
+			,"Description"
+			,"Gen_Bus_Posting_Group"
+			,"Gen_Prod_Posting_Group"
 			,"Dimension_Set_ID"
-			,"Shortcut_Dimension_3_Code"
-			,"Shortcut_Dimension_4_Code"
-			,"Shortcut_Dimension_5_Code"
-			,"Shortcut_Dimension_6_Code"
-			,"Shortcut_Dimension_7_Code"
 			,"Shortcut_Dimension_8_Code"
-			,"EDN_Campaign_No"
-			,"EDN_Campaign_Description"
 			,"Firma"
 			,"load_ts"
 		)
 		SELECT
-			ile."Entry_No"
-			,ile."Posting_Date"
-			,ile."Entry_Type"
-			,ile."Document_Type"
-			,ile."Document_No"
-			,ile."Document_Line_No"
-			,ile."Item_No"
-			,ile."Base_Group"
-			,ile."EDN_Source_Type"
-			,ile."EDN_Source_No"
-			,ile."Global_Dimension_1_Code"
-			,ile."Global_Dimension_2_Code"
-			,ile."Serial_No"
-			,ile."Location_Code"
-			,ile."Quantity"
-			,ile."Invoiced_Quantity"
-			,ile."Remaining_Quantity"
-			,ile."Shipped_Qty_Not_Returned"
-			,ile."Reserved_Quantity"
-			,ile."Sales_Amount_Expected"
-			,ile."Sales_Amount_Actual"
-			,ile."Cost_Amount_Expected"
-			,ile."Cost_Amount_Actual"
-			,ile."Completely_Invoiced"
-			,ile."Open"
-			,ile."Order_Line_No"
-			,ile."Prod_Order_Comp_Line_No"
-			,ile."Dimension_Set_ID"
-			,ile."Shortcut_Dimension_3_Code"
-			,ile."Shortcut_Dimension_4_Code"
-			,ile."Shortcut_Dimension_5_Code"
-			,ile."Shortcut_Dimension_6_Code"
-			,ile."Shortcut_Dimension_7_Code"
-			,ile."Shortcut_Dimension_8_Code"
-			,ile."EDN_Campaign_No"
-			,ile."EDN_Campaign_Description"
+			sle."Entry_No"
+			,sle."Posting_Date"
+			,sle."Entry_Type"
+			,sle."Service_Order_No"
+			,sle."Job_No"
+			,sle."Document_No"
+			,sle."Bill_to_Customer_No"
+			,sle."Service_Item_No_Serviced"
+			,sle."Item_No_Serviced"
+			,sle."Base_Group_A_Serviced"
+			,sle."Base_Group_B_Serviced"
+			,sle."Serial_No_Serviced"
+			,sle."Contract_Invoice_Period"
+			,sle."Global_Dimension_1_Code" 
+			,sle."Global_Dimension_2_Code"
+			,sle."Contract_Group_Code"
+			,sle."Type"
+			,sle."No"
+			,sle."Base_GroupA"
+			,sle."Base_GroupB"
+			,sle."Cost_Amount"
+			,sle."Discount_Amount"
+			,sle."Unit_Cost"
+			,sle."Quantity"
+			,sle."Charged_Qty"
+			,sle."Unit_Price"
+			,sle."Description"
+			,sle."Gen_Bus_Posting_Group"
+			,sle."Gen_Prod_Posting_Group"
+			,sle."Dimension_Set_ID"
+			,sle."Shortcut_Dimension_8_Code"
 			,%L
         	,CURRENT_TIMESTAMP
-		FROM bronze.%I ile
+		FROM bronze.%I sle
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("Entry_No") DO UPDATE
---		SET
---			"Posting_Date" = EXCLUDED."Posting_Date"
---			,"Entry_Type" = EXCLUDED."Entry_Type"
---			,"Document_Type" = EXCLUDED."Document_Type"
---			,"Document_No" = EXCLUDED."Document_No"
---			,"Document_Line_No" = EXCLUDED."Document_Line_No"
---			,"Item_No" = EXCLUDED."Item_No"
---			,"Base_Group" = EXCLUDED."Base_Group"
---			,"EDN_Source_Type" = EXCLUDED."EDN_Source_Type"
---			,"EDN_Source_No" = EXCLUDED."EDN_Source_No"
---			,"Global_Dimension_1_Code" = EXCLUDED."Global_Dimension_1_Code"
---			,"Global_Dimension_2_Code" = EXCLUDED."Global_Dimension_2_Code"
---			,"Serial_No" = EXCLUDED."Serial_No"
---			,"Location_Code" = EXCLUDED."Location_Code"
---			,"Quantity" = EXCLUDED."Quantity"
---			,"Invoiced_Quantity" = EXCLUDED."Invoiced_Quantity"
---			,"Remaining_Quantity" = EXCLUDED."Remaining_Quantity"
---			,"Shipped_Qty_Not_Returned" = EXCLUDED."Shipped_Qty_Not_Returned"
---			,"Reserved_Quantity" = EXCLUDED."Reserved_Quantity"
---			,"Sales_Amount_Expected" = EXCLUDED."Sales_Amount_Expected"
---			,"Sales_Amount_Actual" = EXCLUDED."Sales_Amount_Actual"
---			,"Cost_Amount_Expected" = EXCLUDED."Cost_Amount_Expected"
---			,"Cost_Amount_Actual" = EXCLUDED."Cost_Amount_Actual"
---			,"Completely_Invoiced" = EXCLUDED."Completely_Invoiced"
---			,"Open" = EXCLUDED."Open"
---			,"Order_Line_No" = EXCLUDED."Order_Line_No"
---			,"Prod_Order_Comp_Line_No" = EXCLUDED."Prod_Order_Comp_Line_No"
---			,"Dimension_Set_ID" = EXCLUDED."Dimension_Set_ID"
---			,"Shortcut_Dimension_3_Code" = EXCLUDED."Shortcut_Dimension_3_Code"
---			,"Shortcut_Dimension_4_Code" = EXCLUDED."Shortcut_Dimension_4_Code"
---			,"Shortcut_Dimension_5_Code" = EXCLUDED."Shortcut_Dimension_5_Code"
---			,"Shortcut_Dimension_6_Code" = EXCLUDED."Shortcut_Dimension_6_Code"
---			,"Shortcut_Dimension_7_Code" = EXCLUDED."Shortcut_Dimension_7_Code"
---			,"Shortcut_Dimension_8_Code" = EXCLUDED."Shortcut_Dimension_8_Code"
---			,"EDN_Campaign_No" = EXCLUDED."EDN_Campaign_No"
---			,"EDN_Campaign_Description" = EXCLUDED."EDN_Campaign_Description"
---			,"Firma" = EXCLUDED."Firma"
---			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -201,7 +143,7 @@ $$;
 --------------------------------------------------------------
 
 
-CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_items_ledger_entries()  -- ZMIENIĆ NAZWĘ FUNKCJI
+CREATE OR REPLACE FUNCTION bronze.fn_upsert_bc_service_ledger_entry()  -- ZMIENIĆ NAZWĘ FUNKCJI
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $function$
@@ -216,129 +158,116 @@ BEGIN
 	firma := TG_ARGV[0];
 	litera_firmy := UPPER(SUBSTR(firma, 1, 1));
 -- litera := TG_ARGV[1];
-	target_table := format('bc_items_ledger_entries_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
+	target_table := format('bc_items_ledger_entry_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
 
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"Entry_No"
 		,"Posting_Date"
 		,"Entry_Type"
-		,"Document_Type"
+		,"Service_Order_No"
+		,"Job_No"
 		,"Document_No"
-		,"Document_Line_No"
-		,"Item_No"
-		,"Base_Group"
-		,"EDN_Source_Type"
-		,"EDN_Source_No"
-		,"Global_Dimension_1_Code"
+		,"Bill_to_Customer_No"
+		,"Service_Item_No_Serviced"
+		,"Item_No_Serviced"
+		,"Base_Group_A_Serviced"
+		,"Base_Group_B_Serviced"
+		,"Serial_No_Serviced"
+		,"Contract_Invoice_Period"
+		,"Global_Dimension_1_Code" 
 		,"Global_Dimension_2_Code"
-		,"Serial_No"
-		,"Location_Code"
+		,"Contract_Group_Code"
+		,"Type"
+		,"No"
+		,"Base_GroupA"
+		,"Base_GroupB"
+		,"Cost_Amount"
+		,"Discount_Amount"
+		,"Unit_Cost"
 		,"Quantity"
-		,"Invoiced_Quantity"
-		,"Remaining_Quantity"
-		,"Shipped_Qty_Not_Returned"
-		,"Reserved_Quantity"
-		,"Sales_Amount_Expected"
-		,"Sales_Amount_Actual"
-		,"Cost_Amount_Expected"
-		,"Cost_Amount_Actual"
-		,"Completely_Invoiced"
-		,"Open"
-		,"Order_Line_No"
-		,"Prod_Order_Comp_Line_No"
+		,"Charged_Qty"
+		,"Unit_Price"
+		,"Description"
+		,"Gen_Bus_Posting_Group"
+		,"Gen_Prod_Posting_Group"
 		,"Dimension_Set_ID"
-		,"Shortcut_Dimension_3_Code"
-		,"Shortcut_Dimension_4_Code"
-		,"Shortcut_Dimension_5_Code"
-		,"Shortcut_Dimension_6_Code"
-		,"Shortcut_Dimension_7_Code"
 		,"Shortcut_Dimension_8_Code"
-		,"EDN_Campaign_No"
-		,"EDN_Campaign_Description"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33
+  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Entry_No") DO UPDATE
 	SET
-		"Posting_Date" = EXCLUDED."Posting_Date"
+		"Entry_No" = EXCLUDED."Entry_No"
+		,"Posting_Date" = EXCLUDED."Posting_Date"
 		,"Entry_Type" = EXCLUDED."Entry_Type"
-		,"Document_Type" = EXCLUDED."Document_Type"
+		,"Service_Order_No" = EXCLUDED."Service_Order_No"
+		,"Job_No" = EXCLUDED."Job_No"
 		,"Document_No" = EXCLUDED."Document_No"
-		,"Document_Line_No" = EXCLUDED."Document_Line_No"
-		,"Item_No" = EXCLUDED."Item_No"
-		,"Base_Group" = EXCLUDED."Base_Group"
-		,"EDN_Source_Type" = EXCLUDED."EDN_Source_Type"
-		,"EDN_Source_No" = EXCLUDED."EDN_Source_No"
-		,"Global_Dimension_1_Code" = EXCLUDED."Global_Dimension_1_Code"
+		,"Bill_to_Customer_No" = EXCLUDED."Bill_to_Customer_No"
+		,"Service_Item_No_Serviced" = EXCLUDED."Service_Item_No_Serviced"
+		,"Item_No_Serviced" = EXCLUDED."Item_No_Serviced"
+		,"Base_Group_A_Serviced" = EXCLUDED."Base_Group_A_Serviced"
+		,"Base_Group_B_Serviced" = EXCLUDED."Base_Group_B_Serviced"
+		,"Serial_No_Serviced" = EXCLUDED."Serial_No_Serviced"
+		,"Contract_Invoice_Period" = EXCLUDED."Contract_Invoice_Period"
+		,"Global_Dimension_1_Code"  = EXCLUDED."Global_Dimension_1_Code"
 		,"Global_Dimension_2_Code" = EXCLUDED."Global_Dimension_2_Code"
-		,"Serial_No" = EXCLUDED."Serial_No"
-		,"Location_Code" = EXCLUDED."Location_Code"
+		,"Contract_Group_Code" = EXCLUDED."Contract_Group_Code"
+		,"Type" = EXCLUDED."Type"
+		,"No" = EXCLUDED."No"
+		,"Base_GroupA" = EXCLUDED."Base_GroupA"
+		,"Base_GroupB"= EXCLUDED."Base_GroupB"
+		,"Cost_Amount" = EXCLUDED."Cost_Amount"
+		,"Discount_Amount" = EXCLUDED."Discount_Amount"
+		,"Unit_Cost" = EXCLUDED."Unit_Cost"
 		,"Quantity" = EXCLUDED."Quantity"
-		,"Invoiced_Quantity" = EXCLUDED."Invoiced_Quantity"
-		,"Remaining_Quantity" = EXCLUDED."Remaining_Quantity"
-		,"Shipped_Qty_Not_Returned" = EXCLUDED."Shipped_Qty_Not_Returned"
-		,"Reserved_Quantity" = EXCLUDED."Reserved_Quantity"
-		,"Sales_Amount_Expected" = EXCLUDED."Sales_Amount_Expected"
-		,"Sales_Amount_Actual" = EXCLUDED."Sales_Amount_Actual"
-		,"Cost_Amount_Expected" = EXCLUDED."Cost_Amount_Expected"
-		,"Cost_Amount_Actual" = EXCLUDED."Cost_Amount_Actual"
-		,"Completely_Invoiced" = EXCLUDED."Completely_Invoiced"
-		,"Open" = EXCLUDED."Open"
-		,"Order_Line_No" = EXCLUDED."Order_Line_No"
-		,"Prod_Order_Comp_Line_No" = EXCLUDED."Prod_Order_Comp_Line_No"
+		,"Charged_Qty" = EXCLUDED."Charged_Qty"
+		,"Unit_Price" = EXCLUDED."Unit_Price"
+		,"Description" = EXCLUDED."Description"
+		,"Gen_Bus_Posting_Group" = EXCLUDED."Gen_Bus_Posting_Group"
+		,"Gen_Prod_Posting_Group" = EXCLUDED."Gen_Prod_Posting_Group"
 		,"Dimension_Set_ID" = EXCLUDED."Dimension_Set_ID"
-		,"Shortcut_Dimension_3_Code" = EXCLUDED."Shortcut_Dimension_3_Code"
-		,"Shortcut_Dimension_4_Code" = EXCLUDED."Shortcut_Dimension_4_Code"
-		,"Shortcut_Dimension_5_Code" = EXCLUDED."Shortcut_Dimension_5_Code"
-		,"Shortcut_Dimension_6_Code" = EXCLUDED."Shortcut_Dimension_6_Code"
-		,"Shortcut_Dimension_7_Code" = EXCLUDED."Shortcut_Dimension_7_Code"
 		,"Shortcut_Dimension_8_Code" = EXCLUDED."Shortcut_Dimension_8_Code"
-		,"EDN_Campaign_No" = EXCLUDED."EDN_Campaign_No"
-		,"EDN_Campaign_Description" = EXCLUDED."EDN_Campaign_Description"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
-        NEW."Entry_No"
-        ,NEW."Posting_Date"
-        ,NEW."Entry_Type"
-        ,NEW."Document_Type"
-        ,NEW."Document_No"
-        ,NEW."Document_Line_No"
-        ,NEW."Item_No"
-        ,NEW."Base_Group"
-        ,NEW."EDN_Source_Type"
-        ,NEW."EDN_Source_No"
-        ,NEW."Global_Dimension_1_Code"
-        ,NEW."Global_Dimension_2_Code"
-        ,NEW."Serial_No"
-        ,NEW."Location_Code"
-        ,NEW."Quantity"
-        ,NEW."Invoiced_Quantity"
-        ,NEW."Remaining_Quantity"
-        ,NEW."Shipped_Qty_Not_Returned"
-        ,NEW."Reserved_Quantity"
-        ,NEW."Sales_Amount_Expected"
-        ,NEW."Sales_Amount_Actual"
-        ,NEW."Cost_Amount_Expected"
-        ,NEW."Cost_Amount_Actual"
-        ,NEW."Completely_Invoiced"
-        ,NEW."Open"
-        ,NEW."Order_Line_No"
-        ,NEW."Prod_Order_Comp_Line_No"
-        ,NEW."Dimension_Set_ID"
-        ,NEW."Shortcut_Dimension_3_Code"
-        ,NEW."Shortcut_Dimension_4_Code"
-        ,NEW."Shortcut_Dimension_5_Code"
-        ,NEW."Shortcut_Dimension_6_Code"
-        ,NEW."Shortcut_Dimension_7_Code"
-        ,NEW."Shortcut_Dimension_8_Code"
-        ,NEW."EDN_Campaign_No"
-        ,NEW."EDN_Campaign_Description"
+ 		NEW."Entry_No"
+		,NEW."Posting_Date"
+		,NEW."Entry_Type"
+		,NEW."Service_Order_No"
+		,NEW."Job_No"
+		,NEW."Document_No"
+		,NEW."Bill_to_Customer_No"
+		,NEW."Service_Item_No_Serviced"
+		,NEW."Item_No_Serviced"
+		,NEW."Base_Group_A_Serviced"
+		,NEW."Base_Group_B_Serviced"
+		,NEW."Serial_No_Serviced"
+		,NEW."Contract_Invoice_Period"
+		,NEW."Global_Dimension_1_Code" 
+		,NEW."Global_Dimension_2_Code"
+		,NEW."Contract_Group_Code"
+		,NEW."Type"
+		,NEW."No"
+		,NEW."Base_GroupA"
+		,NEW."Base_GroupB"
+		,NEW."Cost_Amount"
+		,NEW."Discount_Amount"
+		,NEW."Unit_Cost"
+		,NEW."Quantity"
+		,NEW."Charged_Qty"
+		,NEW."Unit_Price"
+		,NEW."Description"
+		,NEW."Gen_Bus_Posting_Group"
+		,NEW."Gen_Prod_Posting_Group"
+		,NEW."Dimension_Set_ID"
+		,NEW."Shortcut_Dimension_8_Code"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 RETURN NEW;
@@ -354,7 +283,7 @@ $function$;
 
 DO $$
 DECLARE
-	grupa_tabel text := 'items_ledger_entries'; 		-- ZMIENIĆ NAZWĘ GRUPY TABEL
+	grupa_tabel text := 'service_ledger_entry'; 		-- ZMIENIĆ NAZWĘ GRUPY TABEL
 	firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
 	firma text;
 BEGIN
