@@ -21,9 +21,11 @@ on
 where
 	EXTRACT(YEAR FROM inv."PostingDate") = 2025
 and
+	EXTRACT(MONTH FROM inv."PostingDate") <= 7
+and
 	inv."Company" in ('Aircon', 'Zymetric')
 and
-	inv."Type" = 'Item'
+	inv."Type" = 'Towar'
 and
 	c."RelatedCompany" = 'Niepowiązane'
 group by
