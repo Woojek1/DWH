@@ -2,151 +2,10 @@
 -- CREATING ITEMS LEDGER ENTRIES TABLES IN SILVER LAYER AND FIRST LOAD
 ----------------------------------------------------------------------
 
-
-DO $$
-DECLARE
--- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
--- zmienne
-_firma text;
-_tabela text;
-_litera_firmy char(1);
-
-BEGIN
-	FOREACH _firma IN ARRAY _firmy LOOP
-	
-	_litera_firmy := UPPER(SUBSTR(_firma,1,1));
-	_tabela := format('nav_service_ledger_entry_%s', _firma);  --- ZMIENIĆ NAZWĘ TABELI ŹRÓDŁOWEJ I DOCELOWEJ ---
-
--- Tworzenie tabeli, jeśli nie istnieje
-	EXECUTE format ($ddl$
-		CREATE TABLE IF NOT EXISTS silver.%I (
-			"Entry_No" int4 NOT NULL PRIMARY KEY
-			,"Posting_Date" date NULL
-			,"Entry_Type" text NULL
-			,"Service_Order_No" text NULL
-			,"Job_No" text NULL
-			,"Document_No" text NULL
-			,"Bill_to_Customer_No" text NULL
-			,"Service_Item_No_Serviced" text NULL
-			,"Item_No_Serviced" text NULL
-			,"Base_Group_A_Serviced" text NULL
-			,"Base_Group_B_Serviced" text NULL
-			,"Serial_No_Serviced" text NULL
-			,"Contract_Invoice_Period" text NULL
-			,"Global_Dimension_1_Code" text NULL
-			,"Global_Dimension_2_Code" text NULL
-			,"Contract_Group_Code" text NULL
-			,"Type" text NULL
-			,"No" text NULL
-			,"Base_GroupA" text NULL
-			,"Base_GroupB" text NULL
-			,"Cost_Amount" numeric(18, 5) NULL
-			,"Discount_Amount" numeric(18, 5) NULL
-			,"Unit_Cost" numeric(18, 5) NULL
-			,"Quantity" numeric(18, 5) NULL
-			,"Charged_Qty" numeric(18, 5) NULL
-			,"Unit_Price" numeric(18, 5) NULL
-			,"Description" text NULL
-			,"Gen_Bus_Posting_Group" text NULL
-			,"Gen_Prod_Posting_Group" text NULL
-			,"Dimension_Set_ID" int4 NULL
-			,"Shortcut_Dimension_8_Code" text NULL
-			,"Firma" char(1) DEFAULT %L
-			,"load_ts" timestamptz NULL
-    );
-$ddl$, _tabela, _litera_firmy);	
-
--- Pierwsze ładowanie danych z bronze do silver
-	EXECUTE format($insert$
-		INSERT INTO silver.%I (
-			"Entry_No"
-			,"Posting_Date"
-			,"Entry_Type"
-			,"Service_Order_No"
-			,"Job_No"
-			,"Document_No"
-			,"Bill_to_Customer_No"
-			,"Service_Item_No_Serviced"
-			,"Item_No_Serviced"
-			,"Base_Group_A_Serviced"
-			,"Base_Group_B_Serviced"
-			,"Serial_No_Serviced"
-			,"Contract_Invoice_Period"
-			,"Global_Dimension_1_Code" 
-			,"Global_Dimension_2_Code"
-			,"Contract_Group_Code"
-			,"Type"
-			,"No"
-			,"Base_GroupA"
-			,"Base_GroupB"
-			,"Cost_Amount"
-			,"Discount_Amount"
-			,"Unit_Cost"
-			,"Quantity"
-			,"Charged_Qty"
-			,"Unit_Price"
-			,"Description"
-			,"Gen_Bus_Posting_Group"
-			,"Gen_Prod_Posting_Group"
-			,"Dimension_Set_ID"
-			,"Shortcut_Dimension_8_Code"
-			,"Firma"
-			,"load_ts"
-		)
-		SELECT
-			sle."Entry No_"
-			,sle."Posting Date"
-			,sle."Entry Type"
-			,sle."Service Order No_"
-			,sle."Job No_"
-			,sle."Document No_"
-			,sle."Bill-to Customer No_"
-			,sle."Service Item No_ (Serviced)"
-			,sle."Item No_ (Serviced)"
-			,sle."Base_Group_A_Serviced" 	-- NIE MA W NAV
-			,sle."Base_Group_B_Serviced"	-- NIE MA W NAV
-			,sle."Serial No_ (Serviced)"
-			,sle."Contract Invoice Period"
-			,sle."Global Dimension 1 Code" 	
-			,sle."Global Dimension 2 Code"
-			,sle."Contract Group Code"
-			,sle."Type"
-			,sle."No"
-			,sle."Base_GroupA"		-- NIE MA W NAV
-			,sle."Base_GroupB"		-- NIE MA W NAV
-			,sle."Cost Amount"
-			,sle."Discount Amount"
-			,sle."Unit Cost"
-			,sle."Quantity"
-			,sle."Charged Qty_"
-			,sle."Unit Price"
-			,sle."Description"
-			,sle."Gen_ Bus_ Posting Group"
-			,sle."Gen_ Prod_ Posting Group"
-			,NULL
-			,NULL
-			,%L
-        	,CURRENT_TIMESTAMP
-		FROM bronze.%I sle
-		LEFT JOIN
-			bronze.nav_items_%I it
-		ON
-			sle."Item No_ (Serviced)" = it."No_"
-    $insert$, _tabela, _litera_firmy, _tabela, _firma);
-
-	END LOOP;
-END;
-$$;
-
-
-----------------------------------------------------------
----------------------------------------------------------
-
 DO $$
 DECLARE
     -- Tablica z nazwami firm
-    _firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
+    _firmy text[] := ARRAY['aircon', 'technab', 'zymetric'];
     -- zmienne
     _firma text;
     _tabela_silver text;
@@ -240,7 +99,10 @@ BEGIN
             SELECT
                 sle."Entry No_",
                 sle."Posting Date",
-                sle."Entry Type",
+				case
+					when sle."Entry Type" = 2 then 'Consume'
+					else sle."Entry Type"::text
+				end as "Entry Type",
                 sle."Service Order No_",
                 sle."Job No_",
                 sle."Document No_",
