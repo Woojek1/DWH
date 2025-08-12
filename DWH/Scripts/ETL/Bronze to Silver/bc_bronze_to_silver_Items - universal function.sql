@@ -77,9 +77,10 @@ BEGIN
 			,"ednBatteryItem" bool NULL
 			,"ednBatteryQuantity" numeric(14, 2) NULL
 			,"vendorNo" text NULL
+			,"alternativeItemNo" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,PRIMARY KEY ("No")
+ 			,PRIMARY KEY ("No")
 		);
 	$ddl$, _tabela, _litera_firmy);
 
@@ -143,6 +144,7 @@ BEGIN
 			,"ednBatteryItem"
 			,"ednBatteryQuantity"
 			,"vendorNo"
+			,"alternativeItemNo"
 			,"Firma"
 			,"load_ts"
 		)
@@ -202,6 +204,7 @@ BEGIN
 			,i."ednBatteryItem"
 			,i."ednBatteryQuantity"
 			,i."vendorNo"
+			,i."alternativeItemNo"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I as i
@@ -297,12 +300,13 @@ EXECUTE format($etl$
 		,"ednBatteryItem"
 		,"ednBatteryQuantity"
 		,"vendorNo"
+		,"alternativeItemNo"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
-		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57
+		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
@@ -362,6 +366,7 @@ EXECUTE format($etl$
 		,"ednBatteryItem" = EXCLUDED."ednBatteryItem"
 		,"ednBatteryQuantity" = EXCLUDED."ednBatteryQuantity"
 		,"vendorNo" = EXCLUDED."vendorNo"
+		,"alternativeItemNo" = EXCLUDED."alternativeItemNo"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -421,6 +426,7 @@ EXECUTE format($etl$
 		,NEW."ednBatteryItem"
 		,NEW."ednBatteryQuantity"
 		,NEW."vendorNo"
+		,NEW."alternativeItemNo"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 
