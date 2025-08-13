@@ -158,7 +158,7 @@ BEGIN
 	firma := TG_ARGV[0];
 	litera_firmy := UPPER(SUBSTR(firma, 1, 1));
 -- litera := TG_ARGV[1];
-	target_table := format('bc_items_ledger_entry_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
+	target_table := format('bc_service_ledger_entry_%s', firma);  -- ZMIENIĆ NAZWĘ TABELI DOCELOWEJ --
 
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
