@@ -261,7 +261,7 @@ EXECUTE format($etl$
 	$etl$, target_table)
 	USING
 		NEW."Document_No"
-		,NEW."Key_Document_No"
+		,CONCAT(litera_firmy, '_', NEW."Document_No")
 		,NEW."Line_No"
 		,NEW."Buy_from_Vendor_No"
 		,case
