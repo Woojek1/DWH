@@ -265,10 +265,10 @@ EXECUTE format($etl$
 		,NEW."Line_No"
 		,NEW."Buy_from_Vendor_No"
 		,case
-				when pil."Type" = 'Item' then 'Towar'
-				when pil."Type" = 'Charge (Item)' then 'Towar (Korekta)'
-				when pil."Type" = 'Resource' then 'Usługa'
-				when pil."Type" = 'G/L Account' then 'Zaliczka'
+				when NEW."Type" = 'Item' then 'Towar'
+				when NEW."Type" = 'Charge (Item)' then 'Towar (Korekta)'
+				when NEW."Type" = 'Resource' then 'Usługa'
+				when NEW."Type" = 'G/L Account' then 'Zaliczka'
 				else ''
 		end
 		,NEW."No"
