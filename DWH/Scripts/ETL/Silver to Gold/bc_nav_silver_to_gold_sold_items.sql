@@ -26,6 +26,7 @@ SELECT
 	,"Entry_Type"
 	,"Item_No"
 	,"Serial_No"
+	,"Quantity"
 	,"Firma"
 FROM
 	silver.bc_items_ledger_entries_technab
@@ -43,6 +44,7 @@ SELECT
 	,"Entry_Type"
 	,"Item_No"
 	,"Serial_No"
+	,"Quantity"
 	,"Firma"
 FROM
 	silver.bc_items_ledger_entries_zymetric
@@ -60,6 +62,7 @@ SELECT
 	,"Entry_Type"
 	,"Item_No"
 	,"Serial_No"
+	,"Quantity"
 	,"Firma"
 FROM
 	silver.nav_items_ledger_entries_aircon
@@ -76,6 +79,7 @@ SELECT
 	,"Entry_Type"
 	,"Item_No"
 	,"Serial_No"
+	,"Quantity"
 	,"Firma"
 FROM
 	silver.nav_items_ledger_entries_technab
@@ -92,6 +96,7 @@ SELECT
 	,"Entry_Type"
 	,"Item_No"
 	,"Serial_No"
+	,"Quantity"
 	,"Firma"
 FROM
 	silver.nav_items_ledger_entries_zymetric
@@ -113,14 +118,10 @@ SELECT DISTINCT ON
 	,"Item_No"
 	,"Serial_No"
 	,"Firma"
+	,count("Item_No") over (partition by "Item_No") as "Sold_Item_No_Quantity"
 FROM ile_union
 ORDER BY 
 	"Item_No"
 	,"Serial_No"
 	,"Posting_Date" desc
 	, "Entry_No" DESC;
-
-
-
-
-
