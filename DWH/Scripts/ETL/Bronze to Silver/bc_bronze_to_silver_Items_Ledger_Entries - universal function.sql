@@ -22,7 +22,7 @@ BEGIN
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"Entry_No" int4 NOT NULL
+			"Entry_No" int4 PRIMARY KEY
 			,"Posting_Date" date NULL
 			,"Entry_Type" text NULL
 			,"Document_Type" text NULL
@@ -32,6 +32,7 @@ BEGIN
 			,"Base_Group" text NULL
 			,"EDN_Source_Type" text NULL
 			,"EDN_Source_No" text NULL
+			,"EDN_Contractor_Name" text NULL
 			,"Global_Dimension_1_Code" text NULL
 			,"Global_Dimension_2_Code" text NULL
 			,"Serial_No" text NULL
@@ -60,7 +61,7 @@ BEGIN
 			,"EDN_Campaign_Description" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,PRIMARY KEY ("Entry_No")
+			
     );
 $ddl$, _tabela, _litera_firmy);	
 
@@ -77,6 +78,7 @@ $ddl$, _tabela, _litera_firmy);
 			,"Base_Group"
 			,"EDN_Source_Type"
 			,"EDN_Source_No"
+			,"EDN_Contractor_Name"
 			,"Global_Dimension_1_Code"
 			,"Global_Dimension_2_Code"
 			,"Serial_No"
@@ -117,6 +119,7 @@ $ddl$, _tabela, _litera_firmy);
 			,ile."Base_Group"
 			,ile."EDN_Source_Type"
 			,ile."EDN_Source_No"
+			,ile."EDN_Contractor_Name"
 			,ile."Global_Dimension_1_Code"
 			,ile."Global_Dimension_2_Code"
 			,ile."Serial_No"
@@ -146,6 +149,7 @@ $ddl$, _tabela, _litera_firmy);
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I ile
+    ON CONFLICT ("Entry_No") DO NOTHING
 
 --	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
 
@@ -230,6 +234,7 @@ EXECUTE format($etl$
 		,"Base_Group"
 		,"EDN_Source_Type"
 		,"EDN_Source_No"
+		,"EDN_Contractor_Name"
 		,"Global_Dimension_1_Code"
 		,"Global_Dimension_2_Code"
 		,"Serial_No"
@@ -260,7 +265,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Entry_No") DO UPDATE
 	SET
@@ -273,6 +278,7 @@ EXECUTE format($etl$
 		,"Base_Group" = EXCLUDED."Base_Group"
 		,"EDN_Source_Type" = EXCLUDED."EDN_Source_Type"
 		,"EDN_Source_No" = EXCLUDED."EDN_Source_No"
+		,"EDN_Contractor_Name" = EXCLUDED."EDN_Contractor_Name"
 		,"Global_Dimension_1_Code" = EXCLUDED."Global_Dimension_1_Code"
 		,"Global_Dimension_2_Code" = EXCLUDED."Global_Dimension_2_Code"
 		,"Serial_No" = EXCLUDED."Serial_No"
@@ -313,6 +319,7 @@ EXECUTE format($etl$
         ,NEW."Base_Group"
         ,NEW."EDN_Source_Type"
         ,NEW."EDN_Source_No"
+		,NEW."EDN_Contractor_Name"
         ,NEW."Global_Dimension_1_Code"
         ,NEW."Global_Dimension_2_Code"
         ,NEW."Serial_No"

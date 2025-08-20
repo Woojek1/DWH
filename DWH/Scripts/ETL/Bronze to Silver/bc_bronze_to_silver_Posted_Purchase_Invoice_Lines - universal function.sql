@@ -26,6 +26,7 @@ BEGIN
 			,"Key_Document_No" text NOT NULL
 			,"Line_No" int4 NOT NULL
 			,"Buy_from_Vendor_No" text NULL
+			,"Buy_from_Vendor_Key_No" text NULL
 			,"Type" text NULL
 			,"No" text NULL
 			,"Variant_Code" text NULL
@@ -69,6 +70,7 @@ BEGIN
 			,"Key_Document_No"
 			,"Line_No"
 			,"Buy_from_Vendor_No"
+			,"Buy_from_Vendor_Key_No"
 			,"Type"
 			,"No"
 			,"Variant_Code"
@@ -107,6 +109,7 @@ BEGIN
 			,CONCAT(%L, '_', pil."Document_No")
 			,pil."Line_No"
 			,pil."Buy_from_Vendor_No"
+			,CONCAT(%L, '_', pil."Buy_from_Vendor_No")
 			,case
 				when pil."Type" = 'Item' then 'Towar'
 				when pil."Type" = 'Charge (Item)' then 'Towar (Korekta)'
@@ -147,7 +150,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I pil
 
-    $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -183,6 +186,7 @@ EXECUTE format($etl$
 		,"Key_Document_No"
 		,"Line_No"
 		,"Buy_from_Vendor_No"
+		,"Buy_from_Vendor_Key_No"
 		,"Type"
 		,"No"
 		,"Variant_Code"
@@ -217,7 +221,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Key_Document_No","Line_No") DO UPDATE
@@ -226,6 +230,7 @@ EXECUTE format($etl$
 		,"Key_Document_No" = EXCLUDED."Key_Document_No"
 		,"Line_No" = EXCLUDED."Line_No"
 		,"Buy_from_Vendor_No" = EXCLUDED."Buy_from_Vendor_No"
+		,"Buy_from_Vendor_Key_No" = EXCLUDED."Buy_from_Vendor_Key_No"
 		,"Type" = EXCLUDED."Type"
 		,"No" = EXCLUDED."No"
 		,"Variant_Code" = EXCLUDED."Variant_Code"
@@ -264,6 +269,7 @@ EXECUTE format($etl$
 		,CONCAT(litera_firmy, '_', NEW."Document_No")
 		,NEW."Line_No"
 		,NEW."Buy_from_Vendor_No"
+		,CONCAT(litera_firmy, '_', NEW."Buy_from_Vendor_No")
 		,case
 				when NEW."Type" = 'Item' then 'Towar'
 				when NEW."Type" = 'Charge (Item)' then 'Towar (Korekta)'

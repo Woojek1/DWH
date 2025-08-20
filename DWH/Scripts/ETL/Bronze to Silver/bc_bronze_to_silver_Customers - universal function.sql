@@ -59,6 +59,7 @@ BEGIN
 			,"Payment_Terms_Code" text NULL
 			,"Payment_Method_Code" text NULL
 			,"Related_company" text NULL
+			,"EDN_KUKE_Symbol" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
 		);
@@ -104,6 +105,7 @@ BEGIN
 			,"Payment_Terms_Code"
 			,"Payment_Method_Code"
 			,"Related_company"
+			,"EDN_KUKE_Symbol"
 			,"Firma"
 			,"load_ts"
 		)
@@ -151,49 +153,11 @@ BEGIN
 				when REGEXP_REPLACE(c."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242770589' then 'Artcomfort'
 				else 'Niepowiązane'
 			end
+			,c."EDN_KUKE_Symbol"
 			,%L
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I c
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("No") DO UPDATE
---		SET
---			"No" = EXCLUDED."No"
---			,"Contact_Type" = EXCLUDED."Contact_Type"
---			,"Name" = EXCLUDED."Name"
---			,"Name_2" = EXCLUDED."Name_2"
---			,"Search_Name" = EXCLUDED."Search_Name"
---			,"IC_Partner_Code" = EXCLUDED."IC_Partner_Code"
---			,"Balance_LCY" = EXCLUDED."Balance_LCY"
---			,"Balance_Due_LCY" = EXCLUDED."Balance_Due_LCY"
---			,"Credit_Limit_LCY" = EXCLUDED."Credit_Limit_LCY"
---			,"EDN_Black_List" = EXCLUDED."EDN_Black_List"
---			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
---			,"TotalSales2" = EXCLUDED."TotalSales2"
---			,"CustSalesLCY_CustProfit_AdjmtCostLCY" = EXCLUDED."CustSalesLCY_CustProfit_AdjmtCostLCY"
---			,"AdjCustProfit" = EXCLUDED."AdjCustProfit"
---			,"EDN_NAV_Key" = EXCLUDED."EDN_NAV_Key"
---			,"VIP" = EXCLUDED."VIP"
---			,"Company_Profile" = EXCLUDED."Company_Profile"
---			,"Company_SegmentA" = EXCLUDED."Company_SegmentA"
---			,"MagentoID" = EXCLUDED."MagentoID"
---			,"EDN_Reckoning_Limit_LCY" = EXCLUDED."EDN_Reckoning_Limit_LCY"
---			,"EDN_Used_Limit_LCY" = EXCLUDED."EDN_Used_Limit_LCY"
---			,"EDN_Factoring_Reckoning" = EXCLUDED."EDN_Factoring_Reckoning"
---			,"EDN_Insurance_Customer" = EXCLUDED."EDN_Insurance_Customer"
---			,"EDN_Limit_Amount_Insur_LCY" = EXCLUDED."EDN_Limit_Amount_Insur_LCY"
---			,"Address" = EXCLUDED."Address"
---			,"Country_Region_Code" = EXCLUDED."Country_Region_Code"
---			,"City" = EXCLUDED."City"
---			,"County" = EXCLUDED."County"
---			,"Post_Code" = EXCLUDED."Post_Code"
---			,"EDN_Province_Code" = EXCLUDED."EDN_Province_Code"
---			,"VAT_Registration_No" = EXCLUDED."VAT_Registration_No"
---			,"Gen_Bus_Posting_Group" = EXCLUDED."Gen_Bus_Posting_Group"
---			,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
---			,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
---			,"load_ts" = CURRENT_TIMESTAMP
     $insert$, _tabela, _litera_firmy, _tabela);
 
 	END LOOP;
@@ -263,11 +227,12 @@ EXECUTE format($etl$
 		,"Payment_Terms_Code"
 		,"Payment_Method_Code"
 		,"Related_company"
+		,"EDN_KUKE_Symbol"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -307,6 +272,7 @@ EXECUTE format($etl$
 		,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
 		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
 		,"Related_company" = EXCLUDED."Related_company"
+		,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
@@ -354,6 +320,7 @@ EXECUTE format($etl$
 			when REGEXP_REPLACE(NEW."VAT_Registration_No", '[^0-9A-Za-z]', '', 'g') = '5242770589' then 'Artcomfort'
 			else 'Niepowiązane'
 		end
+		,NEW."EDN_KUKE_Symbol"
 		,litera_firmy
 		,CURRENT_TIMESTAMP;
 
