@@ -23,7 +23,7 @@ where
 and
 	EXTRACT(MONTH FROM inv."PostingDate") <= 7
 and
-	inv."Company" in ('Aircon', 'Zymetric')
+	inv."Company" in ('Aircon', 'Zymetric', 'Technab')
 and
 	inv."Type" = 'Towar'
 and
@@ -35,4 +35,4 @@ group by
 	,EXTRACT(MONTH from inv."PostingDate")
 	,inv."NoItem"
 order by
-	5 asc, 1 asc, 2 asc, 3 asc 
+	5 asc, 1 asc, 2 asc, 3 asc
