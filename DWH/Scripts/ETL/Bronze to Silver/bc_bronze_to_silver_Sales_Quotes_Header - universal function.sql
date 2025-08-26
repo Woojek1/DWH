@@ -88,9 +88,9 @@ BEGIN
 		SELECT
 			sqh."Document_Type"
 			,sqh."No"
-			,CONCAT(_litera_firmy, '_', sqh."No")
+			,CONCAT(%L, '_', sqh."No")
 			,sqh."Sell_to_Customer_No"
-			,CONCAT(_litera_firmy, '_', sqh."Sell_to_Customer_No")		
+			,CONCAT(%L, '_', sqh."Sell_to_Customer_No")		
 			,sqh."Sell_to_Customer_Name"
 			,sqh."Sell_to_Address"
 			,sqh."Sell_to_Address_2"
