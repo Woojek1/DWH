@@ -23,8 +23,10 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"Document_Type" text NULL
-			,"No" text PRIMARY KEY
+			,"Key_No" text PRIMARY KEY
+			,"No" text null
 			,"Sell_to_Customer_No" text NULL
+			,"Key_Sell_to_Customer_No" text NULL
 			,"Sell_to_Customer_Name" text NULL
 			,"Sell_to_Address" text NULL
 			,"Sell_to_Address_2" text NULL
@@ -56,7 +58,9 @@ BEGIN
 		INSERT INTO silver.%I (
 			"Document_Type"
 			,"No"
+			,"Key_No"
 			,"Sell_to_Customer_No"
+			,"Key_Sell_to_Customer_No"
 			,"Sell_to_Customer_Name"
 			,"Sell_to_Address"
 			,"Sell_to_Address_2"
@@ -84,7 +88,9 @@ BEGIN
 		SELECT
 			sqh."Document_Type"
 			,sqh."No"
+			,CONCAT(_litera_firmy, '_', sqh."No")
 			,sqh."Sell_to_Customer_No"
+			,CONCAT(_litera_firmy, '_', sqh."Sell_to_Customer_No")		
 			,sqh."Sell_to_Customer_Name"
 			,sqh."Sell_to_Address"
 			,sqh."Sell_to_Address_2"
@@ -110,35 +116,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I sqh
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("No") DO UPDATE
---		SET
---			"Document_Type" = EXCLUDED."Document_Type"
---			,"No" = EXCLUDED."No"
---			,"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
---			,"Sell_to_Customer_Name" = EXCLUDED."Sell_to_Customer_Name"
---			,"Sell_to_Address" = EXCLUDED."Sell_to_Address"
---			,"Sell_to_Address_2" = EXCLUDED."Sell_to_Address_2"
---			,"Sell_to_City" = EXCLUDED."Sell_to_City"
---			,"Sell_to_County" = EXCLUDED."Sell_to_County"
---			,"Sell_to_Country_Region_Code" = EXCLUDED."Sell_to_Country_Region_Code"
---			,"Order_Date" = EXCLUDED."Order_Date"
---			,"Document_Date" = EXCLUDED."Document_Date"
---			,"Quote_Valid_Until_Date" = EXCLUDED."Quote_Valid_Until_Date"
---			,"Due_Date" = EXCLUDED."Due_Date"
---			,"Salesperson_Code" = EXCLUDED."Salesperson_Code"
---			,"Status" = EXCLUDED."Status"
---			,"EDN_WasSent" = EXCLUDED."EDN_WasSent"
---			,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
---			,"Currency_Code" = EXCLUDED."Currency_Code"
---			,"Payment_Terms_Code" = EXCLUDED."Payment_Terms_Code"
---			,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
---			,"Shortcut_Dimension_1_Code" = EXCLUDED."Shortcut_Dimension_1_Code"
---			,"Shortcut_Dimension_2_Code" = EXCLUDED."Shortcut_Dimension_2_Code"
---			,"Location_Code" = EXCLUDED."Location_Code"
---			,"EDN_Quote_Type_Code" = EXCLUDED."EDN_Quote_Type_Code"
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -172,7 +150,9 @@ EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"Document_Type"
 		,"No"
+		,"Key_No"
 		,"Sell_to_Customer_No"
+		,"Key_Sell_to_Customer_No"
 		,"Sell_to_Customer_Name"
 		,"Sell_to_Address"
 		,"Sell_to_Address_2"
@@ -198,13 +178,15 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28  -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
-	ON CONFLICT("No") DO UPDATE
+	ON CONFLICT("Key_No") DO UPDATE
 	SET
 		"Document_Type" = EXCLUDED."Document_Type"
 		,"No" = EXCLUDED."No"
+		,"Key_No" = EXCLUDED."Key_No"
 		,"Sell_to_Customer_No" = EXCLUDED."Sell_to_Customer_No"
+		,"Key_Sell_to_Customer_No" = EXCLUDED."Key_Sell_to_Customer_No"
 		,"Sell_to_Customer_Name" = EXCLUDED."Sell_to_Customer_Name"
 		,"Sell_to_Address" = EXCLUDED."Sell_to_Address"
 		,"Sell_to_Address_2" = EXCLUDED."Sell_to_Address_2"
@@ -233,7 +215,9 @@ EXECUTE format($etl$
 	USING
 		NEW."Document_Type"
 		,NEW."No"
+		,CONCAT(litera_firmy, '_', NEW."No")
 		,NEW."Sell_to_Customer_No"
+		,CONCAT(litera_firmy, '_', NEW."Sell_to_Customer_No")
 		,NEW."Sell_to_Customer_Name"
 		,NEW."Sell_to_Address"
 		,NEW."Sell_to_Address_2"
