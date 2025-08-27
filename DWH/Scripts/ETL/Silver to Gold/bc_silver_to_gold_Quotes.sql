@@ -1,30 +1,30 @@
 CREATE OR REPLACE VIEW gold.v_bc_quotes AS
 WITH Quotes_Aircon AS (
 	SELECT
-		sl."documentNo" AS "NoQuote"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoQuote"
-		,sl."documentType" AS "DocumentType"
-		,sl."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
+		sl."Document_No" AS "NoQuote"
+		,CONCAT(sl."Firma", '_', sl."Document_No") AS "KeyNoQuote"
+		,sl."Document_Type" AS "DocumentType"
+		,sl."Shortcut_Dimension2_Code" AS "NoProject"
+		,CONCAT(sl."Firma", '_', sl."Shortcut_Dimension2_Code") AS "KeyNoProject"
 		,qh."Document_Date" AS "QuoteDate"
-		,sl."lineNo" AS "QuoteLine"
-		,sl."no" AS "NoItem"
-		,sl."quantity" AS "Quantity"
-		,sl."lineAmount" AS "LineAmount"
+		,sl."Line_No" AS "QuoteLine"
+		,sl."No_Item" AS "NoItem"
+		,sl."Quantity" AS "Quantity"
+		,sl."Line_Amount" AS "LineAmount"
 		,qh."Currency_Code" as "CurrencyCode"
 --		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
 		,cer."Relational_Exch_Rate_Amount" as "RelationalExchRateAmount"
 		,CASE
-			WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * cer."Relational_Exch_Rate_Amount")
+			WHEN qh."Currency_Code" = '' THEN sl."Line_Amount"
+			ELSE (sl."Line_Amount" * cer."Relational_Exch_Rate_Amount")
 		END AS "LineAmountPLN"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
+		,(sl."Ory_Unit_Cost_LCY") * (sl."Quantity") AS "LineCostsPLN"
 		,(
 			CASE
-				WHEN qh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * cer."EDN_Sales_Exch_Rate")
+				WHEN qh."Currency_Code" = '' THEN sl."Line_Amount"
+				ELSE (sl."Line_Amount" * cer."EDN_Sales_Exch_Rate")
 			END
-		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
+		) - (sl."Ory_Unit_Cost_LCY") * (sl."Quantity")
 			AS "ProfitPLN" 
 		,sl."ednPriceCatalogue" as "PriceCatalogue"
 		,sl."lineDiscount" as "LineDiscount"
@@ -43,7 +43,7 @@ WITH Quotes_Aircon AS (
 	INNER JOIN
 		silver.bc_sales_quotes_header_aircon qh
 	ON
-		sl."documentNo" = qh."No"
+		sl."Document_No" = qh."No"
 	left join 
 		silver.bc_currency_exchange_rates cer
 	on
