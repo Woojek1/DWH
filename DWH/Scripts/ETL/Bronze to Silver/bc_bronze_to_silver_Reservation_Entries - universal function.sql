@@ -26,7 +26,7 @@ BEGIN
 			,"Positive" bool NOT NULL
 			,"Reservation_Status" text NOT NULL
 			,"Item_No" text NOT NULL
-			,"Key_No_Item" text NOT NULL 
+			,"Key_Item_No" text NOT NULL 
 			,"Variant_Code" text NULL
 			,"Location_Code" text NULL
 			,"Serial_No" text NULL
@@ -58,7 +58,7 @@ $ddl$, _tabela, _litera_firmy);
 			,"Positive"
 			,"Reservation_Status"
 			,"Item_No"
-			,"Key_No_Item"
+			,"Key_Item_No"
 			,"Variant_Code"
 			,"Location_Code"
 			,"Serial_No"
@@ -146,7 +146,7 @@ EXECUTE format($etl$
 		,"Positive"
 		,"Reservation_Status"
 		,"Item_No"
-		,"Key_No_Item"
+		,"Key_Item_No"
 		,"Variant_Code"
 		,"Location_Code"
 		,"Serial_No"
@@ -178,7 +178,7 @@ EXECUTE format($etl$
 		,"Positive" = EXCLUDED."Positive"
 		,"Reservation_Status" = EXCLUDED."Reservation_Status"
 		,"Item_No" = EXCLUDED."Item_No"
-		,"Key_No_Item" = EXCLUDED."Key_No_Item"
+		,"Key_Item_No" = EXCLUDED."Key_Item_No"
 		,"Variant_Code" = EXCLUDED."Variant_Code"
 		,"Location_Code" = EXCLUDED."Location_Code"
 		,"Serial_No" = EXCLUDED."Serial_No"
