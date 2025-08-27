@@ -1,38 +1,36 @@
-select * from silver.bc_sales_lines_zymetric
 
--------------------------------------------------
 
 CREATE OR REPLACE VIEW gold.v_orders AS
 WITH Orders_Aircon AS (
 	SELECT
-		sl."documentNo" AS "NoOrder"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoOrder"
-		,sl."documentType" as "DocumentType"
-		,sl."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
-		,oh."Quote_No" as "NoQuote"
-		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "KeyNoQuote"
+		sl."Document_No" AS "No_Order"
+		,sl."Key_Document_No" AS "Key_No_Order"
+		,sl."Document_Type" as "Document_Type"
+		,sl."Shortcut_Dimension2_Code" AS "No_Project"
+		,CONCAT(sl."Firma", '_', sl."Shortcut_Dimension2_Code") AS "Key_No_Project"
+		,oh."Quote_No" as "No_Quote"
+		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "Key_No_Quote"
 		,oh."Posting_Date" AS "OrderDate"
-		,sl."lineNo" AS "OrderLine"
-		,sl."no" AS "NoItem"
-		,sl."quantity" AS "Quantity"		
-		,sl."lineAmount" AS "LineAmount"
+		,sl."Line_No" AS "OrderLine"
+		,sl."No_Item" AS "NoItem"
+		,sl."Quantity" AS "Quantity"		
+		,sl."Line_Amount" AS "LineAmount"
 		,oh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+		,sl."Price_List_Exchange_Rate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
-			WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+			WHEN oh."Currency_Code" = '' THEN sl."Line_Amount"
+			ELSE (sl."Line_Amount" * sl."Price_List_Exchange_Rate")
 		END AS "LineAmountPLN"
 --		,sl."ednOryUnitCostLCY" as "koszt"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
+		,(sl."Ory_UnitCost_LCY") * (sl."Quantity") AS "LineCostsPLN"
 		,(
 			CASE
-				WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+				WHEN oh."Currency_Code" = '' THEN sl."Line_Amount"
+				ELSE (sl."Line_Amount" * sl."Price_List_Exchange_Rate")
 			END
-		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
+		) - (sl."Ory_UnitCost_LCY") * (sl."Quantity")
 			AS "ProfitPLN"
-		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,sl."Cooling_Capacity_KW" AS "CoolingCapacity"
 		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,oh."Sell_to_Customer_Name" AS "CustomerName"
 		,oh."Salesperson_Code" AS "SalespersonCode"
@@ -45,97 +43,97 @@ WITH Orders_Aircon AS (
 	INNER JOIN
 		silver.bc_sales_orders_header_aircon oh
 	ON 
-		sl."documentNo" = oh."No"
+		sl."Document_No" = oh."No"
 ),
 
 Orders_Technab AS (
 	SELECT
-		sl."documentNo" AS "NoOrder"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoOrder"
-		,sl."documentType" as "DocumentType"
-		,sl."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
-		,oh."Quote_No" as "NoQuote"
-		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "KeyNoQuote"
+		sl."Document_No" AS "No_Order"
+		,sl."Key_Document_No" AS "Key_No_Order"
+		,sl."Document_Type" as "Document_Type"
+		,sl."Shortcut_Dimension2_Code" AS "No_Project"
+		,CONCAT(sl."Firma", '_', sl."Shortcut_Dimension2_Code") AS "Key_No_Project"
+		,oh."Quote_No" as "No_Quote"
+		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "Key_No_Quote"
 		,oh."Posting_Date" AS "OrderDate"
-		,sl."lineNo" AS "OrderLine"
-		,sl."no" AS "NoItem"
-		,sl."quantity" AS "Quantity"		
-		,sl."lineAmount" AS "LineAmount"
+		,sl."Line_No" AS "OrderLine"
+		,sl."No_Item" AS "NoItem"
+		,sl."Quantity" AS "Quantity"		
+		,sl."Line_Amount" AS "LineAmount"
 		,oh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+		,sl."Price_List_Exchange_Rate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
-			WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+			WHEN oh."Currency_Code" = '' THEN sl."Line_Amount"
+			ELSE (sl."Line_Amount" * sl."Price_List_Exchange_Rate")
 		END AS "LineAmountPLN"
 --		,sl."ednOryUnitCostLCY" as "koszt"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
+		,(sl."Ory_UnitCost_LCY") * (sl."Quantity") AS "LineCostsPLN"
 		,(
 			CASE
-				WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+				WHEN oh."Currency_Code" = '' THEN sl."Line_Amount"
+				ELSE (sl."Line_Amount" * sl."Price_List_Exchange_Rate")
 			END
-		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
+		) - (sl."Ory_UnitCost_LCY") * (sl."Quantity")
 			AS "ProfitPLN"
-		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,sl."Cooling_Capacity_KW" AS "CoolingCapacity"
 		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,oh."Sell_to_Customer_Name" AS "CustomerName"
 		,oh."Salesperson_Code" AS "SalespersonCode"
 		,oh."Status" AS "Status"
 		,oh."OrderStatus" AS "OrderStatus"
 		,GREATEST(oh."load_ts", sl."load_ts") as "LoadDate"
-		,'Technab' AS "Firma"
+		,'Technab' AS "Company"
 	FROM
 		silver.bc_sales_lines_technab sl
 	INNER JOIN
 		silver.bc_sales_orders_header_technab oh
 	ON 
-		sl."documentNo" = oh."No"
+		sl."Document_No" = oh."No"
 	),
 	
 Orders_Zymetric AS (
 	SELECT
-		sl."documentNo" AS "NoOrder"
-		,CONCAT(sl."Firma", '_', sl."documentNo") AS "KeyNoOrder"
-		,sl."documentType" as "DocumentType"
-		,sl."shortcutDimension2Code" AS "NoProject"
-		,CONCAT(sl."Firma", '_', sl."shortcutDimension2Code") AS "KeyNoProject"
-		,oh."Quote_No" as "NoQuote"
-		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "KeyNoQuote"
+		sl."Document_No" AS "No_Order"
+		,sl."Key_Document_No" AS "Key_No_Order"
+		,sl."Document_Type" as "Document_Type"
+		,sl."Shortcut_Dimension2_Code" AS "No_Project"
+		,CONCAT(sl."Firma", '_', sl."Shortcut_Dimension2_Code") AS "Key_No_Project"
+		,oh."Quote_No" as "No_Quote"
+		,CONCAT(sl."Firma", '_', oh."Quote_No") AS "Key_No_Quote"
 		,oh."Posting_Date" AS "OrderDate"
-		,sl."lineNo" AS "OrderLine"
-		,sl."no" AS "NoItem"
-		,sl."quantity" AS "Quantity"		
-		,sl."lineAmount" AS "LineAmount"
+		,sl."Line_No" AS "OrderLine"
+		,sl."No_Item" AS "NoItem"
+		,sl."Quantity" AS "Quantity"		
+		,sl."Line_Amount" AS "LineAmount"
 		,oh."Currency_Code" as "CurrencyCode"
-		,sl."ednPriceListExchangeRate" AS "CurrencyExchangeRate" -- do zmiany
+		,sl."Price_List_Exchange_Rate" AS "CurrencyExchangeRate" -- do zmiany
 		,CASE
-			WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
-			ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+			WHEN oh."Currency_Code" = '' THEN sl."Line_Amount"
+			ELSE (sl."Line_Amount" * sl."Price_List_Exchange_Rate")
 		END AS "LineAmountPLN"
 --		,sl."ednOryUnitCostLCY" as "koszt"
-		,(sl."ednOryUnitCostLCY") * (sl."quantity") AS "LineCostsPLN"
+		,(sl."Ory_UnitCost_LCY") * (sl."Quantity") AS "LineCostsPLN"
 		,(
 			CASE
-				WHEN oh."Currency_Code" = '' THEN sl."lineAmount"
-				ELSE (sl."lineAmount" * sl."ednPriceListExchangeRate")
+				WHEN oh."Currency_Code" = '' THEN sl."Line_Amount"
+				ELSE (sl."Line_Amount" * sl."Price_List_Exchange_Rate")
 			END
-		) - (sl."ednOryUnitCostLCY") * (sl."quantity")
+		) - (sl."Ory_UnitCost_LCY") * (sl."Quantity")
 			AS "ProfitPLN"
-		,sl."ednCoolingCapacityKW" AS "CoolingCapacity"
+		,sl."Cooling_Capacity_KW" AS "CoolingCapacity"
 		,CONCAT(oh."Firma", '_', oh."Sell_to_Customer_No") AS "KeyNoCustomer"		-- Litera firmy dodana w elu utworzenia klucza klienta w każdej spółce
 		,oh."Sell_to_Customer_Name" AS "CustomerName"
 		,oh."Salesperson_Code" AS "SalespersonCode"
 		,oh."Status" AS "Status"
 		,oh."OrderStatus" AS "OrderStatus"
 		,GREATEST(oh."load_ts", sl."load_ts") as "LoadDate"
-		,'Zymetric' AS "Firma"
+		,'Zymetric' AS "Company"
 	FROM
 		silver.bc_sales_lines_zymetric sl
 	INNER JOIN
 		silver.bc_sales_orders_header_zymetric oh
 	ON 
-		sl."documentNo" = oh."No"
+		sl."Document_No" = oh."No"
 )
 
 SELECT *
