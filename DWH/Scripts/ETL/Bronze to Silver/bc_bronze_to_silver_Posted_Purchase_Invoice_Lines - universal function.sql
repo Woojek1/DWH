@@ -29,6 +29,7 @@ BEGIN
 			,"Buy_from_Vendor_Key_No" text NULL
 			,"Type" text NULL
 			,"No" text NULL
+			,"Key_Item_No"  text NULL
 			,"Variant_Code" text NULL
 			,"Description" text NULL
 			,"Description_2" text NULL
@@ -73,6 +74,7 @@ BEGIN
 			,"Buy_from_Vendor_Key_No"
 			,"Type"
 			,"No"
+			,"Key_Item_No" 
 			,"Variant_Code"
 			,"Description"
 			,"Description_2"
@@ -118,6 +120,7 @@ BEGIN
 				else ''
 			end as "Type"
 			,pil."No"
+			,CONCAT(%L, '_', pil."No")
 			,pil."Variant_Code"
 			,pil."Description"
 			,pil."Description_2"
@@ -150,7 +153,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I pil
 
-    $insert$, _tabela, _litera_firmy, _litera_firmy, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -189,6 +192,7 @@ EXECUTE format($etl$
 		,"Buy_from_Vendor_Key_No"
 		,"Type"
 		,"No"
+		,"Key_Item_No"
 		,"Variant_Code"
 		,"Description"
 		,"Description_2"
@@ -221,7 +225,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Key_Document_No","Line_No") DO UPDATE
@@ -233,6 +237,7 @@ EXECUTE format($etl$
 		,"Buy_from_Vendor_Key_No" = EXCLUDED."Buy_from_Vendor_Key_No"
 		,"Type" = EXCLUDED."Type"
 		,"No" = EXCLUDED."No"
+		,"Key_Item_No" = EXCLUDED."Key_Item_No"
 		,"Variant_Code" = EXCLUDED."Variant_Code"
 		,"Description" = EXCLUDED."Description" 
 		,"Description_2" = EXCLUDED."Description_2" 
@@ -278,6 +283,7 @@ EXECUTE format($etl$
 				else ''
 		end
 		,NEW."No"
+		,CONCAT(litera_firmy, '_', NEW."No")
 		,NEW."Variant_Code"
 		,NEW."Description"
 		,NEW."Description_2"
