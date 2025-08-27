@@ -29,6 +29,7 @@ BEGIN
 			,"Document_No" text NULL
 			,"Document_Line_No" int4 NULL
 			,"Item_No" text NULL
+			,"Key_Item_No" text NULL
 			,"Base_Group" text NULL
 			,"EDN_Source_Type" text NULL
 			,"EDN_Source_No" text NULL
@@ -75,6 +76,7 @@ $ddl$, _tabela, _litera_firmy);
 			,"Document_No"
 			,"Document_Line_No"
 			,"Item_No"
+			,"Key_Item_No"
 			,"Base_Group"
 			,"EDN_Source_Type"
 			,"EDN_Source_No"
@@ -116,6 +118,7 @@ $ddl$, _tabela, _litera_firmy);
 			,ile."Document_No"
 			,ile."Document_Line_No"
 			,ile."Item_No"
+			,CONCAT(%L, '_', ile."Item_No")
 			,ile."Base_Group"
 			,ile."EDN_Source_Type"
 			,ile."EDN_Source_No"

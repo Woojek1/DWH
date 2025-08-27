@@ -23,61 +23,62 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"No" text NULL
-			,"baseUnitOfMeasure" text NULL
-			,"baseGroup" text NULL
-			,"blocked" bool NULL
-			,"costingMethod" text NULL
-			,"description" text NULL
-			,"description2" text NULL
-			,"ednCoolingCapacityKW" numeric(14,2) NULL
-			,"ednEfficiencyIndex" numeric(14,2) NULL
-			,"ednFactorType" text NULL
-			,"ednHeatingCapacityKW" numeric(14,2) NULL
-			,"ednNAVKey" text NULL
-			,"ednRefrigerant" text NULL
-			,"ednRefrigerantQuantityUoM" numeric(14,2) NULL
-			,"ednTypeA" text NULL
-			,"ednTypeB" text NULL
-			,"genProdPostingGroup" text NULL
-			,"inventory" numeric(14,2) NULL
-			,"inventoryPostingGroup" text NULL
-			,"mkGLQuantity" numeric(14, 2) NULL
-			,"manufacturerCode" text NULL
-			,"maximumInventory" numeric(14,2) NULL
-			,"maximumOrderQuantity" numeric(14,2) NULL
-			,"minimumOrderQuantity" numeric(14,2) NULL
-			,"negativeAdjmtLCY" numeric(14,2) NULL
-			,"negativeAdjmtQty" numeric(14,2) NULL
-			,"netChange" numeric(14,2) NULL
-			,"netInvoicedQty" numeric(14,2) NULL
-			,"no2" text NULL
-			,"qtyAssignedToShip" numeric(14,2) NULL
-			,"qtyPicked" numeric(14,2) NULL
-			,"qtyInTransit" numeric(14,2) NULL
-			,"qtyOnAsmComponent" numeric(14,2) NULL
-			,"qtyOnAssemblyOrder" numeric(14,2) NULL
-			,"qtyOnComponentLines" numeric(14,2) NULL
-			,"qtyOnJobOrder" numeric(14,2) NULL
-			,"qtyOnProdOrder" numeric(14,2) NULL
-			,"qtyOnPurchOrder" numeric(14,2) NULL
-			,"qtyOnPurchReturn" numeric(14,2) NULL
-			,"qtyOnSalesOrder" numeric(14,2) NULL
-			,"qtyOnSalesReturn" numeric(14,2) NULL
-			,"qtyOnServiceOrder" numeric(14,2) NULL
-			,"relOrderReceiptQty" numeric(14,2) NULL
-			,"reservedQtyOnInventory" numeric(14,2) NULL
-			,"reservedQtyOnProdOrder" numeric(14,2) NULL
-			,"reservedQtyOnPurchOrders" numeric(14,2) NULL
-			,"reservedQtyOnSalesOrders" numeric(14,2) NULL
-			,"systemId" text NULL
-			,"systemModifiedAt" timestamptz NULL
-			,"unitCost" numeric(14,2) NULL
-			,"netWeight" numeric (14,2) NULL
-			,"ednBatteryCode" text NULL
-			,"ednBatteryItem" bool NULL
-			,"ednBatteryQuantity" numeric(14, 2) NULL
-			,"vendorNo" text NULL
-			,"alternativeItemNo" text NULL
+			,"Key_Item_No" text NULL
+			,"Base_Unit_Of_Measure" text NULL
+			,"Base_Group" text NULL
+			,"Blocked" bool NULL
+			,"Costing_Method" text NULL
+			,"Description" text NULL
+			,"Description_2" text NULL
+			,"Edn_Cooling_Capacity_KW" numeric(14,2) NULL
+			,"Edn_Efficiency_Index" numeric(14,2) NULL
+			,"Edn_Factor_Type" text NULL
+			,"Edn_Heating_Capacity_KW" numeric(14,2) NULL
+			,"Edn_NAV_Key" text NULL
+			,"Edn_Refrigerant" text NULL
+			,"Edn_Refrigerant_Quantity_UoM" numeric(14,2) NULL
+			,"Edn_Type_A" text NULL
+			,"Edn_Type_B" text NULL
+			,"Gen_Prod_Posting_Group" text NULL
+			,"Inventory" numeric(14,2) NULL
+			,"Inventory_Posting_Group" text NULL
+			,"Mk_GL_Quantity" numeric(14,2) NULL
+			,"Manufacturer_Code" text NULL
+			,"Maximum_Inventory" numeric(14,2) NULL
+			,"Maximum_Order_Quantity" numeric(14,2) NULL
+			,"Minimum_Order_Quantity" numeric(14,2) NULL
+			,"Negative_Adjmt_LCY" numeric(14,2) NULL
+			,"Negative_Adjmt_Qty" numeric(14,2) NULL
+			,"Net_Change" numeric(14,2) NULL
+			,"Net_Invoiced_Qty" numeric(14,2) NULL
+			,"No_2" text NULL
+			,"Qty_Assigned_To_Ship" numeric(14,2) NULL
+			,"Qty_Picked" numeric(14,2) NULL
+			,"Qty_In_Transit" numeric(14,2) NULL
+			,"Qty_On_Asm_Component" numeric(14,2) NULL
+			,"Qty_On_Assembly_Order" numeric(14,2) NULL
+			,"Qty_On_Component_Lines" numeric(14,2) NULL
+			,"Qty_On_Job_Order" numeric(14,2) NULL
+			,"Qty_On_Prod_Order" numeric(14,2) NULL
+			,"Qty_On_Purch_Order" numeric(14,2) NULL
+			,"Qty_On_Purch_Return" numeric(14,2) NULL
+			,"Qty_On_Sales_Order" numeric(14,2) NULL
+			,"Qty_On_Sales_Return" numeric(14,2) NULL
+			,"Qty_On_Service_Order" numeric(14,2) NULL
+			,"Rel_Order_Receipt_Qty" numeric(14,2) NULL
+			,"Reserved_Qty_On_Inventory" numeric(14,2) NULL
+			,"Reserved_Qty_On_Prod_Order" numeric(14,2) NULL
+			,"Reserved_Qty_On_Purch_Orders" numeric(14,2) NULL
+			,"Reserved_Qty_On_Sales_Orders" numeric(14,2) NULL
+			,"System_Id" text NULL
+			,"System_Modified_At" timestamptz NULL
+			,"Unit_Cost" numeric(14,2) NULL
+			,"Net_Weight" numeric(14,2) NULL
+			,"Edn_Battery_Code" text NULL
+			,"Edn_Battery_Item" bool NULL
+			,"Edn_Battery_Quantity" numeric(14,2) NULL
+			,"Vendor_No" text NULL
+			,"Alternative_Item_No" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
  			,PRIMARY KEY ("No")
@@ -90,66 +91,68 @@ BEGIN
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
 			"No"
-			,"baseUnitOfMeasure"
-			,"baseGroup"
-			,"blocked"
-			,"costingMethod"
-			,"description"
-			,"description2"
-			,"ednCoolingCapacityKW"
-			,"ednEfficiencyIndex"
-			,"ednFactorType"
-			,"ednHeatingCapacityKW"
-			,"ednNAVKey"
-			,"ednRefrigerant"
-			,"ednRefrigerantQuantityUoM"
-			,"ednTypeA"
-			,"ednTypeB"
-			,"genProdPostingGroup"
-			,"inventory"
-			,"inventoryPostingGroup"
-			,"mkGLQuantity"
-			,"manufacturerCode"
-			,"maximumInventory"
-			,"maximumOrderQuantity"
-			,"minimumOrderQuantity"
-			,"negativeAdjmtLCY"
-			,"negativeAdjmtQty"
-			,"netChange"
-			,"netInvoicedQty"
-			,"no2"
-			,"qtyAssignedToShip"
-			,"qtyPicked"
-			,"qtyInTransit"
-			,"qtyOnAsmComponent"
-			,"qtyOnAssemblyOrder"
-			,"qtyOnComponentLines"
-			,"qtyOnJobOrder"
-			,"qtyOnProdOrder"
-			,"qtyOnPurchOrder"
-			,"qtyOnPurchReturn"
-			,"qtyOnSalesOrder"
-			,"qtyOnSalesReturn"
-			,"qtyOnServiceOrder"
-			,"relOrderReceiptQty"
-			,"reservedQtyOnInventory"
-			,"reservedQtyOnProdOrder"
-			,"reservedQtyOnPurchOrders"
-			,"reservedQtyOnSalesOrders"
-			,"systemId"
-			,"systemModifiedAt"
-			,"unitCost"
-			,"netWeight"
-			,"ednBatteryCode"
-			,"ednBatteryItem"
-			,"ednBatteryQuantity"
-			,"vendorNo"
-			,"alternativeItemNo"
+			,"Key_Item_No"
+			,"Base_Unit_Of_Measure"
+			,"Base_Group"
+			,"Blocked"
+			,"Costing_Method"
+			,"Description"
+			,"Description_2"
+			,"Edn_Cooling_Capacity_KW"
+			,"Edn_Efficiency_Index"
+			,"Edn_Factor_Type"
+			,"Edn_Heating_Capacity_KW"
+			,"Edn_NAV_Key"
+			,"Edn_Refrigerant"
+			,"Edn_Refrigerant_Quantity_UoM"
+			,"Edn_Type_A"
+			,"Edn_Type_B"
+			,"Gen_Prod_Posting_Group"
+			,"Inventory"
+			,"Inventory_Posting_Group"
+			,"Mk_GL_Quantity"
+			,"Manufacturer_Code"
+			,"Maximum_Inventory"
+			,"Maximum_Order_Quantity"
+			,"Minimum_Order_Quantity"
+			,"Negative_Adjmt_LCY"
+			,"Negative_Adjmt_Qty"
+			,"Net_Change"
+			,"Net_Invoiced_Qty"
+			,"No_2"
+			,"Qty_Assigned_To_Ship"
+			,"Qty_Picked"
+			,"Qty_In_Transit"
+			,"Qty_On_Asm_Component"
+			,"Qty_On_Assembly_Order"
+			,"Qty_On_Component_Lines"
+			,"Qty_On_Job_Order"
+			,"Qty_On_Prod_Order"
+			,"Qty_On_Purch_Order"
+			,"Qty_On_Purch_Return"
+			,"Qty_On_Sales_Order"
+			,"Qty_On_Sales_Return"
+			,"Qty_On_Service_Order"
+			,"Rel_Order_Receipt_Qty"
+			,"Reserved_Qty_On_Inventory"
+			,"Reserved_Qty_On_Prod_Order"
+			,"Reserved_Qty_On_Purch_Orders"
+			,"Reserved_Qty_On_Sales_Orders"
+			,"System_Id"
+			,"System_Modified_At"
+			,"Unit_Cost"
+			,"Net_Weight"
+			,"Edn_Battery_Code"
+			,"Edn_Battery_Item"
+			,"Edn_Battery_Quantity"
+			,"Vendor_No"
+			,"Alternative_Item_No"
 			,"Firma"
 			,"load_ts"
 		)
 		SELECT
 			i."No"
+			,CONCAT(%L, '_', i."No")
 			,i."baseUnitOfMeasure"
 			,i."baseGroup"
 			,i."blocked"
@@ -209,7 +212,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I as i
 		
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -246,72 +249,74 @@ BEGIN
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
 		"No"
-		,"baseUnitOfMeasure"
-		,"baseGroup"
-		,"blocked"
-		,"costingMethod"
-		,"description"
-		,"description2"
-		,"ednCoolingCapacityKW"
-		,"ednEfficiencyIndex"
-		,"ednFactorType"
-		,"ednHeatingCapacityKW"
-		,"ednNAVKey"
-		,"ednRefrigerant"
-		,"ednRefrigerantQuantityUoM"
-		,"ednTypeA"
-		,"ednTypeB"
-		,"genProdPostingGroup"
-		,"inventory"
-		,"inventoryPostingGroup"
-		,"mkGLQuantity"
-		,"manufacturerCode"
-		,"maximumInventory"
-		,"maximumOrderQuantity"
-		,"minimumOrderQuantity"
-		,"negativeAdjmtLCY"
-		,"negativeAdjmtQty"
-		,"netChange"
-		,"netInvoicedQty"
-		,"no2"
-		,"qtyAssignedToShip"
-		,"qtyPicked"
-		,"qtyInTransit"
-		,"qtyOnAsmComponent"
-		,"qtyOnAssemblyOrder"
-		,"qtyOnComponentLines"
-		,"qtyOnJobOrder"
-		,"qtyOnProdOrder"
-		,"qtyOnPurchOrder"
-		,"qtyOnPurchReturn"
-		,"qtyOnSalesOrder"
-		,"qtyOnSalesReturn"
-		,"qtyOnServiceOrder"
-		,"relOrderReceiptQty"
-		,"reservedQtyOnInventory"
-		,"reservedQtyOnProdOrder"
-		,"reservedQtyOnPurchOrders"
-		,"reservedQtyOnSalesOrders"
-		,"systemId"
-		,"systemModifiedAt"
-		,"unitCost"
-		,"netWeight"
-		,"ednBatteryCode"
-		,"ednBatteryItem"
-		,"ednBatteryQuantity"
-		,"vendorNo"
-		,"alternativeItemNo"
+		,"Key_Item_No"
+		,"Base_Unit_Of_Measure"
+		,"Base_Group"
+		,"Blocked"
+		,"Costing_Method"
+		,"Description"
+		,"Description_2"
+		,"Edn_Cooling_Capacity_KW"
+		,"Edn_Efficiency_Index"
+		,"Edn_Factor_Type"
+		,"Edn_Heating_Capacity_KW"
+		,"Edn_NAV_Key"
+		,"Edn_Refrigerant"
+		,"Edn_Refrigerant_Quantity_UoM"
+		,"Edn_Type_A"
+		,"Edn_Type_B"
+		,"Gen_Prod_Posting_Group"
+		,"Inventory"
+		,"Inventory_Posting_Group"
+		,"Mk_GL_Quantity"
+		,"Manufacturer_Code"
+		,"Maximum_Inventory"
+		,"Maximum_Order_Quantity"
+		,"Minimum_Order_Quantity"
+		,"Negative_Adjmt_LCY"
+		,"Negative_Adjmt_Qty"
+		,"Net_Change"
+		,"Net_Invoiced_Qty"
+		,"No_2"
+		,"Qty_Assigned_To_Ship"
+		,"Qty_Picked"
+		,"Qty_In_Transit"
+		,"Qty_On_Asm_Component"
+		,"Qty_On_Assembly_Order"
+		,"Qty_On_Component_Lines"
+		,"Qty_On_Job_Order"
+		,"Qty_On_Prod_Order"
+		,"Qty_On_Purch_Order"
+		,"Qty_On_Purch_Return"
+		,"Qty_On_Sales_Order"
+		,"Qty_On_Sales_Return"
+		,"Qty_On_Service_Order"
+		,"Rel_Order_Receipt_Qty"
+		,"Reserved_Qty_On_Inventory"
+		,"Reserved_Qty_On_Prod_Order"
+		,"Reserved_Qty_On_Purch_Orders"
+		,"Reserved_Qty_On_Sales_Orders"
+		,"System_Id"
+		,"System_Modified_At"
+		,"Unit_Cost"
+		,"Net_Weight"
+		,"Edn_Battery_Code"
+		,"Edn_Battery_Item"
+		,"Edn_Battery_Quantity"
+		,"Vendor_No"
+		,"Alternative_Item_No"
 		,"Firma"
 		,"load_ts"
 	)
 	SELECT 
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30
-		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58
+		,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
 		"No" = EXCLUDED."No"
+		,"Key_Item_No" = EXCLUDED."Key_Item_No"
 		,"baseUnitOfMeasure" = EXCLUDED."baseUnitOfMeasure"
 		,"baseGroup" = EXCLUDED."baseGroup"
 		,"blocked" = EXCLUDED."blocked"
@@ -372,6 +377,7 @@ EXECUTE format($etl$
 	$etl$, target_table)
 	USING
 		NEW."No"
+		,CONCAT(litera_firmy, '_', NEW."No")
 		,NEW."baseUnitOfMeasure"
 		,NEW."baseGroup"
 		,NEW."blocked"

@@ -8,7 +8,6 @@ WITH sold_items AS (
 		,"Entry_Type"
 		,"Item_No"
 		,"Serial_No"
-		,"EDN_Contractor_Name"
 		,"Firma"
 	FROM
 		silver.bc_items_ledger_entries_aircon
@@ -80,7 +79,7 @@ WITH sold_items AS (
 		silver.nav_items_ledger_entries_technab
 	where
 		"Entry_Type" = 'Sale'
-		
+		 
 	union all
 	
 	SELECT
@@ -99,7 +98,6 @@ WITH sold_items AS (
 SELECT 
 	"Item_No"
 	,COUNT(*) as "Quantity"
-
 FROM 
 	sold_items
 GROUP BY
