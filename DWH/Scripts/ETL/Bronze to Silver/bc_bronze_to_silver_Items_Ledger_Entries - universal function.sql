@@ -154,48 +154,7 @@ $ddl$, _tabela, _litera_firmy);
 		FROM bronze.%I ile
     ON CONFLICT ("Entry_No") DO NOTHING
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu doaatkowej kolumny w tabeli
-
---		ON CONFLICT ("Entry_No") DO UPDATE
---		SET
---			"Posting_Date" = EXCLUDED."Posting_Date"
---			,"Entry_Type" = EXCLUDED."Entry_Type"
---			,"Document_Type" = EXCLUDED."Document_Type"
---			,"Document_No" = EXCLUDED."Document_No"
---			,"Document_Line_No" = EXCLUDED."Document_Line_No"
---			,"Item_No" = EXCLUDED."Item_No"
---			,"Base_Group" = EXCLUDED."Base_Group"
---			,"EDN_Source_Type" = EXCLUDED."EDN_Source_Type"
---			,"EDN_Source_No" = EXCLUDED."EDN_Source_No"
---			,"Global_Dimension_1_Code" = EXCLUDED."Global_Dimension_1_Code"
---			,"Global_Dimension_2_Code" = EXCLUDED."Global_Dimension_2_Code"
---			,"Serial_No" = EXCLUDED."Serial_No"
---			,"Location_Code" = EXCLUDED."Location_Code"
---			,"Quantity" = EXCLUDED."Quantity"
---			,"Invoiced_Quantity" = EXCLUDED."Invoiced_Quantity"
---			,"Remaining_Quantity" = EXCLUDED."Remaining_Quantity"
---			,"Shipped_Qty_Not_Returned" = EXCLUDED."Shipped_Qty_Not_Returned"
---			,"Reserved_Quantity" = EXCLUDED."Reserved_Quantity"
---			,"Sales_Amount_Expected" = EXCLUDED."Sales_Amount_Expected"
---			,"Sales_Amount_Actual" = EXCLUDED."Sales_Amount_Actual"
---			,"Cost_Amount_Expected" = EXCLUDED."Cost_Amount_Expected"
---			,"Cost_Amount_Actual" = EXCLUDED."Cost_Amount_Actual"
---			,"Completely_Invoiced" = EXCLUDED."Completely_Invoiced"
---			,"Open" = EXCLUDED."Open"
---			,"Order_Line_No" = EXCLUDED."Order_Line_No"
---			,"Prod_Order_Comp_Line_No" = EXCLUDED."Prod_Order_Comp_Line_No"
---			,"Dimension_Set_ID" = EXCLUDED."Dimension_Set_ID"
---			,"Shortcut_Dimension_3_Code" = EXCLUDED."Shortcut_Dimension_3_Code"
---			,"Shortcut_Dimension_4_Code" = EXCLUDED."Shortcut_Dimension_4_Code"
---			,"Shortcut_Dimension_5_Code" = EXCLUDED."Shortcut_Dimension_5_Code"
---			,"Shortcut_Dimension_6_Code" = EXCLUDED."Shortcut_Dimension_6_Code"
---			,"Shortcut_Dimension_7_Code" = EXCLUDED."Shortcut_Dimension_7_Code"
---			,"Shortcut_Dimension_8_Code" = EXCLUDED."Shortcut_Dimension_8_Code"
---			,"EDN_Campaign_No" = EXCLUDED."EDN_Campaign_No"
---			,"EDN_Campaign_Description" = EXCLUDED."EDN_Campaign_Description"
---			,"Firma" = EXCLUDED."Firma"
---			,"load_ts" = CURRENT_TIMESTAMP
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -234,6 +193,7 @@ EXECUTE format($etl$
 		,"Document_No"
 		,"Document_Line_No"
 		,"Item_No"
+		,"Key_Item_No"
 		,"Base_Group"
 		,"EDN_Source_Type"
 		,"EDN_Source_No"
@@ -268,7 +228,7 @@ EXECUTE format($etl$
 		,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("Entry_No") DO UPDATE
 	SET
@@ -278,6 +238,7 @@ EXECUTE format($etl$
 		,"Document_No" = EXCLUDED."Document_No"
 		,"Document_Line_No" = EXCLUDED."Document_Line_No"
 		,"Item_No" = EXCLUDED."Item_No"
+		,"Key_Item_No" = EXCLUDED."Key_Item_No"
 		,"Base_Group" = EXCLUDED."Base_Group"
 		,"EDN_Source_Type" = EXCLUDED."EDN_Source_Type"
 		,"EDN_Source_No" = EXCLUDED."EDN_Source_No"
@@ -319,6 +280,7 @@ EXECUTE format($etl$
         ,NEW."Document_No"
         ,NEW."Document_Line_No"
         ,NEW."Item_No"
+		,CONCAT(litera_firmy, '_', NEW."Item_No")
         ,NEW."Base_Group"
         ,NEW."EDN_Source_Type"
         ,NEW."EDN_Source_No"
