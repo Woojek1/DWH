@@ -7,7 +7,7 @@
 DO $$
 DECLARE
 -- Tablica z nazwami firm wykorzystywana w pętli dla tworzenia tabel i pierwszego ładowania danych
-_firmy text[] := ARRAY[ 'aircon', 'zymetric', 'technab'];
+_firmy text[] := ARRAY['aircon', 'zymetric', 'technab'];
 -- zmienne
 _firma text;
 _tabela text;
@@ -23,105 +23,110 @@ BEGIN
 -- Tworzenie tabeli, jeśli nie istnieje
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
-			"documentType" text NOT NULL
-			,"documentNo" text NOT NULL
-			,"lineNo" int4 NOT NULL
-			,"quantity" numeric(14,2) NULL
-			,"amount" numeric(14,2) NULL
-			,"amountIncludingVAT" numeric(14,2) NULL
-			,"bomItemNo" text NULL
-			,"description" text NULL
-			,"description2" text NULL
-			,"dimensionSetID" int4 NULL
-			,"ednCoolingCapacityKW" numeric(14,2) NULL
-			,"ednHeatingCapacityKW" numeric(14,2) NULL
-			,"ednLineAmountBeforeDisc" numeric(14,2) NULL
-			,"ednOryUnitCost" numeric(14,2) NULL
-			,"ednOryUnitCostLCY" numeric(14,2) NULL
-			,"ednPriceCatalogue" numeric(14,2) NULL
-			,"ednPriceListCurrencyCode" text NULL
-			,"ednPriceListExchangeRate" numeric(14,2) NULL
-			,"ednProfitability" text NULL
-			,"ednTotalCoolingCapKW" numeric(14,2) NULL
-			,"ednTotalGrossWeight" numeric(14,2) NULL
-			,"ednTotalHeatingCapKW" numeric(14,2) NULL
-			,"ednTotalNetWeight" numeric(14,2) NULL
-			,"ednTotalUnitVolume" numeric(14,2) NULL
-			,"ednValueAfterDiscountPrice" numeric(14,2) NULL
-			,"ednValueAtListPrice" numeric(14,2) NULL
-			,"genBusPostingGroup" text NULL
-			,"genProdPostingGroup" text NULL
-			,"lineAmount" numeric(14,2) NULL
-			,"lineDiscount" numeric(14,2) NULL
-			,"lineDiscountAmount" numeric(14,2) NULL
-			,"lineDiscountCalculation" text NULL
-			,"locationCode" text NULL
-			,"no" text NULL
-			,"outstandingAmount" numeric(14,2) NULL
-			,"outstandingAmountLCY" numeric(14,2) NULL
-			,"plannedDeliveryDate" date NULL
-			,"postingDate" date NULL
-			,"postingGroup" text NULL
-			,"sellToCustomerNo" text NULL
-			,"shortcutDimension1Code" text NULL
-			,"shortcutDimension2Code" text NULL
+			"Document_Type" text NOT NULL
+			,"Document_No" text NOT NULL
+			,"Key_Document_No" text Null
+			,"Line_No" int4 NOT NULL 
+			,"Quantity" numeric(14,2) NULL
+			,"Amount" numeric(14,2) NULL
+			,"Amount_Including_VAT" numeric(14,2) NULL
+			,"Bom_Item_No" text NULL
+			,"Description" text NULL
+			,"Description2" text NULL
+			,"Dimension_Set_ID" int4 NULL
+			,"Cooling_Capacity_KW" numeric(14,2) NULL
+			,"Heating_Capacity_KW" numeric(14,2) NULL
+			,"Line_Amount_Before_Disc" numeric(14,2) NULL
+			,"Ory_Unit_Cost" numeric(14,2) NULL
+			,"Ory_UnitCost_LCY" numeric(14,2) NULL
+			,"Price_Catalogue" numeric(14,2) NULL
+			,"Price_List_Currency_Code" text NULL
+			,"Price_List_Exchange_Rate" numeric(14,2) NULL
+			,"Profitability" text NULL
+			,"Total_Cooling_CapKW" numeric(14,2) NULL
+			,"Total_Gross_Weight" numeric(14,2) NULL
+			,"Total_Heating_CapKW" numeric(14,2) NULL
+			,"Total_Net_Weight" numeric(14,2) NULL
+			,"Total_Unit_Volume" numeric(14,2) NULL
+			,"Value_After_Discount_Price" numeric(14,2) NULL
+			,"Value_At_List_Price" numeric(14,2) NULL
+			,"Bus_Posting_Group" text NULL
+			,"Prod_Posting_Group" text NULL
+			,"Line_Amount" numeric(14,2) NULL
+			,"Line_Discount" numeric(14,2) NULL
+			,"Line_Discount_Amount" numeric(14,2) NULL 
+			,"Line_Discount_Calculation" text NULL
+			,"Location_Code" text NULL
+			,"No_Item" text NULL
+			,"Key_No_Item" text NULL
+			,"Outstanding_Amount" numeric(14,2) NULL
+			,"Outstanding_Amount_LCY" numeric(14,2) NULL
+			,"Planned_Delivery_Date" date NULL
+			,"Posting_Date" date NULL
+			,"Posting_Group" text NULL
+			,"Sell_To_Customer_No" text NULL
+			,"Shortcut_Dimension1_Code" text NULL
+			,"Shortcut_Dimension2_Code" text NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
-			,PRIMARY KEY("documentNo","lineNo")
+			,PRIMARY KEY("Key_Document_No","Line_No")
 		);
 	$ddl$, _tabela, _litera_firmy);
 
 -- Pierwsze ładowanie danych z bronze do silver
 	EXECUTE format($insert$
 		INSERT INTO silver.%I (
-			"documentType"
-			,"documentNo"
-			,"lineNo"
-			,"quantity"
-			,"amount"
-			,"amountIncludingVAT"
-			,"bomItemNo"
-			,"description"
-			,"description2"
-			,"dimensionSetID"
-			,"ednCoolingCapacityKW"
-			,"ednHeatingCapacityKW"
-			,"ednLineAmountBeforeDisc"
-			,"ednOryUnitCost"
-			,"ednOryUnitCostLCY"
-			,"ednPriceCatalogue"
-			,"ednPriceListCurrencyCode"
-			,"ednPriceListExchangeRate"
-			,"ednProfitability"
-			,"ednTotalCoolingCapKW"
-			,"ednTotalGrossWeight"
-			,"ednTotalHeatingCapKW"
-			,"ednTotalNetWeight"
-			,"ednTotalUnitVolume"
-			,"ednValueAfterDiscountPrice"
-			,"ednValueAtListPrice"
-			,"genBusPostingGroup"
-			,"genProdPostingGroup"
-			,"lineAmount"
-			,"lineDiscount"
-			,"lineDiscountAmount"
-			,"lineDiscountCalculation"
-			,"locationCode"
-			,"no"
-			,"outstandingAmount"
-			,"outstandingAmountLCY"
-			,"plannedDeliveryDate"
-			,"postingDate"
-			,"postingGroup"
-			,"sellToCustomerNo"
-			,"shortcutDimension1Code"
-			,"shortcutDimension2Code"
+			"Document_Type"
+			,"Document_No"
+			,"Key_Document_No"
+			,"Line_No"
+			,"Quantity"
+			,"Amount"
+			,"Amount_Including_VAT"
+			,"Bom_Item_No"
+			,"Description"
+			,"Description2"
+			,"Dimension_Set_ID"
+			,"Cooling_Capacity_KW"
+			,"Heating_Capacity_KW"
+			,"Line_Amount_Before_Disc"
+			,"Ory_Unit_Cost"
+			,"Ory_UnitCost_LCY"
+			,"Price_Catalogue"
+			,"Price_List_Currency_Code"
+			,"Price_List_Exchange_Rate"
+			,"Profitability"
+			,"Total_Cooling_CapKW"
+			,"Total_Gross_Weight"
+			,"Total_Heating_CapKW"
+			,"Total_Net_Weight"
+			,"Total_Unit_Volume"
+			,"Value_After_Discount_Price"
+			,"Value_At_List_Price"
+			,"Bus_Posting_Group"
+			,"Prod_Posting_Group"
+			,"Line_Amount"
+			,"Line_Discount"
+			,"Line_Discount_Amount"
+			,"Line_Discount_Calculation"
+			,"Location_Code"
+			,"No_Item"
+			,"Key_No_Item"
+			,"Outstanding_Amount"
+			,"Outstanding_Amount_LCY"
+			,"Planned_Delivery_Date"
+			,"Posting_Date"
+			,"Posting_Group"
+			,"Sell_To_Customer_No"
+			,"Shortcut_Dimension1_Code"
+			,"Shortcut_Dimension2_Code"
 			,"Firma"
 			,"load_ts"
 		)
 		SELECT
 			sl."documentType"
 			,sl."documentNo"
+			,CONCAT(%L, '_', sl."documentNo")
 			,sl."lineNo"
 			,sl."quantity"
 			,sl."amount"
@@ -154,6 +159,7 @@ BEGIN
 			,sl."lineDiscountCalculation"
 			,sl."locationCode"
 			,sl."no"
+			,CONCAT(%L, '_', sl."no")		
 			,sl."outstandingAmount"
 			,sl."outstandingAmountLCY"
 			,sl."plannedDeliveryDate"
@@ -166,55 +172,7 @@ BEGIN
         	,CURRENT_TIMESTAMP
 		FROM bronze.%I sl
 
---	ON CONFLICT zostaje dla przeładowania danych po dodaniu dodatkowej kolumny w tabeli
-
---		ON CONFLICT ("documentNo", "lineNo") DO UPDATE
---		SET
---		"documentType" = EXCLUDED."documentType"
---		,"documentNo" = EXCLUDED."documentNo"
---		,"lineNo" = EXCLUDED."lineNo"
---		,"quantity" = EXCLUDED."quantity"
---		,"amount" = EXCLUDED."amount"
---		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
---		,"bomItemNo" = EXCLUDED."bomItemNo"
---		,"description" = EXCLUDED."description"
---		,"description2" = EXCLUDED."description2"
---		,"dimensionSetID" = EXCLUDED."dimensionSetID"
---		,"ednCoolingCapacityKW" = EXCLUDED."ednCoolingCapacityKW"
---		,"ednHeatingCapacityKW" = EXCLUDED."ednHeatingCapacityKW"
---		,"ednLineAmountBeforeDisc" = EXCLUDED."ednLineAmountBeforeDisc"
---		,"ednOryUnitCost" = EXCLUDED."ednOryUnitCost"
---		,"ednOryUnitCostLCY" = EXCLUDED."ednOryUnitCostLCY"
---		,"ednPriceCatalogue" = EXCLUDED."ednPriceCatalogue"
---		,"ednPriceListCurrencyCode" = EXCLUDED."ednPriceListCurrencyCode"
---		,"ednPriceListExchangeRate" = EXCLUDED."ednPriceListExchangeRate"
---		,"ednProfitability" = EXCLUDED."ednProfitability"
---		,"ednTotalCoolingCapKW" = EXCLUDED."ednTotalCoolingCapKW"
---		,"ednTotalGrossWeight" = EXCLUDED."ednTotalGrossWeight"
---		,"ednTotalHeatingCapKW" = EXCLUDED."ednTotalHeatingCapKW"
---		,"ednTotalNetWeight" = EXCLUDED."ednTotalNetWeight"
---		,"ednTotalUnitVolume" = EXCLUDED."ednTotalUnitVolume"
---		,"ednValueAfterDiscountPrice" = EXCLUDED."ednValueAfterDiscountPrice"
---		,"ednValueAtListPrice" = EXCLUDED."ednValueAtListPrice"
---		,"genBusPostingGroup" = EXCLUDED."genBusPostingGroup"
---		,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
---		,"lineAmount" = EXCLUDED."lineAmount"
---		,"lineDiscount" = EXCLUDED."lineDiscount"
---		,"lineDiscountAmount" = EXCLUDED."lineDiscountAmount"
---		,"lineDiscountCalculation" = EXCLUDED."lineDiscountCalculation"
---		,"locationCode" = EXCLUDED."locationCode"
---		,"no" = EXCLUDED."no"
---		,"outstandingAmount" = EXCLUDED."outstandingAmount"
---		,"outstandingAmountLCY" = EXCLUDED."outstandingAmountLCY"
---		,"plannedDeliveryDate" = EXCLUDED."plannedDeliveryDate"
---		,"postingDate" = EXCLUDED."postingDate"
---		,"postingGroup" = EXCLUDED."postingGroup"
---		,"sellToCustomerNo" = EXCLUDED."sellToCustomerNo"
---		,"shortcutDimension1Code" = EXCLUDED."shortcutDimension1Code"
---		,"shortcutDimension2Code" = EXCLUDED."shortcutDimension2Code"
---		,"Firma" = EXCLUDED."Firma"
---		,"load_ts" = EXCLUDED."load_ts";
-    $insert$, _tabela, _litera_firmy, _tabela);
+    $insert$, _tabela, _litera_firmy, _litera_firmy, _litera_firmy, _tabela);
 
 	END LOOP;
 END;
@@ -246,112 +204,119 @@ BEGIN
 
 EXECUTE format($etl$
 	INSERT INTO silver.%I (
-		"documentType"
-		,"documentNo"
-		,"lineNo"
-		,"quantity"
-		,"amount"
-		,"amountIncludingVAT"
-		,"bomItemNo"
-		,"description"
-		,"description2"
-		,"dimensionSetID"
-		,"ednCoolingCapacityKW"
-		,"ednHeatingCapacityKW"
-		,"ednLineAmountBeforeDisc"
-		,"ednOryUnitCost"
-		,"ednOryUnitCostLCY"
-		,"ednPriceCatalogue"
-		,"ednPriceListCurrencyCode"
-		,"ednPriceListExchangeRate"
-		,"ednProfitability"
-		,"ednTotalCoolingCapKW"
-		,"ednTotalGrossWeight"
-		,"ednTotalHeatingCapKW"
-		,"ednTotalNetWeight"
-		,"ednTotalUnitVolume"
-		,"ednValueAfterDiscountPrice"
-		,"ednValueAtListPrice"
-		,"genBusPostingGroup"
-		,"genProdPostingGroup"
-		,"lineAmount"
-		,"lineDiscount"
-		,"lineDiscountAmount"
-		,"lineDiscountCalculation"
-		,"locationCode"
-		,"no"
-		,"outstandingAmount"
-		,"outstandingAmountLCY"
-		,"plannedDeliveryDate"
-		,"postingDate"
-		,"postingGroup"
-		,"sellToCustomerNo"
-		,"shortcutDimension1Code"
-		,"shortcutDimension2Code"
-		,"Firma"
-		,"load_ts"
+			"Document_Type"
+			,"Document_No"
+			,"Key_Document_No"
+			,"Line_No"
+			,"Quantity"
+			,"Amount"
+			,"Amount_Including_VAT"
+			,"Bom_Item_No"
+			,"Description"
+			,"Description2"
+			,"Dimension_Set_ID"
+			,"Cooling_Capacity_KW"
+			,"Heating_Capacity_KW"
+			,"Line_Amount_Before_Disc"
+			,"Ory_Unit_Cost"
+			,"Ory_UnitCost_LCY"
+			,"Price_Catalogue"
+			,"Price_List_Currency_Code"
+			,"Price_List_Exchange_Rate"
+			,"Profitability"
+			,"Total_Cooling_CapKW"
+			,"Total_Gross_Weight"
+			,"Total_Heating_CapKW"
+			,"Total_Net_Weight"
+			,"Total_Unit_Volume"
+			,"Value_After_Discount_Price"
+			,"Value_At_List_Price"
+			,"Bus_Posting_Group"
+			,"Prod_Posting_Group"
+			,"Line_Amount"
+			,"Line_Discount"
+			,"Line_Discount_Amount"
+			,"Line_Discount_Calculation"
+			,"Location_Code"
+			,"No_Item"
+			,"Key_No_Item"
+			,"Outstanding_Amount"
+			,"Outstanding_Amount_LCY"
+			,"Planned_Delivery_Date"
+			,"Posting_Date"
+			,"Posting_Group"
+			,"Sell_To_Customer_No"
+			,"Shortcut_Dimension1_Code"
+			,"Shortcut_Dimension2_Code"
+			,"Firma"
+			,"load_ts"
 	)
 	SELECT 
-		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43, $44
+		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+		$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,
+		$41,$42,$43,$44,$45,$46
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
-	ON CONFLICT("documentNo", "lineNo") DO UPDATE
+	ON CONFLICT("Key_Document_No","Line_No") DO UPDATE
 	SET
-		"documentType" = EXCLUDED."documentType"
-		,"documentNo" = EXCLUDED."documentNo"
-		,"lineNo" = EXCLUDED."lineNo"
-		,"quantity" = EXCLUDED."quantity"
-		,"amount" = EXCLUDED."amount"
-		,"amountIncludingVAT" = EXCLUDED."amountIncludingVAT"
-		,"bomItemNo" = EXCLUDED."bomItemNo"
-		,"description" = EXCLUDED."description"
-		,"description2" = EXCLUDED."description2"
-		,"dimensionSetID" = EXCLUDED."dimensionSetID"
-		,"ednCoolingCapacityKW" = EXCLUDED."ednCoolingCapacityKW"
-		,"ednHeatingCapacityKW" = EXCLUDED."ednHeatingCapacityKW"
-		,"ednLineAmountBeforeDisc" = EXCLUDED."ednLineAmountBeforeDisc"
-		,"ednOryUnitCost" = EXCLUDED."ednOryUnitCost"
-		,"ednOryUnitCostLCY" = EXCLUDED."ednOryUnitCostLCY"
-		,"ednPriceCatalogue" = EXCLUDED."ednPriceCatalogue"
-		,"ednPriceListCurrencyCode" = EXCLUDED."ednPriceListCurrencyCode"
-		,"ednPriceListExchangeRate" = EXCLUDED."ednPriceListExchangeRate"
-		,"ednProfitability" = EXCLUDED."ednProfitability"
-		,"ednTotalCoolingCapKW" = EXCLUDED."ednTotalCoolingCapKW"
-		,"ednTotalGrossWeight" = EXCLUDED."ednTotalGrossWeight"
-		,"ednTotalHeatingCapKW" = EXCLUDED."ednTotalHeatingCapKW"
-		,"ednTotalNetWeight" = EXCLUDED."ednTotalNetWeight"
-		,"ednTotalUnitVolume" = EXCLUDED."ednTotalUnitVolume"
-		,"ednValueAfterDiscountPrice" = EXCLUDED."ednValueAfterDiscountPrice"
-		,"ednValueAtListPrice" = EXCLUDED."ednValueAtListPrice"
-		,"genBusPostingGroup" = EXCLUDED."genBusPostingGroup"
-		,"genProdPostingGroup" = EXCLUDED."genProdPostingGroup"
-		,"lineAmount" = EXCLUDED."lineAmount"
-		,"lineDiscount" = EXCLUDED."lineDiscount"
-		,"lineDiscountAmount" = EXCLUDED."lineDiscountAmount"
-		,"lineDiscountCalculation" = EXCLUDED."lineDiscountCalculation"
-		,"locationCode" = EXCLUDED."locationCode"
-		,"no" = EXCLUDED."no"
-		,"outstandingAmount" = EXCLUDED."outstandingAmount"
-		,"outstandingAmountLCY" = EXCLUDED."outstandingAmountLCY"
-		,"plannedDeliveryDate" = EXCLUDED."plannedDeliveryDate"
-		,"postingDate" = EXCLUDED."postingDate"
-		,"postingGroup" = EXCLUDED."postingGroup"
-		,"sellToCustomerNo" = EXCLUDED."sellToCustomerNo"
-		,"shortcutDimension1Code" = EXCLUDED."shortcutDimension1Code"
-		,"shortcutDimension2Code" = EXCLUDED."shortcutDimension2Code"
+	    ,"Document_Type" = EXCLUDED."Document_Type"
+	    ,"Document_No" = EXCLUDED."Document_No"
+	    ,"Key_Document_No" = EXCLUDED."Key_Document_No"
+	    ,"Line_No" = EXCLUDED."Line_No"
+	    ,"Quantity" = EXCLUDED."Quantity"
+	    ,"Amount" = EXCLUDED."Amount"
+	    ,"Amount_Including_VAT" = EXCLUDED."Amount_Including_VAT"
+	    ,"Bom_Item_No" = EXCLUDED."Bom_Item_No"
+	    ,"Description" = EXCLUDED."Description"
+	    ,"Description2" = EXCLUDED."Description2"
+	    ,"Dimension_Set_ID" = EXCLUDED."Dimension_Set_ID"
+	    ,"Cooling_Capacity_KW" = EXCLUDED."Cooling_Capacity_KW"
+	    ,"Heating_Capacity_KW" = EXCLUDED."Heating_Capacity_KW"
+	    ,"Line_Amount_Before_Disc" = EXCLUDED."Line_Amount_Before_Disc"
+	    ,"Ory_Unit_Cost" = EXCLUDED."Ory_Unit_Cost"
+	    ,"Ory_UnitCost_LCY" = EXCLUDED."Ory_UnitCost_LCY"
+	    ,"Price_Catalogue" = EXCLUDED."Price_Catalogue"
+	    ,"Price_List_Currency_Code" = EXCLUDED."Price_List_Currency_Code"
+	    ,"Price_List_Exchange_Rate" = EXCLUDED."Price_List_Exchange_Rate"
+	    ,"Profitability" = EXCLUDED."Profitability"
+	    ,"Total_Cooling_CapKW" = EXCLUDED."Total_Cooling_CapKW"
+	    ,"Total_Gross_Weight" = EXCLUDED."Total_Gross_Weight"
+	    ,"Total_Heating_CapKW" = EXCLUDED."Total_Heating_CapKW"
+	    ,"Total_Net_Weight" = EXCLUDED."Total_Net_Weight"
+	    ,"Total_Unit_Volume" = EXCLUDED."Total_Unit_Volume"
+	    ,"Value_After_Discount_Price" = EXCLUDED."Value_After_Discount_Price"
+	    ,"Value_At_List_Price" = EXCLUDED."Value_At_List_Price"
+	    ,"Bus_Posting_Group" = EXCLUDED."Bus_Posting_Group"
+	    ,"Prod_Posting_Group" = EXCLUDED."Prod_Posting_Group"
+	    ,"Line_Amount" = EXCLUDED."Line_Amount"
+	    ,"Line_Discount" = EXCLUDED."Line_Discount"
+	    ,"Line_Discount_Amount" = EXCLUDED."Line_Discount_Amount"
+	    ,"Line_Discount_Calculation" = EXCLUDED."Line_Discount_Calculation"
+	    ,"Location_Code" = EXCLUDED."Location_Code"
+	    ,"No_Item" = EXCLUDED."No_Item"
+	    ,"Key_No_Item" = EXCLUDED."Key_No_Item"
+	    ,"Outstanding_Amount" = EXCLUDED."Outstanding_Amount"
+	    ,"Outstanding_Amount_LCY" = EXCLUDED."Outstanding_Amount_LCY"
+	    ,"Planned_Delivery_Date" = EXCLUDED."Planned_Delivery_Date"
+	    ,"Posting_Date" = EXCLUDED."Posting_Date"
+	    ,"Posting_Group" = EXCLUDED."Posting_Group"
+	    ,"Sell_To_Customer_No" = EXCLUDED."Sell_To_Customer_No"
+	    ,"Shortcut_Dimension1_Code" = EXCLUDED."Shortcut_Dimension1_Code"
+	    ,"Shortcut_Dimension2_Code" = EXCLUDED."Shortcut_Dimension2_Code"
 		,"Firma" = EXCLUDED."Firma"
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
 		NEW."documentType"
 		,NEW."documentNo"
+		,CONCAT(litera_firmy, '_', NEW."documentNo")
 		,NEW."lineNo"
 		,NEW."quantity"
 		,NEW."amount"
 		,NEW."amountIncludingVAT"
 		,NEW."bomItemNo"
 		,NEW."description"
-		,REGEXP_REPLACE(NEW."description2", E'[\\''?]', '', 'g') AS "description2"
+		,REGEXP_REPLACE(NEW."description2", E'[\\''?]', '', 'g')
 		,NEW."dimensionSetID"
 		,NEW."ednCoolingCapacityKW"
 		,NEW."ednHeatingCapacityKW"
@@ -377,6 +342,7 @@ EXECUTE format($etl$
 		,NEW."lineDiscountCalculation"
 		,NEW."locationCode"
 		,NEW."no"
+		,CONCAT(litera_firmy, '_', NEW."no")
 		,NEW."outstandingAmount"
 		,NEW."outstandingAmountLCY"
 		,NEW."plannedDeliveryDate"
