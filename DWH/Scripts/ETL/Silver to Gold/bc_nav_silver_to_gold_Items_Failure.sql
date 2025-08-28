@@ -1,4 +1,4 @@
--- create or replace view gold."Fact_Items_Failure" as 
+create or replace view gold."Fact_Items_Failure" as 
 
 with sold_items as (
 
