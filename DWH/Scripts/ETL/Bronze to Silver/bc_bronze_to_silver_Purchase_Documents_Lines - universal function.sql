@@ -218,7 +218,7 @@ BEGIN
 			,"System_Modified_At" timestamptz NULL
 			,"Firma" char(1)
 			,"load_ts" timestamptz NULL
-			,PRIMARY KEY ("Line_Number", "Document_Number", "Document_Type")
+			,PRIMARY KEY ("Line_Number", "Document_No", "Document_Type")
 		);
 	$ddl$, _tabela, _litera_firmy);
 
@@ -1073,7 +1073,7 @@ EXECUTE format($etl$
 		,"load_ts" = CURRENT_TIMESTAMP;
 	$etl$, target_table)
 	USING
-		,NEW."documentType"
+		NEW."documentType"
 		,NEW."documentNumber"
 		,CONCAT(litera_firmy, '_', NEW."documentNumber")
 		,NEW."lineNumber"
