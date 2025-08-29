@@ -1,4 +1,4 @@
-create or replace view gold.v_projects AS
+create or replace view gold.v_bc_projects AS
 with Projects_Aircon as (
 	select
 		p."No" as "NoProject"
