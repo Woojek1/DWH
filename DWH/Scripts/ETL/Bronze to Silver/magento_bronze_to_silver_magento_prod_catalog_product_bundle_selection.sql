@@ -1,103 +1,112 @@
 -----------------------------------------------------------------------------
--- CREATING MAGENTO PROD QOUTE TABLES IN SILVER LAYER AND FIRST LOAD
+-- TWORZENIE TABELI W WARSTWIE SILVER
 -----------------------------------------------------------------------------
 
-
-CREATE TABLE IF NOT EXISTS silver.magento_prod_wishlist (
-	wishlist_id int4 NOT NULL PRIMARY KEY
-	,customer_id int4 NOT NULL
-	,shared int4 NOT NULL
-	,sharing_code text NOT NULL
-	,updated_at timestamp NOT NULL
-	,name text NULL
-	,visibility int4 NOT NULL
-	,"load_ts" timestamptz NULL
+CREATE TABLE IF NOT EXISTS silver.magento_prod_catalog_product_bundle_selection (
+    selection_id int8 NOT NULL PRIMARY KEY,
+    option_id int8 NOT NULL,
+    parent_product_id int8 NOT NULL,
+    product_id int8 NOT NULL,
+    "position" int4 NOT NULL,
+    is_default int2 DEFAULT 0 NOT NULL,
+    selection_price_type int2 DEFAULT 0 NOT NULL,
+    selection_price_value numeric(12, 4) NOT NULL,
+    selection_qty numeric(12, 4) NOT NULL,
+    selection_can_change_qty int2 DEFAULT 0 NOT NULL,
+    load_ts timestamptz NULL
 );
 
+-----------------------------------------------------------------------------
+-- PIERWSZE ŁADOWANIE DANYCH Z BRONZE DO SILVER
+-----------------------------------------------------------------------------
 
--- Pierwsze ładowanie danych z bronze do silver
-
-INSERT INTO silver.magento_prod_wishlist (
-	wishlist_id
-	,customer_id
-	,shared
-	,sharing_code
-	,updated_at
-	,name
-	,visibility
-	,"load_ts"
+INSERT INTO silver.magento_prod_catalog_product_bundle_selection (
+    selection_id,
+    option_id,
+    parent_product_id,
+    product_id,
+    "position",
+    is_default,
+    selection_price_type,
+    selection_price_value,
+    selection_qty,
+    selection_can_change_qty,
+    load_ts
 )
-
 SELECT
-	mpw.wishlist_id
-	,mpw.customer_id
-	,mpw.shared
-	,mpw.sharing_code
-	,mpw.updated_at
-	,mpw.name
-	,mpw.visibility
-	,CURRENT_TIMESTAMP
-FROM bronze.magento_prod_wishlist mpw
-;
+    bs.selection_id,
+    bs.option_id,
+    bs.parent_product_id,
+    bs.product_id,
+    bs."position",
+    bs.is_default,
+    bs.selection_price_type,
+    bs.selection_price_value,
+    bs.selection_qty,
+    bs.selection_can_change_qty,
+    CURRENT_TIMESTAMP
+FROM bronze.magento_prod_catalog_product_bundle_selection bs;
 
+-----------------------------------------------------------------------------
+-- FUNKCJA UPDATER/UPSERT Z BRONZE DO SILVER
+-----------------------------------------------------------------------------
 
-
---------------------------------------------------------------
--- CREATING DATA LOADING FUNCTION FROM BRONZE TO SILVER LAYER
---------------------------------------------------------------
-
-
-CREATE OR REPLACE FUNCTION bronze.fn_upsert_magento_prod_wishlist()
+CREATE OR REPLACE FUNCTION bronze.fn_upsert_magento_prod_catalog_product_bundle_selection()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-	INSERT INTO silver.magento_prod_wishlist (
-		wishlist_id
-		,customer_id
-		,shared
-		,sharing_code
-		,updated_at
-		,name
-		,visibility
-		,"load_ts"
-	)
+    INSERT INTO silver.magento_prod_catalog_product_bundle_selection (
+        selection_id,
+        option_id,
+        parent_product_id,
+        product_id,
+        "position",
+        is_default,
+        selection_price_type,
+        selection_price_value,
+        selection_qty,
+        selection_can_change_qty,
+        load_ts
+    )
+    VALUES (
+        NEW.selection_id,
+        NEW.option_id,
+        NEW.parent_product_id,
+        NEW.product_id,
+        NEW."position",
+        NEW.is_default,
+        NEW.selection_price_type,
+        NEW.selection_price_value,
+        NEW.selection_qty,
+        NEW.selection_can_change_qty,
+        CURRENT_TIMESTAMP
+    )
+    ON CONFLICT (selection_id) DO UPDATE
+    SET
+        option_id              = EXCLUDED.option_id,
+        parent_product_id      = EXCLUDED.parent_product_id,
+        product_id             = EXCLUDED.product_id,
+        "position"             = EXCLUDED."position",
+        is_default             = EXCLUDED.is_default,
+        selection_price_type   = EXCLUDED.selection_price_type,
+        selection_price_value  = EXCLUDED.selection_price_value,
+        selection_qty          = EXCLUDED.selection_qty,
+        selection_can_change_qty = EXCLUDED.selection_can_change_qty,
+        load_ts                = CURRENT_TIMESTAMP;
 
-	VALUES (
-		NEW.wishlist_id
-		,NEW.customer_id
-		,NEW.shared
-		,NEW.sharing_code
-		,NEW.updated_at
-		,NEW.name
-		,NEW.visibility
-		,CURRENT_TIMESTAMP
-	)
-	
-	ON CONFLICT ("wishlist_id") DO UPDATE
-	SET
-		customer_id = EXCLUDED.customer_id
-		,shared = EXCLUDED.shared
-		,sharing_code = EXCLUDED.sharing_code
-		,updated_at = EXCLUDED.updated_at
-		,name = EXCLUDED.name
-		,visibility = EXCLUDED.visibility
-		,"load_ts" = CURRENT_TIMESTAMP;
-	RETURN NEW;
+    RETURN NEW;
 END;
 $$;
 
+-----------------------------------------------------------------------------
+-- TRIGGER W WARSTWIE BRONZE
+-----------------------------------------------------------------------------
 
+DROP TRIGGER IF EXISTS trg_upsert_magento_prod_catalog_product_bundle_selection
+ON bronze.magento_prod_catalog_product_bundle_selection;
 
-
-------------------------------------------------------------------------
--- CREATING TRIGGER IN BRONZE LAYER ON MAGENTO PROD QOUTE
-------------------------------------------------------------------------
-
-
-DROP TRIGGER IF EXISTS trg_upsert_magento_prod_wishlist ON bronze.magento_prod_wishlist;
-CREATE TRIGGER trg_upsert_magento_prod_wishlist
-AFTER INSERT OR UPDATE ON bronze.magento_prod_wishlist
+CREATE TRIGGER trg_upsert_magento_prod_catalog_product_bundle_selection
+AFTER INSERT OR UPDATE ON bronze.magento_prod_catalog_product_bundle_selection
 FOR EACH ROW
-EXECUTE FUNCTION bronze.fn_upsert_magento_prod_wishlist();
-
+EXECUTE FUNCTION bronze.fn_upsert_magento_prod_catalog_product_bundle_selection();
