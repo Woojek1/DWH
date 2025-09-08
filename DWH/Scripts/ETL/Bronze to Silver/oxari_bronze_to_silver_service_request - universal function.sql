@@ -286,6 +286,7 @@ $function$;
 -- CREATING TRIGGER IN BRONZE LAYER ON OXARI SERVICE REQUEST TABLE
 -------------------------------------------------------------------------
 
+create view gold.technab_event_logger as select * from bronze.technab_event_logger
 
 
 DROP TRIGGER IF EXISTS trg_upsert_oxari_service_request ON bronze.oxari_service_request;
