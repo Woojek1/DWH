@@ -34,6 +34,8 @@ WITH Customers_Aircon AS (
 		,c."Payment_Method_Code" as "PaymentMethodCode"
 		,c."Related_company" as "RelatedCompany"
 		,c."EDN_KUKE_Symbol" as "KUKE_Symbol"
+		,c."Customer_Category" as "Customer_Category"
+		,c."Customer_Activity" as "Customer_Activity"
 		,c."load_ts" AS "LoadDate"
 		,'Aircon' AS "Company"
 	FROM
@@ -74,6 +76,8 @@ Customers_Technab as (
 		,c."Payment_Method_Code" as "PaymentMethodCode"
 		,c."Related_company" as "RelatedCompany"
 		,c."EDN_KUKE_Symbol" as "KUKE_Symbol"
+		,c."Customer_Category" as "Customer_Category"
+		,c."Customer_Activity" as "Customer_Activity"
 		,c."load_ts" AS "LoadDate"
 		,'Technab' AS "Company"
 	FROM
@@ -114,6 +118,8 @@ Customers_Zymetric as (
 		,c."Payment_Method_Code" as "PaymentMethodCode"
 		,c."Related_company" as "RelatedCompany"
 		,c."EDN_KUKE_Symbol" as "KUKE_Symbol"
+		,c."Customer_Category" as "Customer_Category"
+		,c."Customer_Activity" as "Customer_Activity"
 		,c."load_ts" AS "LoadDate"
 		,'Zymetric' AS "Company"
 	FROM
