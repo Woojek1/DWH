@@ -27,8 +27,8 @@ BEGIN
 			,"Pracownik" varchar(255) NOT NULL
 			,"StanowiskoKod" varchar(20) NOT NULL
 			,"StanowiskoNazwa" varchar(255) NOT NULL
-			,"EtatStanowiskoHist" text NULL
-			,"EtatMiejscePracyHist" text NULL
+--			,"EtatStanowiskoHist" text NULL
+--			,"EtatMiejscePracyHist" text NULL
 			,"PrzelozonyID" int4 NULL
 			,"PrzelozonyKod" varchar(20) NULL
 			,"Przelozony" varchar(255) NULL
@@ -57,8 +57,8 @@ BEGIN
 			,"Pracownik"
 			,"StanowiskoKod"
 			,"StanowiskoNazwa"
-			,"EtatStanowiskoHist"
-			,"EtatMiejscePracyHist"
+--			,"EtatStanowiskoHist"
+--			,"EtatMiejscePracyHist"
 			,"PrzelozonyID"
 			,"PrzelozonyKod"
 			,"Przelozony"
@@ -80,8 +80,8 @@ BEGIN
 			,INITCAP(hr."Pracownik")
 			,hr."StanowiskoKod"
 			,hr."StanowiskoNazwa"
-			,hr."EtatStanowiskoHist"
-			,hr."EtatMiejscePracyHist"
+--			,hr."EtatStanowiskoHist"
+--			,hr."EtatMiejscePracyHist"
 			,hr."PrzelozonyID"
 			,hr."PrzelozonyKod"
 			,INITCAP(hr."Przelozony")
@@ -136,8 +136,8 @@ EXECUTE format($etl$
 		,"Pracownik"
 		,"StanowiskoKod"
 		,"StanowiskoNazwa"
-		,"EtatStanowiskoHist"
-		,"EtatMiejscePracyHist"
+--		,"EtatStanowiskoHist"
+--		,"EtatMiejscePracyHist"
 		,"PrzelozonyID"
 		,"PrzelozonyKod"
 		,"Przelozony"
@@ -164,8 +164,8 @@ EXECUTE format($etl$
 		,"Pracownik" = EXCLUDED."Pracownik"
 		,"StanowiskoKod" = EXCLUDED."StanowiskoKod"
 		,"StanowiskoNazwa" = EXCLUDED."StanowiskoNazwa"
-		,"EtatStanowiskoHist" = EXCLUDED."EtatStanowiskoHist"
-		,"EtatMiejscePracyHist" = EXCLUDED."EtatMiejscePracyHist"
+--		,"EtatStanowiskoHist" = EXCLUDED."EtatStanowiskoHist"
+--		,"EtatMiejscePracyHist" = EXCLUDED."EtatMiejscePracyHist"
 		,"PrzelozonyID" = EXCLUDED."PrzelozonyID"
 		,"PrzelozonyKod" = EXCLUDED."PrzelozonyKod"
 		,"Przelozony" = EXCLUDED."Przelozony"
@@ -187,8 +187,8 @@ EXECUTE format($etl$
 		,INITCAP(NEW."Pracownik")
 		,NEW."StanowiskoKod"
 		,NEW."StanowiskoNazwa"
-		,NEW."EtatStanowiskoHist"
-		,NEW."EtatMiejscePracyHist"
+--		,NEW."EtatStanowiskoHist"
+--		,NEW."EtatMiejscePracyHist"
 		,NEW."PrzelozonyID"
 		,NEW."PrzelozonyKod"
 		,INITCAP(NEW."Przelozony")
