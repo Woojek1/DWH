@@ -60,6 +60,8 @@ BEGIN
 			,"Payment_Method_Code" text NULL
 			,"Related_company" text NULL
 			,"EDN_KUKE_Symbol" text NULL
+			,"Fgas_UDT_Verify" bool NULL
+			,"EDN_FGAS_Declaration" text NULL
 			,"Customer_Category" text NULL
 			,"Customer_Activity" text NULL
 			,"Firma" char(1) DEFAULT %L
@@ -108,6 +110,8 @@ BEGIN
 			,"Payment_Method_Code"
 			,"Related_company"
 			,"EDN_KUKE_Symbol"
+			,"Fgas_UDT_Verify"
+			,"EDN_FGAS_Declaration"
 			,"Customer_Category"
 			,"Customer_Activity"
 			,"Firma"
@@ -158,6 +162,8 @@ BEGIN
 				else 'Niepowiązane'
 			end
 			,c."EDN_KUKE_Symbol"
+			,c."Fgas_UDT_Verify"
+			,c."EDN_FGAS_Declaration"
 			,c."CustomerCategory"
 			,c."CustomerActivity"
 			,%L
@@ -234,6 +240,8 @@ EXECUTE format($etl$
 		,"Payment_Method_Code"
 		,"Related_company"
 		,"EDN_KUKE_Symbol"
+		,"Fgas_UDT_Verify"
+		,"EDN_FGAS_Declaration"
 		,"Customer_Category"
 		,"Customer_Activity"
 		,"Firma"
@@ -242,7 +250,7 @@ EXECUTE format($etl$
 	SELECT 
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
 		$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40
-		$41,$42 -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
+		$41,$42,$43,$43 -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
 	ON CONFLICT("No") DO UPDATE
 	SET
@@ -283,6 +291,8 @@ EXECUTE format($etl$
 		,"Payment_Method_Code" = EXCLUDED."Payment_Method_Code"
 		,"Related_company" = EXCLUDED."Related_company"
 		,"EDN_KUKE_Symbol" = EXCLUDED."EDN_KUKE_Symbol"
+		,"Fgas_UDT_Verify" = EXCLUDED."Fgas_UDT_Verify"
+		,"EDN_FGAS_Declaration" = EXCLUDED."EDN_FGAS_Declaration"
 		,"Customer_Category" = EXCLUDED."Customer_Category"
 		,"Customer_Activity" = EXCLUDED."Customer_Activity"
 		,"Firma" = EXCLUDED."Firma"
@@ -333,6 +343,8 @@ EXECUTE format($etl$
 			else 'Niepowiązane'
 		end
 		,NEW."EDN_KUKE_Symbol"
+		,NEW."Fgas_UDT_Verify"
+		,NEW."EDN_FGAS_Declaration"
 		,NEW."CustomerCategory"
 		,NEW."CustomerActivity"
 		,litera_firmy
