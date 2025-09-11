@@ -226,7 +226,7 @@ BEGIN
 			,CASE 
 				WHEN cle."Open" IS FALSE THEN cle."Closed_at_Date"
 				ELSE NULL
-			END AS "Closed_at_Date"
+			END AS 
 			,cle."On_Hold"
 			,cle."User_ID"
 			,cle."Source_Code"
