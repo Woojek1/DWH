@@ -1,4 +1,4 @@
---CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices AS
+CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices_1 AS
 WITH BC_Invoices_Aircon AS (
 	select
 		sil."DocumentNo" AS "NoInvoice"
@@ -16,9 +16,11 @@ WITH BC_Invoices_Aircon AS (
 		end as "ECOM"		
 		,sil."PostingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
+		,MAX(cle."Open"::int)::boolean as "Is_Open"
 		,MAX(cle."Closed_at_Date") AS "Payment_Date"
 		,case
-			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
+			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date")
+		end as "DaysAfterDueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
 		,MAX(CONCAT(sih."Firma", '_', sih."Sell_to_Customer_No")) AS "KeyNoCustomer"
 		,MAX(sih."Sell_to_Customer_Name") AS "CustomerName"
@@ -172,6 +174,8 @@ BC_Invoices_Technab AS (
 		end as "ECOM"		
 		,sil."PostingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
+		,MAX(cle."Open"::int)::boolean as "Is_Open"
+		,MAX(cle."Closed_at_Date") AS "Payment_Date"
 		,case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
@@ -272,6 +276,9 @@ BC_Invoices_Technab AS (
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_technab sih
 	ON sil."DocumentNo" = sih."No"
+	LEFT JOIN
+		silver.bc_customer_ledger_entries_technab cle
+	ON sih."No" = cle."Document_No"
 	left JOIN 
 		silver.bc_salesperson_technab sp
 	ON sih."Salesperson_Code" = sp."Code"
@@ -322,6 +329,8 @@ BC_Invoices_Zymetric AS (
 		end as "ECOM"		
 		,sil."PostingDate" AS "PostingDate"
 		,MAX(sih."Due_Date") as "DueDate"
+		,MAX(cle."Open"::int)::boolean as "Is_Open"
+		,MAX(cle."Closed_at_Date") AS "Payment_Date"		
 		,case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end as "DaysAfterDueDate"
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
@@ -422,6 +431,9 @@ BC_Invoices_Zymetric AS (
 	INNER JOIN
 		silver.bc_posted_sales_invoices_header_zymetric sih
 	ON sil."DocumentNo" = sih."No"
+	LEFT JOIN
+		silver.bc_customer_ledger_entries_zymetric cle
+	ON sih."No" = cle."Document_No"
 	left JOIN 
 		silver.bc_salesperson_zymetric sp
 	ON sih."Salesperson_Code" = sp."Code"
