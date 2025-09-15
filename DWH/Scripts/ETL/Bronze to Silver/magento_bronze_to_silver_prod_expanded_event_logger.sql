@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS silver.magento_prod_expanded_event_logger (
 	,"load_ts" timestamptz NULL
 	);
 
-
 -- Pierwsze ładowanie danych z bronze do silver	
 
 INSERT INTO silver.magento_prod_expanded_event_logger (
@@ -81,7 +80,7 @@ BEGIN
 		,NEW.event_type
 		,NEW.event_value
 		,NEW.ip_address
-		,NEW..os
+		,NEW.os
 		,NEW.referer
 		,NEW.destination
 		,NEW.event_time
@@ -90,16 +89,16 @@ BEGIN
 	
 	ON CONFLICT ("event_id") DO UPDATE
 	SET
-		event_id = EXTENDED.event_id
-		,user_id = EXTENDED.user_id
-		,session_id = EXTENDED.session_id
-		,event_type = EXTENDED.event_type
-		,event_value = EXTENDED.vent_value
-		,ip_address = EXTENDED.ip_address
-		,os = EXTENDED.os
-		,referer = EXTENDED.referer
-		,destination = EXTENDED.destination
-		,event_time = EXTENDED.event_time
+		event_id = EXCLUDED.event_id
+		,user_id = EXCLUDED.user_id
+		,session_id = EXCLUDED.session_id
+		,event_type = EXCLUDED.event_type
+		,event_value = EXCLUDED.vent_value
+		,ip_address = EXCLUDED.ip_address
+		,os = EXCLUDED.os
+		,referer = EXCLUDED.referer
+		,destination = EXCLUDED.destination
+		,event_time = EXCLUDED.event_time
 		,"load_ts" = CURRENT_TIMESTAMP;
 
 	RETURN NEW;
