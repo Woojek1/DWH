@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices AS
+--CREATE OR REPLACE VIEW  gold.v_bc_posted_sales_invoices AS
 WITH BC_Invoices_Aircon AS (
 	select
 		sil."DocumentNo" AS "NoInvoice"
@@ -33,7 +33,7 @@ WITH BC_Invoices_Aircon AS (
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."UnitPrice"/(Max(sih."Currency_Factor"))) * (sil."Quantity")
 			else sil."UnitPrice" * (sil."Quantity")
-		end as "LinePriceLCY"	
+		end as "LinePriceLCY"
 		,sil."Amount" AS "Amount"
 		,case 
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (sil."Amount"/(Max(sih."Currency_Factor"))) 

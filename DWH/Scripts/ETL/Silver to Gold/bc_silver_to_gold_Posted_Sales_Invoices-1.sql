@@ -105,6 +105,7 @@ WITH BC_Invoices_Aircon AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
+		,MAX(sih."Payment_Terms_Code") as "PaymentTermsCode"
 		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
 		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
@@ -153,8 +154,7 @@ WITH BC_Invoices_Aircon AS (
 		sil."PostingDate" DESC
 		,sil."DocumentNo" ASC
 		,sil."No" ASC
-	),
-	
+	),	
 	
 	
 BC_Invoices_Technab AS (
@@ -262,6 +262,7 @@ BC_Invoices_Technab AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
+		,MAX(sih."Payment_Terms_Code") as "PaymentTermsCode"
 		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
 		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
@@ -417,6 +418,7 @@ BC_Invoices_Zymetric AS (
 			when MAX(sih."Currency_Code") in ('EUR', 'USD') then (Max(sih."Remaining_Amount")/(Max(sih."Currency_Factor"))) 
 			else MAX(sih."Remaining_Amount")
 		end as "RemainingAmountLCY"
+		,MAX(sih."Payment_Terms_Code") as "PaymentTermsCode"
 		,MAX(sih."Payment_Method_Code") AS "PaymentMethodCode"
 		,MAX(sih."Salesperson_Code") as "SalespersonCode"
 		,MAX(sp."Name") as "SalespersonName"
@@ -475,4 +477,4 @@ SELECT *
 	FROM BC_Invoices_Technab
 UNION ALL
 SELECT *
-	FROM BC_Invoices_Zymetric
+	FROM BC_Invoices_Zymetric;
