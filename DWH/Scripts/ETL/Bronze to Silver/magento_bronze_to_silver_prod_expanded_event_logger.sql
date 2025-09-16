@@ -93,7 +93,7 @@ BEGIN
 		,user_id = EXCLUDED.user_id
 		,session_id = EXCLUDED.session_id
 		,event_type = EXCLUDED.event_type
-		,event_value = EXCLUDED.vent_value
+		,event_value = EXCLUDED.event_value
 		,ip_address = EXCLUDED.ip_address
 		,os = EXCLUDED.os
 		,referer = EXCLUDED.referer
