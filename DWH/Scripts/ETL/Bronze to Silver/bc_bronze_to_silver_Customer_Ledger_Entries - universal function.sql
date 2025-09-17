@@ -1,6 +1,6 @@
------------------------------------------------------------
--- CREATING ITEMS TABLES IN SILVER LAYER AND FIRST LOAD
------------------------------------------------------------
+--------------------------------------------------------------------------
+-- CREATING CUSTOMERS LEDGER ENTRIES TABLES IN SILVER LAYER AND FIRST LOAD
+--------------------------------------------------------------------------
 
 
 DO $$
@@ -223,10 +223,7 @@ BEGIN
 			,cle."Max_Payment_Tolerance"
 			,cle."Payment_Method_Code"
 			,cle."Open"
-			,CASE 
-				WHEN cle."Open" IS FALSE THEN cle."Closed_at_Date"
-				ELSE NULL
-			END AS "Closed_at_Date"
+			,cle."Closed_at_Date"
 			,cle."On_Hold"
 			,cle."User_ID"
 			,cle."Source_Code"
@@ -502,10 +499,7 @@ EXECUTE format($etl$
 		,NEW."Max_Payment_Tolerance"
 		,NEW."Payment_Method_Code"
 		,NEW."Open"
-		,CASE 
-		    WHEN NEW."Open" IS FALSE THEN NEW."Closed_at_Date"
-		    ELSE NULL
-		 END AS "Closed_at_Date"
+		,NEW."Closed_at_Date"
 		,NEW."On_Hold"
 		,NEW."User_ID"
 		,NEW."Source_Code"
