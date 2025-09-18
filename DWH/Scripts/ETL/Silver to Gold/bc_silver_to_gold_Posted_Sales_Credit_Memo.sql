@@ -13,6 +13,8 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 		,false as "ECOM"
 		,MAX(sih."Posting_Date") AS "PostingDate"
 		,null /*MAX(sih."Due_Date")*/ as "DueDate"		-- nie ma na fakturach korygujących
+		,MAX(cle."Open"::int)::boolean as "Is_Open"
+		,MAX(cle."Closed_at_Date") AS "Payment_Date"
 		,null /*case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end */ as "DaysAfterDueDate" 		-- nie ma na fakturach korygujących
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
@@ -92,6 +94,9 @@ WITH BC_Posted_Sales_Credit_Memo_Aircon AS (
 	INNER JOIN
 		silver.bc_posted_sales_credit_memo_header_aircon sih
 	ON sil."Document_No" = sih."No"
+	LEFT JOIN
+		silver.bc_customer_ledger_entries_aircon cle
+	ON sih."No" = cle."Document_No"
 	left JOIN 
 		silver.bc_salesperson_aircon sp
 	ON sih."Salesperson_Code" = sp."Code"
@@ -139,6 +144,8 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 		,false as "ECOM"
 		,MAX(sih."Posting_Date") AS "PostingDate"
 		,null /*MAX(sih."Due_Date")*/ as "DueDate"		-- nie ma na fakturach korygujących
+		,MAX(cle."Open"::int)::boolean as "Is_Open"
+		,MAX(cle."Closed_at_Date") AS "Payment_Date"
 		,null /*case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end */ as "DaysAfterDueDate" 		-- nie ma na fakturach korygujących
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
@@ -218,6 +225,9 @@ BC_Posted_Sales_Credit_Memo_Technab AS (
 	INNER JOIN
 		silver.bc_posted_sales_credit_memo_header_technab sih
 	ON sil."Document_No" = sih."No"
+	LEFT JOIN
+		silver.bc_customer_ledger_entries_aircon cle
+	ON sih."No" = cle."Document_No"
 	left JOIN 
 		silver.bc_salesperson_technab sp
 	ON sih."Salesperson_Code" = sp."Code"
@@ -264,6 +274,8 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 		,false as "ECOM"
 		,MAX(sih."Posting_Date") AS "PostingDate"
 		,null /*MAX(sih."Due_Date")*/ as "DueDate"		-- nie ma na fakturach korygujących
+		,MAX(cle."Open"::int)::boolean as "Is_Open"
+		,MAX(cle."Closed_at_Date") AS "Payment_Date"
 		,null /*case
 			when max(sih."Remaining_Amount") > 0 and MAX(sih."Due_Date") < CURRENT_DATE then CURRENT_DATE - MAX(sih."Due_Date") end */ as "DaysAfterDueDate" 		-- nie ma na fakturach korygujących
 		,MAX(sih."Sell_to_Customer_No") as "NoCustomer"
@@ -343,6 +355,9 @@ BC_Posted_Sales_Credit_Memo_Zymetric AS (
 	INNER JOIN
 		silver.bc_posted_sales_credit_memo_header_zymetric sih
 	ON sil."Document_No" = sih."No"
+	LEFT JOIN
+		silver.bc_customer_ledger_entries_aircon cle
+	ON sih."No" = cle."Document_No"
 	left JOIN 
 		silver.bc_salesperson_zymetric sp
 	ON sih."Salesperson_Code" = sp."Code"
