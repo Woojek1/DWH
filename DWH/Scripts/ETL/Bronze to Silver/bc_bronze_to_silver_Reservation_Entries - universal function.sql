@@ -22,7 +22,7 @@ BEGIN
 	EXECUTE format ($ddl$
 		CREATE TABLE IF NOT EXISTS silver.%I (
 			"Entry_No" int4 NOT NULL
-			,"Key_Entry_No" text PRIMARY KEY
+			,"Key_Entry_No" text NOT NULL
 			,"Positive" bool NOT NULL
 			,"Reservation_Status" text NOT NULL
 			,"Item_No" text NOT NULL
@@ -47,6 +47,7 @@ BEGIN
 			,"Transferred_from_Entry_No" int4 NULL
 			,"Firma" char(1) DEFAULT %L
 			,"load_ts" timestamptz NULL
+			,PRIMARY KEY ("Key_Entry_No","Positive")
     );
 $ddl$, _tabela, _litera_firmy);	
 
@@ -172,7 +173,7 @@ EXECUTE format($etl$
 		$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26
   -- ilość musi odpowiadać ilości kolumn w tabeli docelowej
 	
-	ON CONFLICT("Key_Entry_No") DO UPDATE
+	ON CONFLICT("Key_Entry_No", "Positive") DO UPDATE
 	SET
 		"Entry_No" = EXCLUDED."Entry_No"
 		,"Positive" = EXCLUDED."Positive"
