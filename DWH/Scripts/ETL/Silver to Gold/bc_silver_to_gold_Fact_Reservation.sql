@@ -57,3 +57,5 @@ AS WITH unioned AS (
     m.max_load_ts AS load_ts
    FROM unioned u
      CROSS JOIN max_ts m;
+
+
